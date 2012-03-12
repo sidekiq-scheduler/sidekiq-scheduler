@@ -1,2 +1,1 @@
-module SidekiqScheduler
-end
+require 'sidekiq-scheduler/cli'
