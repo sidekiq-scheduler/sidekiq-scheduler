@@ -84,4 +84,3 @@ module SidekiqScheduler
     end
   end
 end
-

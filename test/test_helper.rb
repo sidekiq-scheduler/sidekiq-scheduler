@@ -1,10 +1,11 @@
-# Configure Rails Environment
-ENV["RAILS_ENV"] = "test"
+require 'minitest/unit'
+require 'minitest/pride'
+require 'minitest/autorun'
+require 'sidekiq-scheduler'
 
-require File.expand_path("../dummy/config/environment.rb",  __FILE__)
-require "rails/test_help"
-
-Rails.backtrace_cleaner.remove_silencers!
+require 'sidekiq/util'
+Sidekiq::Util.logger.level = Logger::ERROR
 
 # Load support files
 Dir["#{File.dirname(__FILE__)}/support/**/*.rb"].each { |f| require f }
+

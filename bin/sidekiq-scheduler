@@ -1,12 +1,12 @@
 #!/usr/bin/env ruby
 
 begin
-  require 'sidekiq-scheduler/cli'
+  require 'sidekiq-scheduler'
 rescue LoadError
   # Better way to do this in dev?
   dir = File.expand_path(File.dirname(__FILE__) + '/../lib') 
   $LOAD_PATH << dir if File.exist?("#{dir}/sidekiq-scheduler.rb")
-  require 'sidekiq-scheduler/cli'
+  require 'sidekiq-scheduler'
 end
 
 begin
