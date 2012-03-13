@@ -11,8 +11,9 @@ module SidekiqScheduler
     end
 
     def run_scheduler
-      options = { :enabled => true, :resolution => 5 }
-      scheduler = SidekiqScheduler::Manager.new(options)
+      scheduler_options = { :scheduler => true, :resolution => 5 }
+      scheduler_options.merge!(options)
+      scheduler = SidekiqScheduler::Manager.new(scheduler_options)
       scheduler.start!
       run_manager
       scheduler.stop!
