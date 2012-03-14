@@ -34,10 +34,25 @@ class ClientTest < MiniTest::Unit::TestCase
       assert_equal 2, Sidekiq::Client.remove_all_delayed('Foo', 3, 4)
     end
 
+    it 'handles removed_delayed from a worker' do
+      Sidekiq::Client.delayed_push(1331284491, 'class' => 'MyWorker', 'args' => [1, 2])
+      Sidekiq::Client.delayed_push(1331284492, 'class' => 'MyWorker', 'args' => [3, 4])
+      Sidekiq::Client.delayed_push(1331284493, 'class' => 'MyWorker', 'args' => [3, 4])
+      Sidekiq::Client.delayed_push(1331284493, 'class' => 'MyWorker', 'args' => [5, 6])
+      assert_equal 2, MyWorker.remove_delayed(3, 4)
+    end
+
     it 'removes messages from specified timestamp' do
       Sidekiq::Client.delayed_push(1331284491, 'class' => 'Foo', 'args' => [1, 2])
       Sidekiq::Client.delayed_push(1331284492, 'class' => 'Foo', 'args' => [1, 2])
       assert_equal 1, Sidekiq::Client.remove_delayed(1331284491, 'Foo', 1, 2)
+      assert_equal 1, Sidekiq.redis.llen('delayed:1331284492')
+    end
+
+    it 'removes messages from a worker for a specified timestamp' do
+      Sidekiq::Client.delayed_push(1331284491, 'class' => 'MyWorker', 'args' => [1, 2])
+      Sidekiq::Client.delayed_push(1331284492, 'class' => 'MyWorker', 'args' => [1, 2])
+      assert_equal 1, MyWorker.remove_delayed_from_timestamp(1331284491, 1, 2)
       assert_equal 1, Sidekiq.redis.llen('delayed:1331284492')
     end
 
@@ -113,6 +128,5 @@ class ClientTest < MiniTest::Unit::TestCase
         @redis.verify
       end
     end
-
   end
 end
