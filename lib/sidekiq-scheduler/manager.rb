@@ -16,7 +16,7 @@ module SidekiqScheduler
     include Celluloid
 
     def initialize(options={})
-      logger.info "Booting sidekiq scheduler #{SidekiqScheduler::VERSION} with Redis at #{redis.client.location}"
+      logger.info "Booting sidekiq scheduler #{SidekiqScheduler::VERSION} with Redis at #{redis { |r| r.client.location} }"
       logger.debug { options.inspect }
       @enabled = options[:scheduler]
       @resolution = options[:resolution] || 5
@@ -37,14 +37,16 @@ module SidekiqScheduler
     private
 
     def clear_scheduled_work
-      queues = redis.zrange('delayed_queue_schedule', 0, -1).to_a
-      redis.del(*queues.map { |t| "delayed:#{t}" }) unless queues.empty?
-      redis.del('delayed_queue_schedule')
+      redis do |conn|
+        queues = conn.zrange('delayed_queue_schedule', 0, -1).to_a
+        conn.del(*queues.map { |t| "delayed:#{t}" }) unless queues.empty?
+        conn.del('delayed_queue_schedule')
+      end
     end
 
     def find_scheduled_work(timestamp)
       loop do
-        break logger.debug("Finished processing queue for timestamp #{timestamp}") unless msg = redis.lpop("delayed:#{timestamp}")
+        break logger.debug("Finished processing queue for timestamp #{timestamp}") unless msg = redis { |r| r.lpop("delayed:#{timestamp}") }
         item = MultiJson.decode(msg)
         queue = item.delete('queue')
         Sidekiq::Client.push(queue, item)
@@ -53,7 +55,7 @@ module SidekiqScheduler
     end
 
     def find_next_timestamp
-      timestamp = redis.zrangebyscore('delayed_queue_schedule', '-inf', Time.now.to_i, :limit => [0, 1])
+      timestamp = redis { |r| r.zrangebyscore('delayed_queue_schedule', '-inf', Time.now.to_i, :limit => [0, 1]) }
       if timestamp.is_a?(Array)
         timestamp = timestamp.first
       end
