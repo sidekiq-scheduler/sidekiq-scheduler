@@ -13,7 +13,8 @@ Gem::Specification.new do |s|
   s.summary     = "Light weight job scheduling extension for Sidekiq"
   s.description = "Light weight job scheduling extension for Sidekiq that adds support for queueing items in the future."
 
-  s.files = Dir["{app,config,db,lib}/**/*"] + ["MIT-LICENSE", "Rakefile", "README.md"]
+  s.executables   = ['sidekiq-scheduler']
+  s.files = Dir["{app,bin,config,db,lib}/**/*"] + ["MIT-LICENSE", "Rakefile", "README.md"]
   s.test_files = Dir["test/**/*"]
 
   s.add_dependency "sidekiq", ">= 0.8.0"
