@@ -9,6 +9,7 @@ gemspec
 # your gemspec. These might include edge Rails or gems from your path or
 # Git. Remember to move these dependencies to your gemspec before releasing
 # your gem to rubygems.org.
+gem 'sidekiq', '~> 0.9.0'
 
 # To use debugger
 # gem 'ruby-debug19', :require => 'ruby-debug'

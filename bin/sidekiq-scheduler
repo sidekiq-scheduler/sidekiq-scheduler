@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 
 begin
-  require 'sidekiq-scheduler'
+  require 'sidekiq-scheduler/cli'
 rescue LoadError
   # Better way to do this in dev?
   dir = File.expand_path(File.dirname(__FILE__) + '/../lib') 
@@ -10,7 +10,7 @@ rescue LoadError
 end
 
 begin
-  cli = Sidekiq::CLI.new
+  cli = Sidekiq::CLI.instance
   cli.parse
   cli.run
 rescue => e

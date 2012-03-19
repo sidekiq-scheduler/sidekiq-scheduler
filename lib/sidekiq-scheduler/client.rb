@@ -15,18 +15,18 @@ module SidekiqScheduler
       item['class'] = item['class'].to_s if !item['class'].is_a?(String)
 
       # Add item to the list for this timestamp
-      Sidekiq.redis.rpush("delayed:#{timestamp}", MultiJson.encode(item))
+      Sidekiq.redis { |r| r.rpush("delayed:#{timestamp}", MultiJson.encode(item)) }
 
       # Add timestamp to zset. Score and value are based on the timestamp
       # as querying will be based on that
-      Sidekiq.redis.zadd('delayed_queue_schedule', timestamp, timestamp)
+      Sidekiq.redis { |r| r.zadd('delayed_queue_schedule', timestamp, timestamp) }
     end
 
     def remove_scheduler_queue(timestamp)
       key = "delayed:#{timestamp}"
-      if 0 == Sidekiq.redis.llen(key)
-        Sidekiq.redis.del(key)
-        Sidekiq.redis.zrem('delayed_queue_schedule', timestamp)
+      if 0 == Sidekiq.redis { |r| r.llen(key) }
+        Sidekiq.redis { |r| r.del(key) }
+        Sidekiq.redis { |r| r.zrem('delayed_queue_schedule', timestamp) }
       end
     end
 
@@ -53,8 +53,8 @@ module SidekiqScheduler
       item = {'class' => klass.to_s, 'args' => args}
       item['queue'] = queue.to_s if queue
       search = MultiJson.encode(item)
-      Array(Sidekiq.redis.keys("delayed:*")).each do |key|
-        count += Sidekiq.redis.lrem(key, 0, search)
+      Array(Sidekiq.redis { |r| r.keys("delayed:*") }).each do |key|
+        count += Sidekiq.redis { |r| r.lrem(key, 0, search) }
       end
       count
     end
@@ -77,7 +77,7 @@ module SidekiqScheduler
       item = {'class' => klass.to_s, 'args' => args}
       item['queue'] = queue.to_s if queue
       search = MultiJson.encode(item)
-      count = Sidekiq.redis.lrem("delayed:#{timestamp}", 0, search)
+      count = Sidekiq.redis { |r| r.lrem("delayed:#{timestamp}", 0, search) }
       remove_scheduler_queue(timestamp)
       count
     end
