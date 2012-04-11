@@ -48,7 +48,6 @@ module SidekiqScheduler
       loop do
         break logger.debug("Finished processing queue for timestamp #{timestamp}") unless msg = redis { |r| r.lpop("delayed:#{timestamp}") }
         item = MultiJson.decode(msg)
-        queue = item.delete('queue')
         item['class'] = constantize(item['class']) # Sidekiq expects the class to be constantized.
         Sidekiq::Client.push(item)
       end
