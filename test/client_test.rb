@@ -4,8 +4,8 @@ require 'timecop'
 class ClientTest < MiniTest::Unit::TestCase
   describe 'with real redis' do
     before do
-      Sidekiq.redis = { :url => 'redis://localhost/sidekiq_test' }
-      Sidekiq.redis.flushdb
+      Sidekiq.redis = REDIS
+      Sidekiq.redis {|c| c.flushdb }
     end
 
     it 'removes scheduled messages and returns count' do
@@ -46,21 +46,21 @@ class ClientTest < MiniTest::Unit::TestCase
       Sidekiq::Client.delayed_push(1331284491, 'class' => 'Foo', 'args' => [1, 2])
       Sidekiq::Client.delayed_push(1331284492, 'class' => 'Foo', 'args' => [1, 2])
       assert_equal 1, Sidekiq::Client.remove_delayed(1331284491, 'Foo', 1, 2)
-      assert_equal 1, Sidekiq.redis.llen('delayed:1331284492')
+      assert_equal 1, Sidekiq.redis { |c| c.llen('delayed:1331284492') }
     end
 
     it 'removes messages from a worker for a specified timestamp' do
       Sidekiq::Client.delayed_push(1331284491, 'class' => 'MyWorker', 'args' => [1, 2])
       Sidekiq::Client.delayed_push(1331284492, 'class' => 'MyWorker', 'args' => [1, 2])
       assert_equal 1, MyWorker.remove_delayed_from_timestamp(1331284491, 1, 2)
-      assert_equal 1, Sidekiq.redis.llen('delayed:1331284492')
+      assert_equal 1, Sidekiq.redis { |c| c.llen('delayed:1331284492') }
     end
 
     it 'removes messages for a queue from specified timestamp' do
       Sidekiq::Client.delayed_push('foo', 1331284491, 'class' => 'Foo', 'args' => [1, 2])
       Sidekiq::Client.delayed_push('foo', 1331284492, 'class' => 'Foo', 'args' => [1, 2])
       assert_equal 1, Sidekiq::Client.remove_delayed_from_queue('foo', 1331284491, 'Foo', 1, 2)
-      assert_equal 1, Sidekiq.redis.llen('delayed:1331284492')
+      assert_equal 1, Sidekiq.redis { |c| c.llen('delayed:1331284492') }
     end
 
     it 'removes nothing if no message is found' do
@@ -71,14 +71,14 @@ class ClientTest < MiniTest::Unit::TestCase
       Sidekiq::Client.delayed_push(1331284491, 'class' => 'Foo', 'args' => [1, 2])
       Sidekiq::Client.delayed_push(1331284491, 'class' => 'Foo', 'args' => [3, 2])
       assert_equal 0, Sidekiq::Client.remove_delayed(1331284491, 'Foo', 3, 4)
-      assert_equal 2, Sidekiq.redis.llen('delayed:1331284491')
+      assert_equal 2, Sidekiq.redis { |c| c.llen('delayed:1331284491') }
     end
 
     it 'removes empty scheduler queues' do
       Sidekiq::Client.delayed_push(1331284491, 'class' => 'Foo', 'args' => [1, 2])
       assert_equal 1, Sidekiq::Client.remove_delayed(1331284491, 'Foo', 1, 2)
-      assert !Sidekiq.redis.exists('delayed:1331284491')
-      assert_equal 0, Sidekiq.redis.zcard('delayed_scheduler_queue')
+      assert !Sidekiq.redis { |c| c.exists('delayed:1331284491') }
+      assert_equal 0, Sidekiq.redis { |c| c.zcard('delayed_scheduler_queue') }
     end
   end
 
