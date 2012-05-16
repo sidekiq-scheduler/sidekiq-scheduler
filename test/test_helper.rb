@@ -5,7 +5,11 @@ require 'sidekiq-scheduler'
 
 require 'sidekiq'
 require 'sidekiq/util'
-Sidekiq::Util.logger.level = Logger::ERROR
+if Sidekiq.respond_to?(:logger)
+  Sidekiq.logger.level = Logger::ERROR
+else
+  Sidekiq::Util.logger.level = Logger::ERROR
+end
 
 # Load support files
 Dir["#{File.dirname(__FILE__)}/support/**/*.rb"].each { |f| require f }
