@@ -58,6 +58,9 @@ the scheduler will pull it from the delayed queue and put it in the appropriate
 work queue for the given job. It will then be processed as soon as a worker is 
 available (just like any other Sidekiq job).
 
+The `5.days` syntax will only work if you are using ActiveSupport (Rails). If you
+are not using Rails, just provide `perform_in` with the number of seconds.
+
 NOTE: The job does not fire **exactly** at the time supplied. Rather, once that
 time is in the past, the job moves from the delayed queue to the actual work
 queue and will be completed as workers are free to process it.
@@ -84,6 +87,16 @@ If you have the need to cancel a delayed job, you can do it like this:
     MyWorker.perform_at(5.days.from_now, 'arg1', 'arg2')
     # remove the job with exactly the same parameters:
     MyWorker.remove_delayed(<timestamp>, 'arg1', 'arg2')
+
+## Using with Testing
+
+Sidekiq uses a jobs array on workers for testing, which is supported by sidekiq-scheduler when you require the test code:
+
+    require 'sidekiq/testing'
+    require 'sidekiq-scheduler/testing'
+    
+    MyWorker.perform_in 5, 'arg1'
+    puts MyWorker.jobs.inspect
 
 ## Note on Patches / Pull Requests
 
