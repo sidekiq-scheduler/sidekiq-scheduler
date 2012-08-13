@@ -5,7 +5,7 @@ require 'sidekiq/manager'
 class ManagerTest < MiniTest::Unit::TestCase
   describe 'with redis' do
     before do
-      Sidekiq.redis = REDIS
+      Sidekiq.redis = Sidekiq::RedisConnection.create(:url => 'redis://localhost/15', :namespace => 'testy')
       Sidekiq.redis {|c| c.flushdb }
       @scheduler = SidekiqScheduler::Manager.new
       $processed = 0
