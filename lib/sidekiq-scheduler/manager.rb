@@ -17,7 +17,6 @@ module SidekiqScheduler
   class Manager
     include Sidekiq::Util
     include Celluloid
-    #extend SidekiqScheduler::ScheduleManager
 
     def initialize(options={})
       logger.info "Booting sidekiq scheduler #{SidekiqScheduler::VERSION} with Redis at #{redis { |r| r.client.location} }"
@@ -34,12 +33,11 @@ module SidekiqScheduler
     end
 
     def start
-
       #Load the schedule into rufus
       #If dynamic is set, load that schedule otherwise use normal load
-      if Sidekiq::Scheduler.dynamic
+      if @enabled && Sidekiq::Scheduler.dynamic
         Sidekiq::Scheduler.reload_schedule!
-      else
+      elsif @enabled
         Sidekiq::Scheduler.load_schedule!
       end
 
