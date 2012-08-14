@@ -19,8 +19,6 @@ module SidekiqScheduler
     include Celluloid
 
     def initialize(options={})
-      logger.info "Booting sidekiq scheduler #{SidekiqScheduler::VERSION} with Redis at #{redis { |r| r.client.location} }"
-      logger.debug { options.inspect }
       @enabled = options[:scheduler]
       @resolution = options[:resolution] || 5
 
@@ -83,7 +81,7 @@ module SidekiqScheduler
         # Dispatch loop
         loop do
           Sidekiq::Scheduler.update_schedule if Sidekiq::Scheduler.dynamic
-          break logger.debug('no scheduler queues to process') unless timestamp = find_next_timestamp
+          break unless timestamp = find_next_timestamp
           find_scheduled_work(timestamp)
         end
 
