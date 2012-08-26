@@ -79,7 +79,7 @@ class ManagerTest < MiniTest::Unit::TestCase
       Sidekiq::Scheduler.load_schedule!
 
       assert_equal(1, Sidekiq::Scheduler.rufus_scheduler.all_jobs.size)
-      assert Sidekiq::Scheduler.scheduled_jobs.include?('some_ivar_job')
+      assert Sidekiq::Scheduler.scheduled_jobs.include?(:some_ivar_job)
 
       Sidekiq.redis { |r| r.del(:schedules) }
       Sidekiq.redis do |r|
