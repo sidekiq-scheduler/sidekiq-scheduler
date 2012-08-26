@@ -4,6 +4,9 @@ require 'multi_json'
 
 require 'sidekiq/util'
 
+require 'sidekiq/scheduler'
+require 'sidekiq-scheduler/schedule'
+
 module SidekiqScheduler
 
   ##
@@ -16,10 +19,11 @@ module SidekiqScheduler
     include Celluloid
 
     def initialize(options={})
-      logger.info "Booting sidekiq scheduler #{SidekiqScheduler::VERSION} with Redis at #{redis { |r| r.client.location} }"
-      logger.debug { options.inspect }
       @enabled = options[:scheduler]
       @resolution = options[:resolution] || 5
+
+      Sidekiq::Scheduler.dynamic = options[:dynamic] || false
+      Sidekiq.schedule = options[:schedule] if options[:schedule]
     end
 
     def stop
@@ -27,6 +31,14 @@ module SidekiqScheduler
     end
 
     def start
+      #Load the schedule into rufus
+      #If dynamic is set, load that schedule otherwise use normal load
+      if @enabled && Sidekiq::Scheduler.dynamic
+        Sidekiq::Scheduler.reload_schedule!
+      elsif @enabled
+        Sidekiq::Scheduler.load_schedule!
+      end
+
       schedule(true)
     end
 
@@ -68,7 +80,8 @@ module SidekiqScheduler
 
         # Dispatch loop
         loop do
-          break logger.debug('no scheduler queues to process') unless timestamp = find_next_timestamp
+          Sidekiq::Scheduler.update_schedule if Sidekiq::Scheduler.dynamic
+          break unless timestamp = find_next_timestamp
           find_scheduled_work(timestamp)
         end
 

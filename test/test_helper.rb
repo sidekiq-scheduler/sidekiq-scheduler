@@ -2,13 +2,45 @@ require 'minitest/unit'
 require 'minitest/pride'
 require 'minitest/autorun'
 require 'sidekiq-scheduler'
+require 'mocha'
+require 'multi_json'
+require 'mock_redis'
 
 require 'sidekiq'
 require 'sidekiq/util'
-Sidekiq::Util.logger.level = Logger::ERROR
+if Sidekiq.respond_to?(:logger)
+  Sidekiq.logger.level = Logger::ERROR
+else
+  Sidekiq::Util.logger.level = Logger::ERROR
+end
 
 # Load support files
 Dir["#{File.dirname(__FILE__)}/support/**/*.rb"].each { |f| require f }
 
 require 'sidekiq/redis_connection'
-REDIS = Sidekiq::RedisConnection.create(:url => "redis://localhost/15", :namespace => 'testy')
+
+#Setup redis mock to avoid having a dependency
+# with redis server during tests
+$redis = ConnectionPool.new(:timeout => 1, :size => 1) { MockRedis.new }
+Sidekiq.redis = $redis
+
+class MiniTest::Spec
+  before :each do
+    $redis.with_connection { |conn| conn.flushdb }
+  end
+end
+
+class SomeJob
+  include Sidekiq::Worker
+  def self.perform(repo_id, path)
+  end
+end
+
+class SomeIvarJob < SomeJob
+  sidekiq_options :queue => :ivar
+end
+
+class SomeRealClass
+  include Sidekiq::Worker
+  sidekiq_options :queue => :some_real_queue
+end

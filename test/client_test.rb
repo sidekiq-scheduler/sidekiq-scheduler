@@ -4,7 +4,7 @@ require 'timecop'
 class ClientTest < MiniTest::Unit::TestCase
   describe 'with real redis' do
     before do
-      Sidekiq.redis = REDIS
+      Sidekiq.redis = Sidekiq::RedisConnection.create(:url => 'redis://localhost/15', :namespace => 'testy')
       Sidekiq.redis {|c| c.flushdb }
     end
 
@@ -82,7 +82,7 @@ class ClientTest < MiniTest::Unit::TestCase
     end
   end
 
-  describe 'with mock redis' do
+  describe 'redis calls' do
     before do
       @redis = MiniTest::Mock.new
       def @redis.multi; yield; end
@@ -100,9 +100,9 @@ class ClientTest < MiniTest::Unit::TestCase
     end
 
     it 'pushes delayed messages to redis' do
-      @redis.expect :rpush, 1, ['delayed:1331284491', String]
-      @redis.expect :zadd, 1, ['delayed_queue_schedule', 1331284491, 1331284491]
-      Sidekiq::Client.delayed_push('foo', 1331284491, 'class' => 'Foo', 'args' => [1, 2])
+      @redis.expect :rpush, 1, ['delayed:1661284491', String]
+      @redis.expect :zadd, 1, ['delayed_queue_schedule', 1661284491, 1661284491]
+      Sidekiq::Client.delayed_push('foo', 1661284491, 'class' => 'Foo', 'args' => [1, 2])
       @redis.verify
     end
 
@@ -114,17 +114,20 @@ class ClientTest < MiniTest::Unit::TestCase
     end
 
     it 'handles perform_at' do
-      @redis.expect :rpush, 1, ['delayed:1331284491', String]
-      @redis.expect :zadd, 1, ['delayed_queue_schedule', 1331284491, 1331284491]
+
+      #@redis.expect :rpush, 1, ['delayed:1331284491', String]
+      @redis.expect :zadd, 1, ['schedule', "1331284491.0", String]
       MyWorker.perform_at(1331284491, 1, 2)
+
       @redis.verify
     end
 
     it 'handles perform_in' do
+
       Timecop.freeze(Time.now) do
         timestamp = Time.now + 30
-        @redis.expect :rpush, 1, ["delayed:#{timestamp.to_i}", String]
-        @redis.expect :zadd, 1, ['delayed_queue_schedule', timestamp.to_i, timestamp.to_i]
+        #@redis.expect :rpush, 1, ["delayed:#{timestamp.to_i}", String]
+        @redis.expect :zadd, 1, ['schedule', "#{timestamp.to_f}", String]
         MyWorker.perform_in(30, 1, 2)
         @redis.verify
       end
