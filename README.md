@@ -1,5 +1,14 @@
 # SidekiqScheduler
 
+# Warning!
+
+The original function of this gem was to add delayed jobs for a fixed amount of time. 
+This has been available directly within Sidekiq since Version 2.0. A lot of this code
+should be considered redundant and might even conflict with the latest Sidekiq release.
+
+Since I have upgraded my projects that made use of this gem to the core Sidekiq functions and
+no longer make active use of this gem this project should be considered largely unmaintained.
+
 ## Description
 
 sidekiq-scheduler is an extension to [Sidekiq](http://github.com/mperham/sidekiq)
@@ -9,7 +18,7 @@ This table explains the version requirements for redis
 
 | sidekiq-scheduler version | required redis version|
 |:--------------------------|----------------------:|
-| ~> 1.0.0                  | >= 2.2.0              |
+| >= 1.0.0                  | >= 2.2.0              |
 
 Job scheduling is supported in two different way: Recurring (scheduled) and
 Delayed.
@@ -31,7 +40,7 @@ details on individual methods, you might want to try the [rdoc](http://rdoc.info
 ## Installation
 
     #To install:
-    gem install resque-scheduler
+    gem install sidekiq-scheduler
 
     #If you use a Gemfile:
     gem 'sidekiq-scheduler'
@@ -195,6 +204,8 @@ Sidekiq uses a jobs array on workers for testing, which is supported by sidekiq-
 
 This work is a partial port of [resque-scheduler](https://github.com/bvandenbos/resque-scheduler) by Ben VandenBos.  
 Modified to work with the Sidekiq queueing library by Morton Jonuschat.
+
+Scheduling of recurring jobs has been addet to v0.4.0, thanks to [Adrian Gomez](https://github.com/adrian-gomez).
 
 ## Maintainers
 
