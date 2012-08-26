@@ -9,7 +9,7 @@ This table explains the version requirements for redis
 
 | sidekiq-scheduler version | required redis version|
 |:--------------------------|----------------------:|
-| >= 1.0.0                  | >= 2.2.0              |
+| ~> 1.0.0                  | >= 2.2.0              |
 
 Job scheduling is supported in two different way: Recurring (scheduled) and
 Delayed.
@@ -25,7 +25,7 @@ The syntax is pretty explanatory:
 ### Documentation
 
 This README covers what most people need to know. If you're looking for
-details on individual methods, you might want to try the [rdoc](http://rdoc.info/github/adrian-gomez/sidekiq-scheduler/master/frames).
+details on individual methods, you might want to try the [rdoc](http://rdoc.info/github/yabawock/sidekiq-scheduler/master/frames).
 
 
 ## Installation
@@ -107,7 +107,7 @@ If you have the need to cancel a delayed job, you can do it like this:
     # remove the job with exactly the same parameters:
     MyWorker.remove_delayed(<timestamp>, 'arg1', 'arg2')
 
-### Scheduled Jobs (Recurring Jobs)
+## Scheduled Jobs (Recurring Jobs)
 
 Scheduled (or recurring) jobs are logically no different than a standard cron
 job.  They are jobs that run based on a fixed schedule which is set at
@@ -155,6 +155,23 @@ seconds past the minute).
 A big shout out to [rufus-scheduler](http://github.com/jmettraux/rufus-scheduler)
 for handling the heavy lifting of the actual scheduling engine.
 
+### Time zones
+
+Note that if you use the cron syntax, this will be interpreted as in the server time zone
+rather than the `config.time_zone` specified in Rails.
+
+You can explicitly specify the time zone that rufus-scheduler will use:
+
+    cron: "30 6 * * 1 Europe/Stockholm"
+
+Also note that `config.time_zone` in Rails allows for a shorthand (e.g. "Stockholm")
+that rufus-scheduler does not accept. If you write code to set the scheduler time zone
+from the `config.time_zone` value, make sure it's the right format, e.g. with:
+
+    ActiveSupport::TimeZone.find_tzinfo(Rails.configuration.time_zone).name
+
+A future version of sidekiq-scheduler may do this for you.
+
 ## Using with Testing
 
 Sidekiq uses a jobs array on workers for testing, which is supported by sidekiq-scheduler when you require the test code:
@@ -173,23 +190,6 @@ Sidekiq uses a jobs array on workers for testing, which is supported by sidekiq-
 * Commit, do not mess with rakefile, version, or history.
   (if you want to have your own version, that is fine but bump version in a commit by itself I can ignore when I pull)
 * Send me a pull request. Bonus points for topic branches.
-
-#### Time zones
-
-Note that if you use the cron syntax, this will be interpreted as in the server time zone
-rather than the `config.time_zone` specified in Rails.
-
-You can explicitly specify the time zone that rufus-scheduler will use:
-
-    cron: "30 6 * * 1 Europe/Stockholm"
-
-Also note that `config.time_zone` in Rails allows for a shorthand (e.g. "Stockholm")
-that rufus-scheduler does not accept. If you write code to set the scheduler time zone
-from the `config.time_zone` value, make sure it's the right format, e.g. with:
-
-    ActiveSupport::TimeZone.find_tzinfo(Rails.configuration.time_zone).name
-
-A future version of resque-scheduler may do this for you.
 
 ## Credits
 
