@@ -11,7 +11,7 @@ class TestingTest < MiniTest::Unit::TestCase
         assert_equal 0, DirectWorker.jobs.size
         assert DirectWorker.perform_at(1331759054, 1, 2)
         assert_equal 1, DirectWorker.jobs.size
-        assert_equal 1331759054, DirectWorker.jobs[0]['timestamp']
+        assert_equal 1331759054, DirectWorker.jobs[0]['at']
         DirectWorker.jobs.clear
 
         # perform_in
@@ -20,7 +20,7 @@ class TestingTest < MiniTest::Unit::TestCase
           assert_equal 0, DirectWorker.jobs.size
           assert DirectWorker.perform_in(30, 1, 2)
           assert_equal 1, DirectWorker.jobs.size
-          assert_equal timestamp.to_i, DirectWorker.jobs[0]['timestamp']
+          assert_equal timestamp.to_f, DirectWorker.jobs[0]['at']
         end
       ensure
         # Undo override
