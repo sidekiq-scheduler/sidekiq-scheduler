@@ -115,7 +115,7 @@ module Sidekiq
       args = args.is_a?(Hash) ? [args] : Array(args)
       
       klass_name = job_config[:class] || job_config['class']
-      klass = constantize(klass_name) rescue klass_name
+      klass = klass_name.constantize rescue constantize(klass_name)
 
       Sidekiq::Client.push({ 'class' => klass, 'args' => args })
     end
