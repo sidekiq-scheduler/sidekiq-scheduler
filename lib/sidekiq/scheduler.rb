@@ -111,10 +111,13 @@ module Sidekiq
 
     # Enqueue a job based on a config hash
     def self.enqueue_from_config(job_config)
-      job_config['class'] = constantize(job_config['class']) # Sidekiq expects the class to be constantized.
-      job_config['args'] = '' if job_config['args'].nil?
+      args = job_config[:args] || job_config['args']
+      args = args.is_a?(Hash) ? [args] : Array(args)
+      
+      klass_name = job_config[:class] || job_config['class']
+      klass = klass_name.constantize rescue constantize(klass_name)
 
-      Sidekiq::Client.push(job_config)
+      Sidekiq::Client.push({ 'class' => klass, 'args' => args })
     end
 
     def self.rufus_scheduler
