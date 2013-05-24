@@ -2,7 +2,7 @@ require 'test_helper'
 require 'sidekiq-scheduler/cli'
 require 'tempfile'
 
-class CliTest < MiniTest::Unit::TestCase
+class CliTest < Minitest::Test
   describe 'with cli' do
     before do
       @cli = Sidekiq::CLI.instance

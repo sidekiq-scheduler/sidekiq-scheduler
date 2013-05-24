@@ -1,8 +1,8 @@
-require 'minitest/unit'
+require 'minitest/autorun'
 require 'minitest/pride'
 require 'minitest/autorun'
 require 'sidekiq-scheduler'
-require 'mocha'
+require 'mocha/setup'
 require 'multi_json'
 require 'mock_redis'
 
@@ -19,14 +19,24 @@ Dir["#{File.dirname(__FILE__)}/support/**/*.rb"].each { |f| require f }
 
 require 'sidekiq/redis_connection'
 
-#Setup redis mock to avoid having a dependency
-# with redis server during tests
-$redis = ConnectionPool.new(:timeout => 1, :size => 1) { MockRedis.new }
-Sidekiq.redis = $redis
-
+#Setup redis mock to avoid having a dependency with redis server during tests
+#$redis = ConnectionPool.new(:timeout => 1, :size => 1) { MockRedis.new }
+#Sidekiq.redis = $redis
+#
+#class MiniTest::Spec
+#  before :each do
+#    $redis.with_connection { |conn| conn.flushdb }
+#  end
+#end
 class MiniTest::Spec
   before :each do
-    $redis.with_connection { |conn| conn.flushdb }
+    redis = MockRedis.new
+    client = Object.new
+
+    redis.stubs(:client).returns(client)
+    client.stubs(:location).returns('MockRedis')
+
+    Sidekiq::RedisConnection.stubs(:create).returns(ConnectionPool.new({}) { redis })
   end
 end
 

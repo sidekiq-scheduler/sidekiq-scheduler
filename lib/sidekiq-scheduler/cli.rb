@@ -11,6 +11,10 @@ module SidekiqScheduler
     end
 
     def run_scheduler
+
+    end
+
+    def run_scheduler
       scheduler_options = { :scheduler => true, :resolution => 5, :schedule => nil }
       scheduler_options.merge!(options)
 
@@ -21,9 +25,9 @@ module SidekiqScheduler
       end
 
       scheduler = SidekiqScheduler::Manager.new(scheduler_options)
-      scheduler.start!
+      scheduler.start
       run_manager
-      scheduler.stop!
+      scheduler.stop
     end
   end
 end
