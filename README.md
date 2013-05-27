@@ -40,7 +40,6 @@ parsing provided by sidekiq you will need to use a configuration file to
 override the scheduler options.
 Available options are:
 
-    :resolution: <seconds between schedule runs>
     :schedule: <the schedule to be run>
     :dynamic: <if true the schedule can we modified in runtime>
 

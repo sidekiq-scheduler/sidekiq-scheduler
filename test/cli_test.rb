@@ -3,7 +3,9 @@ require 'sidekiq-scheduler/cli'
 require 'tempfile'
 
 class CliTest < Minitest::Test
+
   describe 'with cli' do
+
     before do
       @cli = Sidekiq::CLI.instance
     end
@@ -17,5 +19,7 @@ class CliTest < Minitest::Test
         assert_equal 30, Sidekiq.options[:resolution]
       end
     end
+
   end
+
 end

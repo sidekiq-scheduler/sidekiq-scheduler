@@ -11,11 +11,7 @@ module SidekiqScheduler
     end
 
     def run_scheduler
-
-    end
-
-    def run_scheduler
-      scheduler_options = { :scheduler => true, :resolution => 5, :schedule => nil }
+      scheduler_options = { :scheduler => true, :schedule => nil }
       scheduler_options.merge!(options)
 
       if options[:config_file]
