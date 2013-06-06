@@ -18,6 +18,7 @@ module SidekiqScheduler
         file_options = YAML.load_file(options[:config_file])
         options.merge!(file_options)
         options.delete(:config_file)
+        parse_queues(options, options.delete(:queues) || [])
       end
 
       scheduler = SidekiqScheduler::Manager.new(scheduler_options)
