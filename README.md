@@ -103,6 +103,20 @@ seconds past the minute).
 A big shout out to [rufus-scheduler](http://github.com/jmettraux/rufus-scheduler)
 for handling the heavy lifting of the actual scheduling engine.
 
+### Loading the schedule
+
+Let's assume your scheduled jobs are defined in a file called "config/scheduler.yml" under your Rails project,
+you could create a Rails initializer called "config/initializer/scheduler.rb" which would load the job definitions:
+
+    require 'sidekiq/scheduler'
+    Sidekiq.schedule = YAML.load_file(File.expand_path("../../../config/scheduler.yml",__FILE__))
+
+If you were running a non Rails project you should add code to load the workers classes before loading the schedule.
+
+    require 'sidekiq/scheduler'
+    Dir[File.expand_path('../lib/workers/*.rb',__FILE__)].each do |file| load file; end
+    Sidekiq.schedule = YAML.load_file(File.expand_path("../../../config/scheduler.yml",__FILE__))
+ 
 ### Time zones
 
 Note that if you use the cron syntax, this will be interpreted as in the server time zone
