@@ -1,10 +1,6 @@
 require 'test_helper'
 
-class ScheduleTest < MiniTest::Unit::TestCase
-  #class ScheduleManager
-  #  extend SidekiqScheduler::ScheduleManager
-  #end
-
+class ScheduleTest < Minitest::Test
 
   describe 'SidekiqScheduler::Schedule' do
     it 'schedule= sets the schedule' do

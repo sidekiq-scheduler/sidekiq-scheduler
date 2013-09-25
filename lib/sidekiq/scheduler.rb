@@ -111,13 +111,16 @@ module Sidekiq
 
     # Enqueue a job based on a config hash
     def self.enqueue_from_config(job_config)
-      args = job_config[:args] || job_config['args']
-      args = args.is_a?(Hash) ? [args] : Array(args)
-      
-      klass_name = job_config[:class] || job_config['class']
-      klass = klass_name.constantize rescue constantize(klass_name)
+      config = job_config.dup
 
-      Sidekiq::Client.push({ 'class' => klass, 'args' => args })
+      config['class'] = if config['class'].is_a?(String)
+                          config['class'].constantize
+                        else
+                          config['class']
+                        end
+      config['args'] = Array(config['args'])
+
+       Sidekiq::Client.push(config)
     end
 
     def self.rufus_scheduler
@@ -162,5 +165,6 @@ module Sidekiq
         self.scheduled_jobs.delete(name)
       end
     end
+
   end
 end
