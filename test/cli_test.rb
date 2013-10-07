@@ -7,6 +7,7 @@ class CliTest < Minitest::Test
   describe 'with cli' do
 
     before do
+      Celluloid.boot
       @cli = Sidekiq::CLI.instance
     end
 
