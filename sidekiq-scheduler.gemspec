@@ -17,7 +17,7 @@ Gem::Specification.new do |s|
   s.files = Dir["{app,bin,config,db,lib}/**/*"] + ["MIT-LICENSE", "Rakefile", "README.md"]
   s.test_files = Dir["test/**/*"]
 
-  s.add_dependency 'sidekiq', '~> 2.0'
+  s.add_dependency 'sidekiq', '~> 2.12.0'
   s.add_dependency('redis', '>= 2.0.1')
   s.add_dependency 'rufus-scheduler', '~> 2.0'
 
@@ -27,4 +27,5 @@ Gem::Specification.new do |s|
   s.add_development_dependency 'mocha'
   s.add_development_dependency 'minitest'
   s.add_development_dependency 'mock_redis'
+  s.add_development_dependency 'multi_json'
 end

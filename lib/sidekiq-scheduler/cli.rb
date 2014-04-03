@@ -11,19 +11,20 @@ module SidekiqScheduler
     end
 
     def run_scheduler
-      scheduler_options = { :scheduler => true, :resolution => 5, :schedule => nil }
+      scheduler_options = { :scheduler => true, :schedule => nil }
       scheduler_options.merge!(options)
 
       if options[:config_file]
         file_options = YAML.load_file(options[:config_file])
         options.merge!(file_options)
         options.delete(:config_file)
+        parse_queues(options, options.delete(:queues) || [])
       end
 
       scheduler = SidekiqScheduler::Manager.new(scheduler_options)
-      scheduler.start!
+      scheduler.start
       run_manager
-      scheduler.stop!
+      scheduler.stop
     end
   end
 end
