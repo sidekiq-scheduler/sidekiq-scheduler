@@ -21,13 +21,10 @@ details on individual methods, you might want to try the [rdoc](http://rdoc.info
 
 ## Installation
 
-    #To install:
-    gem install sidekiq-scheduler
+    # Add this to your Gemfile:
+    gem 'sidekiq-scheduler', '=> 0.6'
 
-    #If you use a Gemfile:
-    gem 'sidekiq-scheduler'
-
-    #Starting the scheduler
+    # Starting the scheduler
     bundle exec sidekiq-scheduler
 
 The scheduler will perform identically to a normal sidekiq worker with
