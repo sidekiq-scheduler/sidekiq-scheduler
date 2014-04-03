@@ -2,6 +2,8 @@
 .idea/
 log/*.log
 pkg/
+
+coverage/
 test/dummy/db/*.sqlite3
 test/dummy/log/*.log
 test/dummy/tmp/

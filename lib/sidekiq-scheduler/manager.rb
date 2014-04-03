@@ -1,6 +1,5 @@
 require 'celluloid'
 require 'redis'
-require 'multi_json'
 
 require 'sidekiq/util'
 

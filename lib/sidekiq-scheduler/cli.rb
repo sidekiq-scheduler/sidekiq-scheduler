@@ -1,8 +1,10 @@
-require 'sidekiq-scheduler/manager'
 require 'sidekiq/cli'
+
+require 'sidekiq-scheduler/manager'
 
 module SidekiqScheduler
   module CLI
+
     def self.included(base)
       base.class_eval do
         alias_method :run_manager, :run
@@ -26,6 +28,7 @@ module SidekiqScheduler
       run_manager
       scheduler.stop
     end
+
   end
 end
 
