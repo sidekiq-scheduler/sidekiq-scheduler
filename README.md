@@ -21,13 +21,10 @@ details on individual methods, you might want to try the [rdoc](http://rdoc.info
 
 ## Installation
 
-    #To install:
-    gem install sidekiq-scheduler
+    # Add this to your Gemfile:
+    gem 'sidekiq-scheduler', '=> 0.6'
 
-    #If you use a Gemfile:
-    gem 'sidekiq-scheduler'
-
-    #Starting the scheduler
+    # Starting the scheduler
     bundle exec sidekiq-scheduler
 
 The scheduler will perform identically to a normal sidekiq worker with
@@ -61,7 +58,7 @@ Scheduled (or recurring) jobs are logically no different than a standard cron
 job.  They are jobs that run based on a fixed schedule which is set at
 startup.
 
-The schedule is a list of Resque worker classes with arguments and a
+The schedule is a list of Sidekiq worker classes with arguments and a
 schedule frequency (in crontab syntax).  The schedule is just a hash, but
 is most likely stored in a YAML like so:
 

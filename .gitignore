@@ -2,9 +2,11 @@
 .idea/
 log/*.log
 pkg/
+
+coverage/
 test/dummy/db/*.sqlite3
 test/dummy/log/*.log
 test/dummy/tmp/
 test/dummy/.sass-cache
 Gemfile.lock
-.rvmrc
+*.gem

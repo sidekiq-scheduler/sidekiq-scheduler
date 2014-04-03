@@ -1,3 +1,5 @@
+require 'multi_json'
+
 module SidekiqScheduler
   module Schedule
 
@@ -29,9 +31,6 @@ module SidekiqScheduler
     #
     # :args can be any yaml which will be converted to a ruby literal and
     # passed in a params. (optional)
-    #
-    # :rails_envs is the list of envs where the job gets loaded. Envs are
-    # comma separated (optional)
     #
     # :description is just that, a description of the job (optional). If
     # params is an array, each element in the array is passed as a separate
@@ -89,10 +88,10 @@ module SidekiqScheduler
     # Note: values for class and custom_job_class need to be strings,
     # not constants.
     #
-    #    Resque.set_schedule('some_job', {:class => 'SomeJob',
-    #                                     :every => '15mins',
-    #                                     :queue => 'high',
-    #                                     :args => '/tmp/poop'})
+    #    Sidekiq.set_schedule('some_job', { :class => 'SomeJob',
+    #                                       :every => '15mins',
+    #                                       :queue => 'high',
+    #                                       :args => '/tmp/poop' })
     def set_schedule(name, config)
       existing_config = get_schedule(name)
       unless existing_config && existing_config == config
