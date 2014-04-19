@@ -28,8 +28,8 @@ module SidekiqScheduler
     end
 
     def start
-      #Load the schedule into rufus
-      #If dynamic is set, load that schedule otherwise use normal load
+      # Load the schedule into rufus
+      # If dynamic is set, load that schedule otherwise use normal load
       if @enabled && Sidekiq::Scheduler.dynamic
         Sidekiq::Scheduler.reload_schedule!
       elsif @enabled

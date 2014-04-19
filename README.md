@@ -1,5 +1,10 @@
 # SidekiqScheduler
 
+## Note
+
+The master branch and releases from 1.0 are compatible with sidekiq ~> 3, for sidekiq ~> 2 support
+use versions ~> 0.
+
 ## Description
 
 sidekiq-scheduler is an extension to [Sidekiq](http://github.com/mperham/sidekiq)
@@ -15,36 +20,31 @@ details on individual methods, you might want to try the [rdoc](http://rdoc.info
 
 ## Installation
 
-    # Add this to your Gemfile:
-    gem 'sidekiq-scheduler', '=> 0.6'
+Add this to your Gemfile:
+```ruby
+gem 'sidekiq-scheduler', '~> 1'
+```
 
-    # Starting the scheduler
-    bundle exec sidekiq-scheduler
+If you are using rails you are set
 
-The scheduler will perform identically to a normal sidekiq worker with
-an additional scheduler thread being run - in the default configuration
-this will result in 25 worker threads being available on the scheduler
-node but all normal configuration options apply.
+If you are not using rails create a file with this content:
+```ruby
+require 'sidekiq-scheduler'
+```
 
-NOTE: Since it's currently not possible to hook into the default option
-parsing provided by sidekiq you will need to use a configuration file to
-override the scheduler options.
+and the execute:
+```sh
+sidekiq -r created_file_path.rb
+```
+
+Look at [Loading the schedule][https://github.com/moove-it/sidekiq-scheduler/tree/0.x#loading-the-schedule]
+for information on how to load your schedule.
+
+You can add sidekiq-scheduler configuration options to sidekiq.yml config file.
 Available options are:
 
     :schedule: <the schedule to be run>
     :dynamic: <if true the schedule can we modified in runtime>
-
-The scheduling thread will sleep this many seconds between looking for
-jobs that need moving to the worker queue. The default is 5 seconds
-which should be fast enough for almost all uses.
-
-NOTE: You DO NOT want to run more than one instance of the scheduler.  Doing
-so will result in the same job being queued multiple times.  You only need one
-instance of the scheduler running per application, regardless of number of servers.
-
-NOTE: If the scheduler thread goes down for whatever reason, the delayed items
-that should have fired during the outage will fire once the scheduler is
-started back up again (even if it is on a new machine).
 
 ## Scheduled Jobs (Recurring Jobs)
 
@@ -94,20 +94,31 @@ seconds past the minute).
 A big shout out to [rufus-scheduler](http://github.com/jmettraux/rufus-scheduler)
 for handling the heavy lifting of the actual scheduling engine.
 
+
 ### Loading the schedule
 
 Let's assume your scheduled jobs are defined in a file called "config/scheduler.yml" under your Rails project,
 you could create a Rails initializer called "config/initializer/scheduler.rb" which would load the job definitions:
 
-    require 'sidekiq/scheduler'
-    Sidekiq.schedule = YAML.load_file(File.expand_path("../../../config/scheduler.yml",__FILE__))
+```ruby
+require 'sidekiq/scheduler'
+Sidekiq.schedule = YAML.load_file(File.expand_path("../../../config/scheduler.yml",__FILE__))
+```
 
 If you were running a non Rails project you should add code to load the workers classes before loading the schedule.
 
-    require 'sidekiq/scheduler'
-    Dir[File.expand_path('../lib/workers/*.rb',__FILE__)].each do |file| load file; end
-    Sidekiq.schedule = YAML.load_file(File.expand_path("../../../config/scheduler.yml",__FILE__))
- 
+```ruby
+require 'sidekiq/scheduler'
+Dir[File.expand_path('../lib/workers/*.rb',__FILE__)].each do |file| load file; end
+Sidekiq.schedule = YAML.load_file(File.expand_path("../../../config/scheduler.yml",__FILE__))
+```
+
+You can also put your schedule information inside sidekiq.yml and load it with:
+
+```sh
+sidekiq -C ./config/sidekiq.yml
+```
+
 ### Time zones
 
 Note that if you use the cron syntax, this will be interpreted as in the server time zone
@@ -124,16 +135,6 @@ from the `config.time_zone` value, make sure it's the right format, e.g. with:
     ActiveSupport::TimeZone.find_tzinfo(Rails.configuration.time_zone).name
 
 A future version of sidekiq-scheduler may do this for you.
-
-## Using with Testing
-
-Sidekiq uses a jobs array on workers for testing, which is supported by sidekiq-scheduler when you require the test code:
-
-    require 'sidekiq/testing'
-    require 'sidekiq-scheduler/testing'
-    
-    MyWorker.perform_in 5, 'arg1'
-    puts MyWorker.jobs.inspect
 
 ## Note on Patches / Pull Requests
 
