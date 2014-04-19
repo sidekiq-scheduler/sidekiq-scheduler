@@ -1,5 +1,10 @@
 # SidekiqScheduler
 
+## Note
+
+This branch 0.x and releases until 0.7 are compatible with sidekiq ~> 2, for sidekiq ~> 3 support
+use versions ~> 1.
+
 ## Description
 
 sidekiq-scheduler is an extension to [Sidekiq](http://github.com/mperham/sidekiq)
