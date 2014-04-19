@@ -5,18 +5,12 @@
 sidekiq-scheduler is an extension to [Sidekiq](http://github.com/mperham/sidekiq)
 that adds support for running scheduled.
 
-This table explains the version requirements for redis
-
-| sidekiq-scheduler version | required redis version|
-|:--------------------------|----------------------:|
-| >= 0.4.0                  | >= 2.2.0              |
-
 Scheduled jobs are like cron jobs, recurring on a regular basis.
 
 ### Documentation
 
 This README covers what most people need to know. If you're looking for
-details on individual methods, you might want to try the [rdoc](http://rdoc.info/github/yabawock/sidekiq-scheduler/master/frames).
+details on individual methods, you might want to try the [rdoc](http://rdoc.info/github/moove-it/sidekiq-scheduler/master/frames).
 
 
 ## Installation
@@ -159,7 +153,7 @@ Scheduling of recurring jobs has been added to v0.4.0, thanks to [Adrian Gomez](
 ## Maintainers
 
 * [Morton Jonuschat](https://github.com/yabawock)
-* [Moove-IT](https://github.com/Moove-it)
+* [Adrian Gomez](https://github.com/adrian-gomez)
 
 ## License
 
