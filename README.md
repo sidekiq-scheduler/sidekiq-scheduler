@@ -44,7 +44,7 @@ You can add sidekiq-scheduler configuration options to sidekiq.yml config file.
 Available options are:
 
     :schedule: <the schedule to be run>
-    :dynamic: <if true the schedule can we modified in runtime>
+    :dynamic: <if true the schedule can be modified in runtime>
 
 ## Scheduled Jobs (Recurring Jobs)
 
