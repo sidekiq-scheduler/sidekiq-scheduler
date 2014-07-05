@@ -119,6 +119,18 @@ You can also put your schedule information inside sidekiq.yml and load it with:
 sidekiq -C ./config/sidekiq.yml
 ```
 
+#### The Spring preloader and Testing your initializer via Rails console
+
+If you're pulling in your schedule from a YML file via an initializer as shown, be aware that the Spring application preloader included with Rails will interefere with testing via the Rails console.
+
+**Spring will not reload initializers** unless the initializer is changed.  Therefore, if you're making a change to your YML schedule file and reloading Rails console to see the change, Spring will make it seem like your modified schedule is not being reloaded.
+
+To see your updated schedule, be sure to reload Spring by stopping it prior to booting the Rails console.
+
+Run `spring stop` to stop Spring.
+
+For more information, see [this issue](https://github.com/Moove-it/sidekiq-scheduler/issues/35#issuecomment-48067183) and [Spring's README](https://github.com/rails/spring/blob/master/README.md).
+
 ### Time zones
 
 Note that if you use the cron syntax, this will be interpreted as in the server time zone
