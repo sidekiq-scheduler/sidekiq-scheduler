@@ -5,6 +5,7 @@ class ManagerTest < Minitest::Test
 
     before do
       Sidekiq::Scheduler.dynamic = false
+      Sidekiq::Scheduler.rufus_scheduler_class = Rufus::Scheduler
       Sidekiq.redis { |r| r.del(:schedules) }
       Sidekiq.redis { |r| r.del(:schedules_changed) }
       Sidekiq::Scheduler.clear_schedule!
@@ -67,7 +68,14 @@ class ManagerTest < Minitest::Test
       assert Sidekiq::Scheduler.scheduled_jobs.include?(:some_ivar_job)
     end
 
-    # THIS
+    it 'can use a Rufus::Scheduler subclass for its scheduler' do
+      scheduler = Object.new
+      scheduler.expects(:start_new)
+
+      Sidekiq::Scheduler.rufus_scheduler_class = scheduler
+      Sidekiq::Scheduler.clear_schedule!
+    end
+
     it 'can reload schedule' do
       Sidekiq::Scheduler.dynamic = true
       Sidekiq.schedule = {
@@ -99,7 +107,7 @@ class ManagerTest < Minitest::Test
 
       Sidekiq::Scheduler.reload_schedule!
 
-      assert Sidekiq::Scheduler.scheduled_jobs.include?('some_ivar_job')
+      refute Sidekiq::Scheduler.scheduled_jobs.include?('some_ivar_job')
       assert Sidekiq::Scheduler.scheduled_jobs.include?('some_ivar_job2')
 
       assert_equal '/tmp/2', Sidekiq.schedule['some_ivar_job2']['args']
