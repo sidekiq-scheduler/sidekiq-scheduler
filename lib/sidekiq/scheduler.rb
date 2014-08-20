@@ -7,8 +7,13 @@ module Sidekiq
   class Scheduler
     extend Sidekiq::Util
 
+    # We expect rufus jobs to have #params
+    Rufus::Scheduler::Job.module_eval do
+      alias_method :params, :opts
+    end
+
     class << self
-      # If set, will try to update the schulde in the loop
+      # If set, will try to update the schedule in the loop
       attr_accessor :dynamic
     end
 
@@ -77,7 +82,10 @@ module Sidekiq
           if !config[interval_type].nil? && config[interval_type].length > 0
             args = self.optionizate_interval_value(config[interval_type])
 
-            @@scheduled_jobs[name] = self.rufus_scheduler.send(interval_type, *args) do
+            # We want rufus_scheduler to return a job object, not a job id
+            opts = { :job => true }
+
+            @@scheduled_jobs[name] = self.rufus_scheduler.send(interval_type, *args, opts) do
               logger.info "queueing #{config['class']} (#{name})"
               config.delete(interval_type)
               self.handle_errors { self.enqueue_from_config(config) }
@@ -124,7 +132,7 @@ module Sidekiq
     end
 
     def self.rufus_scheduler
-      @rufus_scheduler ||= Rufus::Scheduler.start_new
+      @rufus_scheduler ||= Rufus::Scheduler.new
     end
 
     # Stops old rufus scheduler and creates a new one.  Returns the new

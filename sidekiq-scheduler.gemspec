@@ -20,7 +20,7 @@ Gem::Specification.new do |s|
 
   s.add_dependency 'sidekiq',         '~> 3', '>= 2.12'
   s.add_dependency 'redis',           '~> 3'
-  s.add_dependency 'rufus-scheduler', '~> 2'
+  s.add_dependency 'rufus-scheduler', '~> 3'
   s.add_dependency 'multi_json',      '~> 1'
 
   s.add_development_dependency 'rake',        '~> 10.0'
