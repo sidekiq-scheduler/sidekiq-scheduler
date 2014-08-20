@@ -107,7 +107,7 @@ class ManagerTest < Minitest::Test
 
       Sidekiq::Scheduler.reload_schedule!
 
-      assert Sidekiq::Scheduler.scheduled_jobs.include?('some_ivar_job')
+      refute Sidekiq::Scheduler.scheduled_jobs.include?('some_ivar_job')
       assert Sidekiq::Scheduler.scheduled_jobs.include?('some_ivar_job2')
 
       assert_equal '/tmp/2', Sidekiq.schedule['some_ivar_job2']['args']
