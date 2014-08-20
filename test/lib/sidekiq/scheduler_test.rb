@@ -67,7 +67,15 @@ class ManagerTest < Minitest::Test
       assert Sidekiq::Scheduler.scheduled_jobs.include?(:some_ivar_job)
     end
 
-    # THIS
+    it 'can pass options to the Rufus scheduler instance' do
+      options = { :lockfile => '/tmp/rufus_lock' }
+
+      Sidekiq::Scheduler.rufus_scheduler_options = options
+      Rufus::Scheduler.expects(:new).with(options)
+
+      Sidekiq::Scheduler.clear_schedule!
+    end
+
     it 'can reload schedule' do
       Sidekiq::Scheduler.dynamic = true
       Sidekiq.schedule = {
