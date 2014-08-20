@@ -123,8 +123,16 @@ module Sidekiq
        Sidekiq::Client.push(config)
     end
 
+    def self.rufus_scheduler_class=(scheduler)
+      @rufus_scheduler_class = scheduler
+    end
+
+    def self.rufus_scheduler_class
+      @rufus_scheduler_class ||= Rufus::Scheduler
+    end
+
     def self.rufus_scheduler
-      @rufus_scheduler ||= Rufus::Scheduler.start_new
+      @rufus_scheduler ||= rufus_scheduler_class.start_new
     end
 
     # Stops old rufus scheduler and creates a new one.  Returns the new
