@@ -8,7 +8,7 @@ Sidekiq.configure_server do |config|
   config.on(:startup) do
     scheduler_options = {
       :scheduler => config.options.fetch(:scheduler, true),
-      :dynamic => config.options.fetch(:dynamic, false),
+      :dynamic => config.options.fetch(:dynamic, nil) || Sidekiq::Scheduler.dynamic || false,
       :schedule => config.options.fetch(:schedule, nil)
     }
 

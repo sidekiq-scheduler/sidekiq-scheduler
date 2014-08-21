@@ -8,7 +8,7 @@ module Sidekiq
     extend Sidekiq::Util
 
     class << self
-      # If set, will try to update the schulde in the loop
+      # If set, will try to update the schedule in the loop
       attr_accessor :dynamic
     end
 
@@ -32,8 +32,14 @@ module Sidekiq
     def self.load_schedule!
       logger.info 'Loading Schedule'
 
-      # Need to load the schedule from redis for the first time if dynamic
-      Sidekiq.reload_schedule! if dynamic
+      # Need to load the schedule from redis for the first time if dynamic and schedule a taks
+      # to reload the schedules
+      if dynamic
+        Sidekiq.reload_schedule!
+        self.rufus_scheduler.every('5s') do
+          self.update_schedule
+        end
+      end
 
       logger.info 'Schedule empty! Set Sidekiq.schedule' if Sidekiq.schedule.empty?
 
@@ -143,6 +149,7 @@ module Sidekiq
     end
 
     def self.update_schedule
+      logger.debug 'Getting schedule changes from redis.'
       if Sidekiq.redis { |r| r.scard(:schedules_changed) } > 0
         logger.info 'Updating schedule'
         Sidekiq.reload_schedule!
@@ -154,7 +161,9 @@ module Sidekiq
             self.unschedule_job(schedule_name)
           end
         end
-        logger.info 'Schedules Loaded'
+        logger.info 'Schedule updated'
+      else
+        logger.debug 'No schedule changes in redis.'
       end
     end
 

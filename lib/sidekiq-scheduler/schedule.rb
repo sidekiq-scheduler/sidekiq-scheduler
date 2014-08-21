@@ -52,10 +52,13 @@ module SidekiqScheduler
 
     # reloads the schedule from redis
     def reload_schedule!
+      logger.debug 'Loading Schedule from Redis'
       @schedule = get_schedule
+      logger.debug "Redis Schedule: #{@schedule}"
+      logger.debug 'Redis Schedule Loaded'
     end
 
-    # Retrive the schedule configuration for the given name
+    # Retrieve the schedule configuration for the given name
     # if the name is nil it returns a hash with all the
     # names end their schedules.
     def get_schedule(name = nil)
@@ -78,6 +81,8 @@ module SidekiqScheduler
             schedules[name] = MultiJson.decode(config)
           end
         end
+      else
+        logger.info 'No schedule in redis to load.'
       end
 
       schedules
