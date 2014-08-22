@@ -112,7 +112,31 @@ If you were running a non Rails project you should add code to load the workers 
     require 'sidekiq/scheduler'
     Dir[File.expand_path('../lib/workers/*.rb',__FILE__)].each do |file| load file; end
     Sidekiq.schedule = YAML.load_file(File.expand_path("../../../config/scheduler.yml",__FILE__))
- 
+
+### Reloading the schedules
+
+The schedules can we updated from redis, every 5 seconds the redis is checked for schedule changes,
+to update an schedule you have to:
+
+ ```ruby
+   Sidekiq.set_schedule('some_name', { 'every' => ['1m'], 'class' => 'HardWorker' })
+ ```
+
+ If the schedule did not exist it'll we created if it existed it'll be updated
+
+ ### Testing
+
+ In your tests you can check that a schedule change has been set you have to:
+ ```ruby
+   require 'sidekiq'
+   require 'sidekiq-scheduler'
+   require 'sidekiq-scheduler/test'
+
+   Sidekiq.set_schedule('some_name', { 'every' => ['1m'], 'class' => 'HardWorker' })
+
+   Sidekiq::Scheduler.schedules => { 'every' => ['1m'], 'class' => 'HardWorker' }
+   Sidekiq::Scheduler.schedules_changed => ['every']
+ ```
 ### Time zones
 
 Note that if you use the cron syntax, this will be interpreted as in the server time zone
@@ -129,16 +153,6 @@ from the `config.time_zone` value, make sure it's the right format, e.g. with:
     ActiveSupport::TimeZone.find_tzinfo(Rails.configuration.time_zone).name
 
 A future version of sidekiq-scheduler may do this for you.
-
-## Using with Testing
-
-Sidekiq uses a jobs array on workers for testing, which is supported by sidekiq-scheduler when you require the test code:
-
-    require 'sidekiq/testing'
-    require 'sidekiq-scheduler/testing'
-    
-    MyWorker.perform_in 5, 'arg1'
-    puts MyWorker.jobs.inspect
 
 ## Note on Patches / Pull Requests
 

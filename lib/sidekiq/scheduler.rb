@@ -33,7 +33,12 @@ module Sidekiq
       logger.info 'Loading Schedule'
 
       # Need to load the schedule from redis for the first time if dynamic
-      Sidekiq.reload_schedule! if dynamic
+      if dynamic
+        Sidekiq.reload_schedule!
+        self.rufus_scheduler.every('5s') do
+          self.update_schedule
+        end
+      end
 
       logger.info 'Schedule empty! Set Sidekiq.schedule' if Sidekiq.schedule.empty?
 
