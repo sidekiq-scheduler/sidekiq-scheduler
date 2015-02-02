@@ -62,7 +62,7 @@ is most likely stored in a YAML like so:
     queue_documents_for_indexing:
       cron: "0 0 * * *"
       # you can use rufus-scheduler "every" syntax in place of cron if you prefer
-      # every: 1hr
+      # every: 1h
       # By default the job name (hash key) will be taken as worker class name.
       # If you want to have a different job name and class name, provide the 'class' option
       class: QueueDocuments
