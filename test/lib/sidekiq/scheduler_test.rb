@@ -152,6 +152,36 @@ class ManagerTest < Minitest::Test
       assert Sidekiq::Scheduler.scheduled_jobs['some_ivar_job'].params.keys.include?(:allow_overlapping)
     end
 
+    it 'load_schedule_job with at' do
+      Sidekiq::Scheduler.load_schedule_job(
+        'some_ivar_job',
+        {
+          'at' => "2013/12/12 12:30",
+          'class' => 'SomeIvarJob',
+          'args' => '/tmp'
+        }
+      )
+
+      assert_equal(1, Sidekiq::Scheduler.rufus_scheduler.all_jobs.size)
+      assert_equal(1, Sidekiq::Scheduler.scheduled_jobs.size)
+      assert Sidekiq::Scheduler.scheduled_jobs.keys.include?('some_ivar_job')
+    end
+
+    it 'load_schedule_job with in' do
+      Sidekiq::Scheduler.load_schedule_job(
+        'some_ivar_job',
+        {
+          'in' => "10d",
+          'class' => 'SomeIvarJob',
+          'args' => '/tmp'
+        }
+      )
+
+      assert_equal(1, Sidekiq::Scheduler.rufus_scheduler.all_jobs.size)
+      assert_equal(1, Sidekiq::Scheduler.scheduled_jobs.size)
+      assert Sidekiq::Scheduler.scheduled_jobs.keys.include?('some_ivar_job')
+    end
+
     it 'does not load the schedule without cron' do
       Sidekiq::Scheduler.load_schedule_job(
         'some_ivar_job',
