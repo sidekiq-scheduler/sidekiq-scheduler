@@ -52,7 +52,7 @@ class ManagerTest < Minitest::Test
     end
 
     it 'config makes it into the rufus_scheduler' do
-      assert_equal(0, Sidekiq::Scheduler.rufus_scheduler.all_jobs.size)
+      assert_equal(0, Sidekiq::Scheduler.rufus_scheduler.jobs.size)
       Sidekiq.schedule = {
         :some_ivar_job => {
           'cron' => '* * * * *',
@@ -63,11 +63,19 @@ class ManagerTest < Minitest::Test
 
       Sidekiq::Scheduler.load_schedule!
 
-      assert_equal(1, Sidekiq::Scheduler.rufus_scheduler.all_jobs.size)
+      assert_equal(1, Sidekiq::Scheduler.rufus_scheduler.jobs.size)
       assert Sidekiq::Scheduler.scheduled_jobs.include?(:some_ivar_job)
     end
 
-    # THIS
+    it 'can pass options to the Rufus scheduler instance' do
+      options = { :lockfile => '/tmp/rufus_lock' }
+
+      Sidekiq::Scheduler.rufus_scheduler_options = options
+      Rufus::Scheduler.expects(:new).with(options)
+
+      Sidekiq::Scheduler.clear_schedule!
+    end
+
     it 'can reload schedule' do
       Sidekiq::Scheduler.dynamic = true
       Sidekiq.schedule = {
@@ -99,7 +107,7 @@ class ManagerTest < Minitest::Test
 
       Sidekiq::Scheduler.reload_schedule!
 
-      assert Sidekiq::Scheduler.scheduled_jobs.include?('some_ivar_job')
+      refute  Sidekiq::Scheduler.scheduled_jobs.include?('some_ivar_job')
       assert Sidekiq::Scheduler.scheduled_jobs.include?('some_ivar_job2')
 
       assert_equal '/tmp/2', Sidekiq.schedule['some_ivar_job2']['args']
@@ -115,7 +123,7 @@ class ManagerTest < Minitest::Test
         }
       )
 
-      assert_equal(1, Sidekiq::Scheduler.rufus_scheduler.all_jobs.size)
+      assert_equal(1, Sidekiq::Scheduler.rufus_scheduler.jobs.size)
       assert_equal(1, Sidekiq::Scheduler.scheduled_jobs.size)
       assert Sidekiq::Scheduler.scheduled_jobs.keys.include?('some_ivar_job')
     end
@@ -130,7 +138,7 @@ class ManagerTest < Minitest::Test
         }
       )
 
-      assert_equal(1, Sidekiq::Scheduler.rufus_scheduler.all_jobs.size)
+      assert_equal(1, Sidekiq::Scheduler.rufus_scheduler.jobs.size)
       assert_equal(1, Sidekiq::Scheduler.scheduled_jobs.size)
       assert Sidekiq::Scheduler.scheduled_jobs.keys.include?('some_ivar_job')
       assert Sidekiq::Scheduler.scheduled_jobs['some_ivar_job'].params.keys.include?(:first_in)
@@ -146,7 +154,7 @@ class ManagerTest < Minitest::Test
         }
       )
 
-      assert_equal(1, Sidekiq::Scheduler.rufus_scheduler.all_jobs.size)
+      assert_equal(1, Sidekiq::Scheduler.rufus_scheduler.jobs.size)
       assert_equal(1, Sidekiq::Scheduler.scheduled_jobs.size)
       assert Sidekiq::Scheduler.scheduled_jobs.keys.include?('some_ivar_job')
       assert Sidekiq::Scheduler.scheduled_jobs['some_ivar_job'].params.keys.include?(:allow_overlapping)
@@ -161,7 +169,7 @@ class ManagerTest < Minitest::Test
         }
       )
 
-      assert_equal(0, Sidekiq::Scheduler.rufus_scheduler.all_jobs.size)
+      assert_equal(0, Sidekiq::Scheduler.rufus_scheduler.jobs.size)
       assert_equal(0, Sidekiq::Scheduler.scheduled_jobs.size)
       assert !Sidekiq::Scheduler.scheduled_jobs.keys.include?('some_ivar_job')
     end
@@ -176,7 +184,7 @@ class ManagerTest < Minitest::Test
         }
       )
 
-      assert_equal(0, Sidekiq::Scheduler.rufus_scheduler.all_jobs.size)
+      assert_equal(0, Sidekiq::Scheduler.rufus_scheduler.jobs.size)
       assert_equal(0, Sidekiq::Scheduler.scheduled_jobs.size)
       assert !Sidekiq::Scheduler.scheduled_jobs.keys.include?('some_ivar_job')
     end
