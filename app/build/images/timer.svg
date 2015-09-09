@@ -1,0 +1,328 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Generator: Adobe Illustrator 19.0.1, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
+<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+	 viewBox="-636 139.5 607 390" style="enable-background:new -636 139.5 607 390;" xml:space="preserve">
+<style type="text/css">
+	.st0{opacity:0.12;enable-background:new    ;}
+	.st1{fill:#022430;}
+	.st2{opacity:0;}
+	.st3{fill:#043D5D;}
+	.st4{fill:#FFFFFF;}
+	.st5{fill:#033044;}
+	.st6{opacity:0.5;fill:#FFFFFF;enable-background:new    ;}
+	.st7{fill:none;stroke:#FFFFFF;stroke-width:74;stroke-miterlimit:10;stroke-dasharray:1000;}
+	.st8{fill:#D3E9F4;}
+
+
+
+  #timer {
+    stroke-dasharray: 1000;
+    stroke-dashoffset: 0;
+    -webkit-transform-origin: 50% 50%;
+        -ms-transform-origin: 50% 50%;
+            transform-origin: 50% 50%;
+    -webkit-transform: rotate(-90deg);
+        -ms-transform: rotate(-90deg);
+            transform: rotate(-90deg);
+  }
+
+  #button-click {
+    cursor: pointer;
+  }
+
+  #hour_hand {
+    -webkit-transform-origin: 50% 80%;
+        -ms-transform-origin: 50% 80%;
+            transform-origin: 50% 80%;
+    -webkit-animation: example 100ms linear 1000ms;
+            animation: example 100ms linear 1000ms
+  }
+
+  .flag-name {
+    opacity: 0;
+    filter: alpha(opacity=0);
+  }
+
+  @-webkit-keyframes example {
+    0%   {-webkit-transform: rotate(0deg);transform: rotate(0deg);}
+    100% {-webkit-transform: rotate(8deg);transform: rotate(8deg);}
+  }
+
+  @keyframes example {
+    0%   {-webkit-transform: rotate(0deg);transform: rotate(0deg);}
+    100% {-webkit-transform: rotate(8deg);transform: rotate(8deg);}
+  }
+
+  #clock-group {
+    -webkit-transform-origin: 50% 50%;
+        -ms-transform-origin: 50% 50%;
+            transform-origin: 50% 50%;
+  }
+
+  #clock-group-3 {
+    -webkit-transform-origin: 50% 50%;
+        -ms-transform-origin: 50% 50%;
+            transform-origin: 50% 50%;
+  }
+</style>
+<g id="shadow-group-1">
+	<g id="shadow-group-2">
+		<ellipse id="shadow" class="st0" cx="-477.2" cy="473.7" rx="104.3" ry="23.4"/>
+	</g>
+</g>
+<g id="clock-group-1">
+	<g id="clock-group-2">
+		<g id="clock-group-3">
+			<polygon id="flag-end" class="st1" points="-492.8,395.7 -415.8,395.7 -433.8,418 -415.8,439.7 -492.8,439.7 			"/>
+			<g id="flag-name-1" class="st2">
+				<polygon id="flag-front" class="st3" points="-356.8,457.7 -607.6,457.7 -590.5,435.5 -607.6,413.9 -356.8,413.9 				"/>
+				<g id="sidekiq-name">
+					<path class="st4" d="M-571.9,436.3c-0.5-0.1-1.3-0.3-2.2-0.9c-1.1-0.8-1.8-1.9-1.8-3.2c-0.1-1.1,0.3-2.1,1-2.9
+						c1.1-1.1,2.6-1.4,3.3-1.4c2.1,0,3.2,0.8,4.3,1.4l0.5,0.3l-1.5,2.4l-0.5-0.3c-0.9-0.6-1.5-1-2.8-1c-0.2,0-0.9,0.1-1.3,0.5
+						c-0.1,0.1-0.3,0.3-0.2,0.8c0,0.7,0.5,1.1,1.8,1.5c0.2,0,0.3,0.1,0.4,0.1c1.4,0.5,2.4,1.1,3.2,1.9c0.7,0.8,1.1,1.8,1.1,2.8
+						s-0.4,2-1.1,2.8c-0.8,0.9-2,1.5-3.3,1.5c-0.6,0-1.5,0-2.5-0.3c-1.3-0.4-2.4-1.1-3.4-2.2l2.1-2c1.5,1.6,3.2,1.6,3.8,1.6
+						c1.2,0,1.6-1.1,1.6-1.4c0-0.8-0.9-1.5-2.4-2L-571.9,436.3L-571.9,436.3z"/>
+					<path class="st4" d="M-559.9,430.9v8.6h1.5v2.9h-5.9v-2.9h1.5v-8.6h-1.5V428h5.9v2.9H-559.9z"/>
+					<path class="st4" d="M-551.6,428.2c1,0,1.9,0.2,2.8,0.6c0.9,0.4,1.6,0.9,2.3,1.5c0.7,0.7,1.2,1.4,1.5,2.3
+						c0.4,0.9,0.6,1.8,0.6,2.8s-0.2,1.9-0.6,2.8c-0.3,0.9-0.9,1.6-1.5,2.3c-0.7,0.7-1.4,1.2-2.3,1.5c-0.9,0.4-1.8,0.6-2.8,0.6h-2.9
+						l0,0h-1.2v-14.3L-551.6,428.2L-551.6,428.2z M-551.6,439.5c2.4,0,4.3-1.9,4.3-4.3s-1.9-4.3-4.3-4.3h-1.2v8.6H-551.6
+						L-551.6,439.5z"/>
+					<path class="st4" d="M-532.8,430.9h-6.7v2.6h5.5v2.9h-5.5v3.1h6.6v2.9h-9.4v-14.3h9.5V430.9L-532.8,430.9z"/>
+					<path class="st4" d="M-526.1,435.8l-1.1,1.1v5.4h-2.9V428h2.9v4.6l4.2-4.6h3.9l-5,5.6l5.1,8.7h-3.4L-526.1,435.8z"/>
+					<path class="st4" d="M-512.6,430.9v8.6h1.5v2.9h-5.9v-2.9h1.5v-8.6h-1.5V428h5.9v2.9H-512.6z"/>
+					<path class="st4" d="M-502.8,442.5c-3.4-0.7-5.9-3.7-5.9-7.3c0-4.1,3.3-7.4,7.4-7.4c4.1,0,7.4,3.3,7.4,7.4
+						c0,3.5-2.4,6.4-5.6,7.2h3.2v2.9h-8L-502.8,442.5z M-504.6,438.5c0.9,0.9,2,1.3,3.2,1.3c1.2,0,2.4-0.5,3.2-1.3
+						c0.9-0.9,1.3-2,1.3-3.2s-0.5-2.4-1.3-3.2c-0.9-0.9-2-1.3-3.2-1.3c-1.2,0-2.4,0.5-3.2,1.3c-0.9,0.9-1.3,2-1.3,3.2
+						S-505.4,437.7-504.6,438.5z"/>
+					<path class="st4" d="M-481.4,436.3c-0.5-0.1-1.3-0.3-2.2-0.9c-1.1-0.8-1.8-1.9-1.8-3.2c-0.1-1.1,0.3-2.1,1-2.9
+						c1.1-1.1,2.6-1.4,3.3-1.4c2.1,0,3.2,0.8,4.3,1.4l0.5,0.3l-1.5,2.4l-0.5-0.3c-0.9-0.6-1.5-1-2.8-1c-0.2,0-0.9,0.1-1.3,0.5
+						c-0.1,0.1-0.3,0.3-0.2,0.8c0,0.7,0.5,1.1,1.8,1.5c0.2,0,0.3,0.1,0.4,0.1c1.4,0.5,2.4,1.1,3.2,1.9c0.7,0.8,1.1,1.8,1.1,2.8
+						s-0.4,2-1.1,2.8c-0.8,0.9-2,1.5-3.3,1.5c-0.6,0-1.5,0-2.5-0.3c-1.3-0.4-2.4-1.1-3.4-2.2l2.1-2c1.5,1.6,3.2,1.6,3.8,1.6
+						c1.2,0,1.6-1.1,1.6-1.4c0-0.8-0.9-1.5-2.4-2L-481.4,436.3L-481.4,436.3z"/>
+					<path class="st4" d="M-463.6,431.5c-2.8-1.8-7-0.1-7,3.7c0,4,4.4,5.6,7.1,3.6l1.8,2.1c-1.3,1.1-2.9,1.7-4.7,1.7
+						c-4.1,0-7.4-3.3-7.4-7.4c0-4.1,3.3-7.4,7.4-7.4c1.7,0,3.3,0.6,4.6,1.6L-463.6,431.5z"/>
+					<path class="st4" d="M-450.9,428.2h2.9v14.3h-2.9v-6h-5.3v6h-2.9v-14.3h2.9v5.5h5.3C-450.9,433.7-450.9,428.2-450.9,428.2z"/>
+					<path class="st4" d="M-436.1,430.9h-6.7v2.6h5.5v2.9h-5.5v3.1h6.6v2.9h-9.5v-14.3h9.5L-436.1,430.9L-436.1,430.9z"/>
+					<path class="st4" d="M-429.4,428.2c1,0,1.9,0.2,2.8,0.6c0.9,0.4,1.6,0.9,2.3,1.5c0.7,0.7,1.2,1.4,1.5,2.3
+						c0.4,0.9,0.6,1.8,0.6,2.8s-0.2,1.9-0.6,2.8c-0.3,0.9-0.9,1.6-1.5,2.3c-0.7,0.7-1.4,1.2-2.3,1.5c-0.9,0.4-1.8,0.6-2.8,0.6h-2.8
+						l0,0h-1.2v-14.3L-429.4,428.2L-429.4,428.2z M-429.4,439.5c2.4,0,4.3-1.9,4.3-4.3s-1.9-4.3-4.3-4.3h-1.2v8.6H-429.4
+						L-429.4,439.5z"/>
+					<path class="st4" d="M-409.2,437.2c0,3.1-2.5,5.5-5.5,5.5c-3.1,0-5.5-2.5-5.5-5.5v-9h2.9v9c0,0.7,0.3,1.4,0.8,1.9
+						s1.2,0.8,1.9,0.8c0.7,0,1.4-0.3,1.9-0.8s0.8-1.2,0.8-1.9l0,0v-9h2.9L-409.2,437.2L-409.2,437.2z"/>
+					<path class="st4" d="M-405.3,439.5h5.3v2.8h-8.2V428h2.9C-405.3,428-405.3,439.5-405.3,439.5z"/>
+					<path class="st4" d="M-388.2,430.9h-6.7v2.6h5.5v2.9h-5.5v3.1h6.6v2.9h-9.5v-14.3h9.5L-388.2,430.9L-388.2,430.9z"/>
+					<path class="st4" d="M-378.8,442.5l-2.7-5.7h-1.5v5.7h-2.9v-14.3h5.4c2.4,0,4.3,1.9,4.3,4.3c0,1.7-1,3.2-2.5,3.9l2.8,6.1
+						H-378.8z M-383,430.9v2.9h2.5c0.8,0,1.4-0.6,1.4-1.4s-0.6-1.4-1.4-1.4L-383,430.9L-383,430.9z"/>
+				</g>
+			</g>
+			<path id="button1" class="st5" d="M-568.4,209.9l-16.9,13.9c-2.2,1.9-2.6,5.2-0.7,7.4l10.7,12.9c1.9,2.2,5.2,2.6,7.4,0.7
+				l16.8-13.9c2.2-1.9,2.6-5.2,0.7-7.4l-10.6-12.8C-562.9,208.3-566.1,208-568.4,209.9z"/>
+			<path id="button2" class="st5" d="M-457.6,173.7h-41.2c-2.5,0-4.5,2-4.5,4.5v25.4c0,2.5,2,4.5,4.5,4.5h41.2c2.5,0,4.5-2,4.5-4.5
+				v-25.4C-453.1,175.7-455.2,173.7-457.6,173.7z"/>
+			<path id="background-clock" class="st3" d="M-478.6,469.7c-73.6,0-133.4-59.8-133.4-133.4s59.8-133.4,133.4-133.4
+				s133.4,59.8,133.4,133.4S-405.1,469.7-478.6,469.7z M-520.2,341c-0.5,0-1,0.3-1,0.7s0.4,0.7,1,0.7c0.6,0,1-0.3,1-0.7
+				S-519.8,341-520.2,341z"/>
+			<path id="background-small" class="st3" d="M-522,349.2c-6.6,0-11.9-5.3-11.9-11.9s5.3-11.9,11.9-11.9s11.9,5.3,11.9,11.9
+				S-515.4,349.2-522,349.2z M-525.7,337.7C-525.8,337.7-525.8,337.8-525.7,337.7c-0.1,0.1-0.1,0.1,0,0.1
+				C-525.7,337.9-525.6,337.8-525.7,337.7C-525.6,337.8-525.7,337.7-525.7,337.7z"/>
+			<path id="background-timer" class="st6" d="M-478.6,450.7c-63.1,0-114.4-51.3-114.4-114.4s51.3-114.4,114.4-114.4
+				s114.4,51.3,114.4,114.4S-415.6,450.7-478.6,450.7z M-478.6,295.8c-22.3,0-40.4,18.1-40.4,40.4s18.1,40.4,40.4,40.4
+				s40.4-18.1,40.4-40.4S-456.4,295.8-478.6,295.8z"/>
+			<circle id="timer" class="st7" cx="-478.6" cy="335.8" r="77.4"/>
+			<path id="hour_hand" class="st8" d="M-465.8,315.7c-1.6-1.1-3.3-1.9-5-2.6l-7.9-61.6c-0.6-4.9-5.2-8.5-10.1-7.8
+				c-4.9,0.6-8.5,5.2-7.8,10.1l7.7,59.8c-3.8,1.7-7.3,4.5-9.8,8.2c-7.4,10.8-4.7,25.6,6.1,33s25.6,4.7,33-6.1
+				C-452.2,337.8-454.9,323.1-465.8,315.7z M-483.4,341.5c-3.4-2.3-4.3-7-1.9-10.4c2.3-3.4,7-4.3,10.4-1.9c3.4,2.3,4.3,7,1.9,10.4
+				C-475.2,342.9-479.9,343.7-483.4,341.5z"/>
+			<g id="flag-name-2" transform="translate(300 0)" class="st2">
+				<polygon id="flag-front_1_" class="st3" points="-356.8,457.7 -607.6,457.7 -590.5,435.5 -607.6,413.9 -356.8,413.9 				"/>
+				<g id="sidekiq-name_1_">
+					<path class="st4" d="M-571.9,436.3c-0.5-0.1-1.3-0.3-2.2-0.9c-1.1-0.8-1.8-1.9-1.8-3.2c-0.1-1.1,0.3-2.1,1-2.9
+						c1.1-1.1,2.6-1.4,3.3-1.4c2.1,0,3.2,0.8,4.3,1.4l0.5,0.3l-1.5,2.4l-0.5-0.3c-0.9-0.6-1.5-1-2.8-1c-0.2,0-0.9,0.1-1.3,0.5
+						c-0.1,0.1-0.3,0.3-0.2,0.8c0,0.7,0.5,1.1,1.8,1.5c0.2,0,0.3,0.1,0.4,0.1c1.4,0.5,2.4,1.1,3.2,1.9c0.7,0.8,1.1,1.8,1.1,2.8
+						s-0.4,2-1.1,2.8c-0.8,0.9-2,1.5-3.3,1.5c-0.6,0-1.5,0-2.5-0.3c-1.3-0.4-2.4-1.1-3.4-2.2l2.1-2c1.5,1.6,3.2,1.6,3.8,1.6
+						c1.2,0,1.6-1.1,1.6-1.4c0-0.8-0.9-1.5-2.4-2L-571.9,436.3L-571.9,436.3z"/>
+					<path class="st4" d="M-559.9,430.9v8.6h1.5v2.9h-5.9v-2.9h1.5v-8.6h-1.5V428h5.9v2.9H-559.9z"/>
+					<path class="st4" d="M-551.6,428.2c1,0,1.9,0.2,2.8,0.6c0.9,0.4,1.6,0.9,2.3,1.5c0.7,0.7,1.2,1.4,1.5,2.3
+						c0.4,0.9,0.6,1.8,0.6,2.8s-0.2,1.9-0.6,2.8c-0.3,0.9-0.9,1.6-1.5,2.3c-0.7,0.7-1.4,1.2-2.3,1.5c-0.9,0.4-1.8,0.6-2.8,0.6h-2.9
+						l0,0h-1.2v-14.3L-551.6,428.2L-551.6,428.2z M-551.6,439.5c2.4,0,4.3-1.9,4.3-4.3s-1.9-4.3-4.3-4.3h-1.2v8.6H-551.6
+						L-551.6,439.5z"/>
+					<path class="st4" d="M-532.8,430.9h-6.7v2.6h5.5v2.9h-5.5v3.1h6.6v2.9h-9.4v-14.3h9.5V430.9L-532.8,430.9z"/>
+					<path class="st4" d="M-526.1,435.8l-1.1,1.1v5.4h-2.9V428h2.9v4.6l4.2-4.6h3.9l-5,5.6l5.1,8.7h-3.4L-526.1,435.8z"/>
+					<path class="st4" d="M-512.6,430.9v8.6h1.5v2.9h-5.9v-2.9h1.5v-8.6h-1.5V428h5.9v2.9H-512.6z"/>
+					<path class="st4" d="M-502.8,442.5c-3.4-0.7-5.9-3.7-5.9-7.3c0-4.1,3.3-7.4,7.4-7.4c4.1,0,7.4,3.3,7.4,7.4
+						c0,3.5-2.4,6.4-5.6,7.2h3.2v2.9h-8L-502.8,442.5z M-504.6,438.5c0.9,0.9,2,1.3,3.2,1.3c1.2,0,2.4-0.5,3.2-1.3
+						c0.9-0.9,1.3-2,1.3-3.2s-0.5-2.4-1.3-3.2c-0.9-0.9-2-1.3-3.2-1.3c-1.2,0-2.4,0.5-3.2,1.3c-0.9,0.9-1.3,2-1.3,3.2
+						S-505.4,437.7-504.6,438.5z"/>
+					<path class="st4" d="M-481.4,436.3c-0.5-0.1-1.3-0.3-2.2-0.9c-1.1-0.8-1.8-1.9-1.8-3.2c-0.1-1.1,0.3-2.1,1-2.9
+						c1.1-1.1,2.6-1.4,3.3-1.4c2.1,0,3.2,0.8,4.3,1.4l0.5,0.3l-1.5,2.4l-0.5-0.3c-0.9-0.6-1.5-1-2.8-1c-0.2,0-0.9,0.1-1.3,0.5
+						c-0.1,0.1-0.3,0.3-0.2,0.8c0,0.7,0.5,1.1,1.8,1.5c0.2,0,0.3,0.1,0.4,0.1c1.4,0.5,2.4,1.1,3.2,1.9c0.7,0.8,1.1,1.8,1.1,2.8
+						s-0.4,2-1.1,2.8c-0.8,0.9-2,1.5-3.3,1.5c-0.6,0-1.5,0-2.5-0.3c-1.3-0.4-2.4-1.1-3.4-2.2l2.1-2c1.5,1.6,3.2,1.6,3.8,1.6
+						c1.2,0,1.6-1.1,1.6-1.4c0-0.8-0.9-1.5-2.4-2L-481.4,436.3L-481.4,436.3z"/>
+					<path class="st4" d="M-463.6,431.5c-2.8-1.8-7-0.1-7,3.7c0,4,4.4,5.6,7.1,3.6l1.8,2.1c-1.3,1.1-2.9,1.7-4.7,1.7
+						c-4.1,0-7.4-3.3-7.4-7.4c0-4.1,3.3-7.4,7.4-7.4c1.7,0,3.3,0.6,4.6,1.6L-463.6,431.5z"/>
+					<path class="st4" d="M-450.9,428.2h2.9v14.3h-2.9v-6h-5.3v6h-2.9v-14.3h2.9v5.5h5.3C-450.9,433.7-450.9,428.2-450.9,428.2z"/>
+					<path class="st4" d="M-436.1,430.9h-6.7v2.6h5.5v2.9h-5.5v3.1h6.6v2.9h-9.5v-14.3h9.5L-436.1,430.9L-436.1,430.9z"/>
+					<path class="st4" d="M-429.4,428.2c1,0,1.9,0.2,2.8,0.6c0.9,0.4,1.6,0.9,2.3,1.5c0.7,0.7,1.2,1.4,1.5,2.3
+						c0.4,0.9,0.6,1.8,0.6,2.8s-0.2,1.9-0.6,2.8c-0.3,0.9-0.9,1.6-1.5,2.3c-0.7,0.7-1.4,1.2-2.3,1.5c-0.9,0.4-1.8,0.6-2.8,0.6h-2.8
+						l0,0h-1.2v-14.3L-429.4,428.2L-429.4,428.2z M-429.4,439.5c2.4,0,4.3-1.9,4.3-4.3s-1.9-4.3-4.3-4.3h-1.2v8.6H-429.4
+						L-429.4,439.5z"/>
+					<path class="st4" d="M-409.2,437.2c0,3.1-2.5,5.5-5.5,5.5c-3.1,0-5.5-2.5-5.5-5.5v-9h2.9v9c0,0.7,0.3,1.4,0.8,1.9
+						s1.2,0.8,1.9,0.8c0.7,0,1.4-0.3,1.9-0.8s0.8-1.2,0.8-1.9l0,0v-9h2.9L-409.2,437.2L-409.2,437.2z"/>
+					<path class="st4" d="M-405.3,439.5h5.3v2.8h-8.2V428h2.9C-405.3,428-405.3,439.5-405.3,439.5z"/>
+					<path class="st4" d="M-388.2,430.9h-6.7v2.6h5.5v2.9h-5.5v3.1h6.6v2.9h-9.5v-14.3h9.5L-388.2,430.9L-388.2,430.9z"/>
+					<path class="st4" d="M-378.8,442.5l-2.7-5.7h-1.5v5.7h-2.9v-14.3h5.4c2.4,0,4.3,1.9,4.3,4.3c0,1.7-1,3.2-2.5,3.9l2.8,6.1
+						H-378.8z M-383,430.9v2.9h2.5c0.8,0,1.4-0.6,1.4-1.4s-0.6-1.4-1.4-1.4L-383,430.9L-383,430.9z"/>
+				</g>
+			</g>
+		</g>
+	</g>
+</g>
+  <!-- Animation Definitions -->
+      <!-- Button -->
+      <animateTransform xlink:href="#button2"
+                        attributeName="transform"
+                        begin="0s"
+                        type="translate"
+                        keyTimes="0; .8; 1"
+                        values="0 0; 0 10 ; 0"
+                        dur="300ms"
+                        fill="freeze"
+                        id='button-click'/>
+      <!-- End Button -->
+
+      <!-- Timer-->
+      <animate xlink:href="#timer"
+               attributeName="stroke-dashoffset"
+               attributeType="CSS"
+               from="0"
+               to="-1000"
+               begin="button-click.begin + 300ms"
+               fill="freeze"
+               dur="1500ms"
+               rotate="auto"
+               id='timer-count' />
+      <!-- End Timer -->
+
+      <!-- Clock Group -->
+        <animateTransform xlink:href="#clock-group-1"
+                          attributeName="transform"
+                          begin="timer-count.begin + 1100ms"
+                          type="translate"
+                          keyTimes="0; .2; .4; .6; .8;  1"
+                          values="10 0; -10 0; 8 0; -8 0; 5 0;  0 0"
+                          dur="450ms"
+                          fill="freeze"
+                          />
+
+
+        <animateTransform xlink:href="#clock-group-2"
+                  attributeName="transform"
+                  begin="timer-count.begin + 1100ms"
+                  type="translate"
+                  keyTimes="0; .2; .4; .6; .8; .9; 1"
+                  values="0 0; 0 -10; 0 5; 0 -2; 0 2; 0 -1; 0 0"
+                  dur="450ms"
+                  fill="freeze"
+                  />
+
+          <animate xlink:href="#clock-group-3"
+                attributeName="cx"
+                attributeType="xml"
+                begin="timer-count.begin + 1100ms"
+                type="translate"
+                keyTimes="0; .2; .4; .6; .8; .9; 1"
+                values="0 0; 0 -10; 0 5; 0 -2; 0 2; 0 -1; 0 0"
+                dur="450ms"
+                fill="freeze"
+                />
+      <!-- End Clock Group -->
+
+
+      <animateTransform xlink:href="#shadow-group-1"
+                        attributeName="transform"
+                        begin="timer-count.begin + 1100ms"
+                        type="translate"
+                        keyTimes="0; .2; .4; .6; .8; .9; 1"
+                        values="0 0; 0 10; 0 -5; 0 2; 0 -2; 0 1; 0 0"
+                        dur="450ms"
+                        fill="freeze"
+                        id='shadow-group-animation'
+                        />
+
+
+      <animate xlink:href="#background-timer"
+                attributeName="opacity"
+                attributeType="CSS"
+                begin="timer-count.begin + 1300ms"
+                type="translate"
+                keyTimes="0; 1"
+                values="0.5; 1"
+                dur="450ms"
+                fill="freeze"
+                />
+
+
+      <animate xlink:href="#flag-name-1"
+          attributeName="opacity"
+          attributeType="CSS"
+          begin="timer-count.begin + 1500ms"
+          type="translate"
+          keyTimes="0; 1"
+          values="0.5; 1"
+          dur="450ms"
+          fill="freeze"
+          />
+
+      <animateTransform xlink:href="#flag-name-1"
+          attributeName="transform"
+          begin="timer-count.begin + 1500ms"
+          type="translate"
+          keyTimes="0; 1"
+          values="0 0; 300 0 "
+          dur="300ms"
+          fill="freeze"
+          id='flag-name-1-animation'/>
+
+
+      <animate xlink:href="#flag-name-1"
+          attributeName="opacity"
+          attributeType="CSS"
+          begin="flag-name-1-animation.begin + 50ms"
+          type="translate"
+          keyTimes="0; 1"
+          values="1; 0"
+          dur="450ms"
+          fill="freeze"
+          />
+
+      <animate xlink:href="#flag-name-2"
+          attributeName="opacity"
+          attributeType="CSS"
+          begin="flag-name-1-animation.begin + 300ms"
+          keyTimes="0; 1"
+          values="0.5; 1"
+          dur="450ms"
+          fill="freeze"
+          />
+
+      <animateTransform xlink:href="#flag-name-2"
+          attributeName="transform"
+          begin="flag-name-1-animation.begin + 400ms"
+          type="translate"
+          keyTimes="0; 1"
+          values="300 0; 0 0 "
+          dur="300ms"
+          fill="freeze"
+          id='flag-name-2-animation'/>
+
+       <animateTransform xlink:href="#flag-end"
+          attributeName="transform"
+          begin="flag-name-2-animation.begin + 100ms"
+          type="translate"
+          keyTimes="0; 1"
+          values="0 0; 120 0 "
+          dur="300ms"
+          fill="freeze"
+          />
+
+</svg>

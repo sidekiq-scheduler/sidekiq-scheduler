@@ -1,0 +1,1042 @@
+/*
+ * This file is the main stylesheet of moove-it.com site
+ *
+ * In order to work properly, browse into application.css.scss
+ * and be sure that  -- @import "document" -- line
+ * is under he following imports:
+ * - bourbon
+ * - settings
+ * - foundation
+ * - mixins
+ */
+
+/*
+ * Enviroment variables
+ * This paths are
+ */
+$image-path: "v2/IMG_"
+$retina-suffix: "_2x"
+
+@import 'system'
+
+/* Mobile-first Header and Navbar blocks
+ ========================================================================== */
+
+.Header
+  position: fixed
+  top: 0
+  z-index: 3
+  width: 100%
+  background-color: $white-smoke
+  box-shadow: 0 0 $column-gutter / 2 rgba(#000, .25)
+
+.Header-wrapper
+  height: rem-calc(55)
+  @extend .clearfix
+
+.Header-logo
+  float: left
+  position: relative
+  z-index: 100
+  margin: rem-calc(-41 / 2) 0 0 $column-gutter / 2
+  top: 60%
+
+  img
+    position: relative
+    width: rem-calc(70)
+    height: auto
+  span
+    display: none
+
+
+.Navbar
+  position: absolute
+  z-index: 99
+  width: 100%
+  .js-menuSwitch
+    float: right
+    font-style: normal
+    font-weight: bold
+    font-size: rem-calc(24)
+    margin: rem-calc(10) $column-gutter / 2 0 0
+    cursor: pointer
+  .Navbar-list
+    display: none
+
+// Open mobile navigation
+.Navbar.is-open
+  box-shadow: 0 0 $column-gutter / 2 rgba(#000, .25)
+  .js-menuSwitch
+    opacity: .5
+  .Navbar-list
+    display: block
+    padding-top: rem-calc(55)
+    list-style: none
+    background: $contrasting-font-color
+    margin: 0
+    padding-bottom: $column-gutter / 2
+    .Navbar-listItem a
+      display: block
+      padding: $column-gutter/4 $column-gutter / 2
+      text-transform: uppercase
+      color: $body-font-color
+      text-decoration: none
+      font-weight: 800
+      &:hover, &:active
+        color: $primary-color
+
+/* NOT-MOBILE Header and Navbar
+ ========================================================================== */
+
+@media #{$medium-up}
+  .Header-log
+    top: 50%
+
+    img
+      width: rem-calc(70)
+
+
+@media #{$large-up}
+  .Header
+    box-shadow: none
+    body.shrink & .clearfix
+      height: rem-calc(62)
+
+  .Header-wrapper
+    @include transition( height 0.3s )
+    height: rem-calc(110)
+    position: relative
+
+  .Header-logo
+    margin: rem-calc(-36) 0 0 $column-gutter
+    img
+      width: rem-calc(112)
+
+  .Navbar
+    top: 50%
+    margin: rem-calc(-27 / 2) 0 0
+    line-height: 1.2em
+    font-weight: bold
+    .js-menuSwitch
+      display: none
+    .Navbar-list
+      display: block
+      text-align: center
+      margin: 0
+      padding: 0
+    .Navbar-listItem
+      display: inline-block
+      margin: 0 $column-gutter / 2
+      padding: 0
+      position: relative
+      a
+        display:block
+        text-transform: uppercase
+        color: $body-font-color
+        text-decoration: none
+        font-weight: 300
+    .Navbar-listItem--doc
+      position: absolute
+      right: 0
+      top: 50%
+      margin-top: rem-calc(-22.5)
+      margin-right: $column-gutter
+      > a
+        @include button($padding:$button-med)
+        padding: rem-calc(10 40)
+        font-size: rem-calc(18)
+        border: 1px solid $primary-color !important
+        color: $primary-color
+        background: transparent
+          font-weight: 300
+          margin-bottom: 0
+
+
+/* Main content block
+ ========================================================================== */
+
+.Main
+  height: 100%
+  margin-top: rem-calc(55)
+  @include transition ( margin 0.3s )
+  @media #{$large-up}
+    margin-top: rem-calc(110)
+
+$menu-items: home-index about-index services-index industries-index portfolio-index careers-index contact_us jobs
+@each $a in $menu-items
+  body.#{$a}
+    .Navbar-listItem.#{$a} a
+      color: mix($body-font-color, white, 35%)
+      @media #{$large-up}
+        color: $body-font-color
+        border-bottom: 1px solid $body-font-color
+
+/* Home Hero
+ ========================================================================== */
+
+body.#{nth($menu-items, 1)}
+  @extend %hero
+  @include hero-image($hero-image: 8494)
+
+/* Intro Schema and Pieces
+ ========================================================================== */
+
+.Intro
+  margin-bottom: $column-gutter * 2
+  @media #{$large-up}
+    margin-top: 0
+    margin-bottom: rem-calc(100)
+  h4
+    text-transform: uppercase
+    letter-spacing: 0.018em
+    line-height: 1.4em
+
+  .Intro-schema
+    position: relative
+    z-index: 1
+    h4
+      font-size: rem-calc(26)
+      padding: 0 rem-calc(20)
+    p
+      font-size: rem-calc(18)
+      padding: 0 rem-calc(20)
+      &.last-for-separation
+        display: none
+      @media #{$medium-up}
+        margin-bottom: 0
+        &.last-for-separation
+          display: block
+    @media #{$medium-up}
+      .columns
+        padding-left: $column-gutter * 2
+        padding-right: $column-gutter * 2
+        display: table
+        > div
+          height: 100%
+          display: table-cell
+          vertical-align: bottom
+        &.Intro-schema__build
+          @include grid-column(4)
+          @media #{$large-up}
+            @include grid-column(3, $offset:1.5)
+          h4
+            font-weight: 300
+        &.Intro-schema__scalable
+          @include grid-column(4)
+          @media #{$large-up}
+            @include grid-column(3)
+        &.Intro-schema__reduced
+          @include grid-column(4, $float:left)
+          @media #{$large-up}
+            @include grid-column(3, $float:left)
+
+  .Schema
+    position: relative
+    z-index: 1
+    background: transparent image-url("v2/home/img-home-2.svg") center 100% no-repeat
+    background-size: 100% auto
+    height: rem-calc(370)
+    width: rem-calc(700)
+    margin: $column-gutter / 2 auto 0
+    @media #{$portrait}
+      height: rem-calc(300)
+      width: rem-calc(520)
+    @media #{$medium-up}
+      top: rem-calc(-50)
+    @media #{$large-up}
+      top: rem-calc(-65)
+
+  .Intro-pieces
+    @extend .clearfix
+    background: $white-smoke
+    padding: rem-calc(50) $column-gutter / 2
+    position: relative
+    @media #{$medium-only}
+      padding: $column-gutter / 2
+    .row
+      position: relative
+    .Intro-pieces__first,
+    .Intro-pieces__middle,
+    .Intro-pieces__last
+      @include grid-column(12)
+      background: $white-smoke
+      text-align: center
+    p:last-child
+      margin-bottom: 0
+    @media #{$medium-up}
+      .row
+        border: 2px solid $secondary-color
+        border-radius: rem-calc(15)
+        .Intro-pieces__first,
+        .Intro-pieces__middle,
+        .Intro-pieces__last
+          @include grid-column(10 / 3)
+          padding: $column-gutter / 2
+          border-radius: $global-radius * 10
+          @media #{$portrait}
+            h4
+              font-size: rem-calc(16)
+            p
+              font-size: rem-calc(13)
+              margin-bottom: rem-calc(5)
+          @media #{$large-up}
+            padding: $column-gutter
+        .separation
+          @include grid-column(1, $collapse:true)
+          background: transparent image-url("v2/home/img-home-1.svg") 50% 50% no-repeat
+          @media #{$portrait}
+            background-size: 100%
+      &:before
+        content: '\0020'
+        position: absolute
+        z-index: 3
+        width: 2px
+        left: 50%
+        height: rem-calc(240)
+        display: block
+        background: $secondary-color
+        top: - rem-calc(240 - 50)
+        margin-left: -1px
+        @media #{$medium-only}
+          height: rem-calc(110)
+          top: - rem-calc(110) + $column-gutter / 2
+      &:after
+        content: '\0020'
+        position: absolute
+        z-index: 3
+        width: 2px
+        left: 50%
+        height: rem-calc(90)
+        display: block
+        background: $secondary-color
+        margin-left: -1px
+        @media #{$xlarge-up}
+          height: rem-calc(110)
+
+/* Testimonials
+  ========================================================================== */
+
+.Testimonials
+
+  .Testimonials-row
+    @include grid-row
+    max-width: rem-calc(800)
+    position: relative
+    overflow: hidden
+
+  .Testimonials-wrapper
+    width: 3200px
+    margin-left: 0
+    @include transition(margin-left 1s ease-out)
+    @extend .clearfix
+    @media #{$large-up}
+      width: 2000px
+
+  .Testimonials-testimonial-item
+    @include grid-column(12)
+    position: static
+    width: rem-calc(320)
+    margin-top: rem-calc(220)
+    padding: 0
+    @media #{$large-up}
+      width: rem-calc(200)
+      margin-top: rem-calc(230)
+
+    p.name:before
+      content: '\25BC'
+      position: absolute
+      color: mix($primary-color, white, 40%)
+      top: rem-calc(-195)
+      left: 50%
+      font-size: rem-calc(60)
+      margin-left: rem-calc(-30)
+      opacity: 0
+      @include transition(opacity 0.5s ease-in-out)
+      @media #{$large-up}
+        top: rem-calc(-210)
+
+  @for $i from 4 through 7
+    &.active-#{$i} .Testimonials-wrapper
+      margin-left: rem-calc(-800)
+
+  @for $i from 8 through 9
+    &.active-#{$i} .Testimonials-wrapper
+      margin-left: rem-calc(-1600)
+
+  @for $i from 0 through 9
+    &.active-#{$i} .Testimonials-testimonial-item:nth-child(#{$i + 1})
+
+      p.cite
+        opacity: 1
+      img
+        box-shadow: 0 0 rem-calc(5) $primary-color
+
+      p.name:before
+        opacity: 1
+
+      @media #{$small-only}
+
+        .Testimonials-wrapper
+          margin-left: rem-calc(-320) * $i
+
+      @media #{$medium-only}
+
+        .Testimonials-wrapper
+          margin-left: rem-calc(-320) * $i
+
+  img
+    border-radius: 999em
+    display: block
+    width: rem-calc(100)
+    height: rem-calc(100)
+    margin: 0 auto $column-gutter / 2
+    @include transition(box-shadow 0.5s ease-in-out)
+    cursor: pointer
+
+  p
+    font-family: $font-family-serif
+    letter-spacing: 0.024em
+    &.name-wrapper
+      font-size: rem-calc(14)
+      width: 100%
+      margin: 0
+      text-align: center
+      position: relative
+      .name
+        font-weight: bold
+        display: block
+
+      @media #{$large-up}
+        min-width: none
+
+    &.cite
+      position: absolute
+      top: 0
+      left: 0
+      font-weight: 300
+      background: mix($primary-color, white, 40%)
+      padding: $column-gutter / 2
+      font-size: rem-calc(14)
+      height: rem-calc(180)
+      opacity: 0
+      width: 100%
+      min-width: rem-calc(320)
+      @include transition(opacity 0.5s ease-in-out)
+      @media #{$large-up}
+        padding: $column-gutter
+        font-size: rem-calc(18)
+        height: rem-calc(175)
+        border-radius: $global-radius * 2
+        width: rem-calc(800)
+
+/*
+ * Clients
+ */
+
+.Clients
+  margin-top: rem-calc(140)
+.Clients-carousel
+  @include inline-carousel(page-1 page-2 page-3)
+  .row
+    > div
+      @include grid-column(12)
+
+    @media #{$large-up}
+      > div
+        @include grid-column(12 / 5)
+  .page
+    padding: 0 rem-calc(110)
+  img
+    width: rem-calc(200)
+    margin: 0 auto
+    display: block
+  nav
+    a
+      margin: 0 30px
+      width: 50px
+      height: 50px
+    a::before
+      position: absolute
+      top: 0
+      left: 0
+      width: 100%
+      height: 100%
+      border-radius: 50%
+      background: $primary-color
+      content: ''
+      opacity: 0
+      @include transition ( transform 0.3s, opacity 0.3s )
+      @include transform ( scale(0.9) )
+    .icon-wrap
+      position: relative
+      display: block
+      margin: 10% 0 0 10%
+      width: 80%
+      height: 80%
+    a.next .icon-wrap
+      @include transform ( rotate(180deg) )
+    .icon-wrap::before,
+    .icon-wrap::after
+      position: absolute
+      left: 25%
+      width: 3px
+      height: 50%
+      background: $primary-color
+      content: ''
+      @include transition( transform 0.3s, background-color 0.3s )
+      @include backface-visibility( hidden )
+    .icon-wrap::before
+      @include transform( translateX(-50%) rotate(30deg) )
+      @include transform-origin( 0 100% )
+    .icon-wrap::after
+      top: 50%
+      @include transform( translateX(-50%) rotate(-30deg) )
+      @include transform-origin( 0 0 )
+    a:hover::before
+      opacity: 1
+      @include transform( scale(1) )
+    a:hover .icon-wrap::before,
+    a:hover .icon-wrap::after
+      background: $body-bg
+    a:hover .icon-wrap::before
+      @include transform( translateX(-50%) rotate(45deg) )
+    a:hover .icon-wrap::after
+      @include transform( translateX(-50%) rotate(-45deg) )
+    a
+      position: absolute
+      top: 50%
+      display: block
+      outline: none
+      text-align: left
+      z-index: 2
+      @include transform( translateY(-50%) )
+    a.prev
+      left: 0
+    a.next
+      right: 0
+
+.Testimonials, .Clients
+  h2
+    font-weight: 400
+    margin-bottom: $column-gutter
+    font-size: rem-calc(22)
+    @media #{$large-up}
+      font-size: $h2-font-size
+
+/*
+ * About
+ */
+body.#{nth($menu-items, 2)}
+  @extend %hero
+  @include hero-image($hero-image: 7891)
+  .Hero-text h1
+    font-size: rem-calc(22)
+    @media #{$medium-up}
+      line-height: 1.2em
+      font-size: rem-calc(36)
+
+/*
+ * Team
+ */
+#team
+  .grey-background h1
+    text-align: center
+    font-weight: 300
+    margin-bottom: $column-gutter * 2
+    font-size: rem-calc(26)
+    @media #{$medium-up}
+      padding-top: rem-calc(110)
+      font-size: rem-calc(50)
+
+  .row-wrapper
+    @include grid-row($behavior: false)
+
+  a.columns
+    margin-bottom: $column-gutter * 2
+    cursor: default
+    color: $body-font-color
+    text-decoration: none
+    &:nth-child(3n + 1)
+      clear: left
+
+    span.photo
+      display: block
+      width: rem-calc(290)
+      height: rem-calc(290)
+      border-radius: 9999em
+      margin: 0 auto
+      background-repeat: no-repeat
+      background-position: 50% 50%
+      background-size: auto 100%
+      cursor: pointer
+      @media #{$medium-only}
+        width: rem-calc(200)
+        height: rem-calc(200)
+
+    span.name
+      display: block
+      margin: rem-calc(10) 0 0
+      text-align: center
+      cursor: pointer
+      font-size: $h4-font-size
+      font-weight: 800
+      line-height: $base-line-height
+
+    span.role
+      display: block
+      font-weight: 300
+      text-align: center
+      cursor: pointer
+      font-size: $h5-font-size
+      line-height: $base-line-height
+
+    p
+      display: none
+
+    @media #{$large-up}
+      > div
+        padding: 0 rem-calc(30)
+
+@import "team"
+
+.Values
+  display: table
+  padding-top: $column-gutter
+  padding-bottom: $column-gutter
+  width: 100%
+  margin: 0 auto
+  background: $body-font-color
+  text-align: center
+  @media #{$large-up}
+    height: rem-calc(600)
+    width: rem-calc(600)
+    border-radius: 9999em
+    padding-top: 0
+    padding-bottom: 0
+  .Values-text
+    display: table-cell
+    vertical-align: middle
+
+  h4
+    color: $contrasting-font-color
+    font-size: rem-calc(32)
+    margin-bottom: rem-calc(36)
+
+  ul
+    list-style: none
+    margin: 0
+    padding: 0
+    li
+      color: $contrasting-font-color
+      margin-bottom: rem-calc(20)
+      text-transform: uppercase
+      @media #{$large-up}
+        font-size: rem-calc(24)
+
+      a
+        color: $contrasting-font-color
+        font-weight: 300
+        letter-spacing: 0.028em
+        text-decoration: none
+        &:hover
+          text-decoration: underline
+
+        &:after
+          content: "\00a0 \00bb"
+
+/*
+ *Services & Industries
+ */
+body.#{nth($menu-items, 3)}
+  @include hero(Hero-services, $height:200, $hero-mask:false)
+  @media #{$small-only}
+    .Hero-services .Hero-text h1
+      font-size: $h3-font-size
+      padding-top: $column-gutter / 2
+
+  @media #{$medium-up}
+    @include hero(Hero-services, $height:320, $hero-mask:false)
+
+  .Hero-services
+    height: rem-calc(200)
+    @media #{$medium-up}
+      height: rem-calc(320)
+
+    margin-bottom: 0
+    h1
+      font-size: rem-calc(25)
+      @media #{$medium-up}
+        font-size: rem-calc(50)
+
+  .balls
+    display: none
+    @media #{$large-up}
+      display: block
+      position: relative
+      @include ball($ball-width: rem-calc(250), $balls: 4)
+
+body.#{nth($menu-items, 4)}
+  @include hero(Hero-industries, $height:200, $hero-mask: false)
+  @media #{$small-only}
+    .Hero-industries .Hero-text h1
+      font-size: $h3-font-size
+      padding-top: $column-gutter / 2
+
+  @media #{$medium-up}
+    @include hero(Hero-industries, $height:320, $hero-mask:false)
+
+  .Hero-industries
+    height: rem-calc(200)
+    @media #{$medium-up}
+      height: rem-calc(320)
+
+    margin-bottom: 0
+    h1
+      font-size: rem-calc(25)
+      @media #{$medium-up}
+        font-size: rem-calc(50)
+
+body.#{nth($menu-items, 3)} .intro
+  text-align: center
+
+.service, .industry
+  margin-top: $column-gutter * 2
+  @include hero(Hero, $height:660, $hero-mask: rgba($body-font-color, 0.3))
+  .Hero, .Hero .Hero-text
+    &, h1, h2, h3
+      font-family: $font-family-sans-serif
+
+    height: rem-calc(320)
+    @media #{$large-up}
+      height: rem-calc(660)
+
+
+  p
+    font-weight: 300
+    .button
+      margin-top: 1.25rem
+
+    @media #{$large-up}
+      font-size: rem-calc(24)
+
+$services-map: ('inception' 8494), ('design' 8554), ('development' 8037), ('consultancy' 8697)
+
+@each $s, $service-image-path in $services-map
+  .service-#{$s} .Hero
+    @include retina-image($filename:'v2/IMG_#{$service-image-path}', $background-size: cover, $extension: jpg, $asset-pipeline: true)
+    @media #{$large-up}
+      background-attachment: fixed
+    @media #{$xlarge-up}
+      background-image: image-url("v2/IMG_#{$service-image-path}_2x.jpg")
+
+$industries: healthcare energy education education finance iot entertainment
+@each $i in $industries
+  @include hero(industry-#{nth($i, 1)} Hero, $height:660, $hero-mask: rgba($body-font-color, 0.3))
+  .industry-#{$i} .Hero
+    @include retina-image($filename:'v2/industries/#{$i}', $background-size: cover, $extension: jpg, $asset-pipeline: true)
+    @media #{$large-up}
+      background-attachment: fixed
+
+    @media #{$xlarge-up}
+      background-image: image-url("v2/industries/#{$i}_2x.jpg")
+
+$careers-places: montevideo austin san-francisco rosario
+
+/*
+ * Careers
+ */
+body.#{nth($menu-items, 6)}
+  @include hero(Hero-careers, $height:660)
+  .Hero-careers
+    background: image-url("v2/team.jpg") 50% 50% no-repeat scroll
+    background-size: cover
+
+  .intro
+    h2
+      font-size: rem-calc(28)
+
+    h3
+      font-size: rem-calc(22)
+
+    @media #{$small-only}
+      h3
+        font-size: 1rem
+
+
+    .looking-for
+      ul
+        font-size: rem-calc(22)
+        margin-top: rem-calc(28)
+
+      li + li
+        margin-top: rem-calc(12)
+
+  @include hero(Hero-places, $height:660, $hero-mask: rgba($body-font-color, 0.5))
+  .Hero-places
+    .Hero-text
+      height: 100% / length($careers-places)
+      background-repeat: no-repeat
+      background-size: 100% auto
+      background-position: center
+      &, h1, h2, h3
+        font-family: $font-family-sans-serif
+        font-weight: 400
+
+      width: 100%
+      @media #{$large-up}
+        @include grid-column(3)
+        height: 100%
+        background-size: cover
+
+      @each $i in $careers-places
+        &.#{$i}
+          @include retina-image($filename:'v2/#{$i}', $background-size: cover, $extension: jpg, $asset-pipeline: true)
+
+
+      .span-empty
+        display: none
+        @media #{$large-up}
+          display: block
+
+      a
+        color: $contrasting-font-color
+        font-weight: 300
+
+
+  .table
+    @media #{$large-up}
+      height: rem-calc(415)
+      &:nth-child(1), &:nth-child(3)
+        background: $white-smoke
+
+
+    .column
+      float: none
+      @media #{$large-up}
+        vertical-align: middle
+        float: left
+
+      &.large-4
+        background-repeat: no-repeat
+        background-position: 50%
+        background-size: cover
+        @media #{$small-only}
+          height: rem-calc(250)
+
+        @media #{$medium-only}
+          height: rem-calc(500)
+
+        @media #{$large-up}
+          height: rem-calc(400)
+
+
+      &.large-8
+        padding-top: $column-gutter
+        padding-bottom: $column-gutter
+        @media #{$large-up}
+          height: rem-calc(400)
+          padding-left: rem-calc(150)
+          padding-right: rem-calc(150)
+          h3
+            font-size: rem-calc(48)
+            margin-top: rem-calc(48)
+
+          p
+            font-size: rem-calc(20)
+
+    .tell
+      @include retina-image($filename:'#{$image-path}8233', $background-size: cover, $extension: jpg, $asset-pipeline: true)
+
+    .interview
+      @include retina-image($filename:'#{$image-path}8418', $background-size: cover, $extension: jpg, $asset-pipeline: true)
+
+    .technical
+      @include retina-image($filename:'#{$image-path}8278', $background-size: cover, $extension: jpg, $asset-pipeline: true)
+
+
+  @include hero(mooversity, $height:660)
+  .mooversity
+    @include retina-image($filename:'v2/mooversity', $background-size: cover, $extension: jpg, $asset-pipeline: true)
+    margin-bottom: 0
+    &, h2, h3, h4
+      font-family: $font-family-sans-serif
+
+    a
+      color: $contrasting-font-color
+
+    @media #{$large-up}
+      .Hero-text > div
+        width: rem-calc(900)
+        margin: 0 auto
+
+
+/*
+ * Jobs
+ */
+body.#{nth($menu-items, 8)}
+  header > div #main-nav li.careers-index
+    a
+      color: mix($body-font-color, white, 35%)
+      @media #{$large-up}
+        color: $body-font-color
+        border-bottom: 1px solid $body-font-color // FIXME: coupled with top main navs
+
+
+
+  @include hero(Hero, $height:660, $hero-mask: rgba($body-font-color, 0.5))
+  .Hero
+    $places: montevideo austin san-francisco rosario
+    @each $place in $places
+      &.#{$place}
+        background: image-url("v2/#{$place}_2x.jpg") center 0 no-repeat
+        background-size: cover
+        @media #{$large-up}
+          background-attachment: fixed
+
+  p
+    font-weight: 300
+    font-size: rem-calc(20)
+    line-height: 2em
+
+  .job-description li
+    font-size: rem-calc(20)
+    line-height: 2em
+
+  .job-form .grey-background
+    background: $primary-color
+    margin-bottom: 0
+    margin-top: $column-gutter
+    color: #fff
+    .job-form__left p
+      font-size: rem-calc(22)
+
+    p.hello a
+      color: #fff
+
+
+/*
+ * Contact us
+ */
+body.#{nth($menu-items, 7)}
+  @include hero(Hero-contact, $height:320)
+  .Hero-contact
+    margin-bottom: 0
+    height: rem-calc(320)
+    @media #{$small-only}
+      height: rem-calc(200)
+      h1
+        font-size: rem-calc(25)
+
+
+    @include retina-image($filename:'v2/contact_us/contact_us.jpg', $background-size: cover, $extension: jpg, $asset-pipeline: true)
+    @media #{$large-up}
+      background-image: image-url("v2/contact_us/contact_us_2x.jpg")
+
+    background-position-y: 16%
+
+
+.contact_us, .job-form
+  .grey-background
+    margin-top: 0
+    @media #{$small-only}
+      padding: $column-gutter / 2 0
+
+
+  form
+    input, textarea
+      @include radius($input-border-radius)
+
+    textarea
+      height: rem-calc(100)
+
+    .button
+      @media #{$small-only}
+        width: 100%
+
+  .data
+    p
+      font-size: 1em
+      position: relative
+      a
+        font-weight: 300
+        color: $body-font-color
+        text-decoration: none
+        font-size: $h5-font-size
+
+      b a
+        font-weight: 400
+
+      &.hello a
+        font-size: rem-calc(30)
+        color: $primary-color
+
+      @media #{$large-up}
+        margin: $column-gutter 0
+        line-height: 2em
+        a
+          font-size: $h3-font-size
+
+        &.hello a
+          font-size: $h1-font-size
+
+    i
+      height: 1.5em
+      width: 1.25em
+      background-size: auto 1.1em
+      background-position: center 2px
+      background-repeat: no-repeat
+      display: block
+      position: absolute
+      left: 0
+
+    i.mail
+      background-image: image-url("site-core-images/contact-icons/email.png")
+
+    i.skype
+      background-image: image-url("site-core-images/contact-icons/skype.png")
+
+    i.phone
+      background-image: image-url("site-core-images/contact-icons/phone.png")
+
+    i.address
+      background-image: image-url("site-core-images/contact-icons/map.png")
+
+/*
+ * Footer
+ */
+
+.Footer
+  @extend .clearfix
+  background-color: $white-smoke
+  padding: $column-gutter 0
+  position:relative
+  @media #{$large-up}
+    padding: $column-gutter*2 0
+  .Footer-row
+    @include grid-row
+  .Footer-column
+    @include grid-column(12)
+    @media #{$large-up}
+      @include grid-column(1.5)
+      &.Footer-column__about-us
+        @include grid-column(1.5, $offset:2.25)
+  a
+    font-weight: 300
+    line-height: 1.5em
+    color: $body-font-color
+    text-decoration: none
+  .title
+    font-size: rem-calc(20)
+    font-weight: bold
+    text-transform: uppercase
+
+  $footer-columns: ('about-us' #3780af), ('services' #5ba06f), ('industries' #d05385), ('careers' #d08953), ('follow' #d0c353)
+
+  @each $f, $colors in $footer-columns
+    .Footer-column__#{$f} .title
+      color: $colors
+
+body.errors
+  .container
+    margin-top: rem-calc(150)
+

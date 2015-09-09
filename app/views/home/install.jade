@@ -1,0 +1,42 @@
+section#install.SectionInstall
+  .container-cell
+    .row
+      h2.SectionInstall-title
+        | Install
+      .SectionInstall-terminal
+        .terminal-window
+          header
+            .terminal-button.green
+            .terminal-button.yellow
+            .terminal-button.red
+          section.terminal
+            span.terminal-arrow
+              i.fa.fa-long-arrow-right
+            span.terminal-tilde
+              | ~
+            span.command
+              | gem install sidekiq-scheduler
+            span.prompt
+            span.typed-cursor
+      .separator.vertical
+        .separator-text
+          | or
+      .SectionInstall-sublime
+        .terminal-window
+          header
+            .terminal-button.green
+            .terminal-button.yellow
+            .terminal-button.red
+          section.terminal
+            header.terminal-header
+              ul
+                li Gemfile
+            section.terminal-body
+              pre.prettyprint.linenums.lang-rb
+                code
+                  :verbatim
+                    source 'http://rubygems.org'
+
+                    gem 'sidekiq-scheduler', '~> 1'
+
+          footer.terminal-footer

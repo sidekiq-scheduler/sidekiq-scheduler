@@ -1,0 +1,15 @@
+include ../mixin.jade
+
+header.Header(itemscope = '' itemtype = 'http://schema.org/Organization')
+  .Header-wrapper
+    +link('/', 'Angus')(class = 'Header-logo')
+      +image('ss_logo.svg')
+    nav.Navbar
+      .Navbar-doc
+        +link('https://github.com/Moove-it/sidekiq-scheduler', 'docs')(target='_blank')
+      ul.Navbar-list
+        +navItem('index', 'why', '#why')
+        +navItem('index', 'install', '#install')
+        +navItem('index', 'using', '#using')
+        +navItem('index', 'docs', '')(class='Navbar-listItem--doc')
+          +link('https://github.com/Moove-it/sidekiq-scheduler', 'docs')(target='_blank')

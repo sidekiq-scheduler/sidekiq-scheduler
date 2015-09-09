@@ -1,0 +1,9 @@
+extends error_layout
+
+block content
+  section.SectionError
+    .container-cell
+      .row
+        h1.SectionError-status= error.status
+        img(src='images/ruy_ruby.svg')
+        a.button(href='/') Go back

@@ -1,0 +1,67 @@
+$people-image-path: "v2/people/IMG_";
+
+$people:
+ariel-luduena
+martin-cabrera
+conrado-vina
+gabriela-isnardi
+michel-golffed
+maria-noel-burghi
+gustavo-armagno
+paula-reboredo
+gianfranco-zas
+pablo-ifran
+sebastian-suttner
+marcelo-casiraghi
+andreas-fast
+ivan-etchart
+santiago-doldan
+virginia-rodriguez
+maximo-gomez
+adrian-gomez
+damian-arrillaga
+guzman-iglesias
+miguel-renom
+nicolas-suarez
+lesly-acuna
+gabriel-fagundez
+enrique-rodriguez
+matias-nieves
+rodrigo-deleon
+agustin-cornu
+patricio-maite
+cecilia-marcora
+javier-buquet
+jr-gonzalez
+martin-fernandez
+santiago-estrago
+karina-dentone
+rosina-acosta;
+$code: 7160 7724 7749 7020 6990 7585 6819 7567 7700 7244 7197 6926 6965 7468 7453 7063 7536 7706 7295 7442 7498 7624 6902 7053 7631 7084 7482 7407 7759 7521 7135 7112 7271 7391 6917 7349;
+
+$people-codes: zip($people, $code);
+
+@each $a in $people-codes{
+  .#{nth($a, 1)} .photo{
+    background-color: darken($white-smoke, 10%);
+  }
+  .#{nth($a, 1)}.visible .photo{
+      background-image: image-url("#{$people-image-path}#{nth($a, 2)}.jpg");
+  }
+  .side-content##{nth($a, 1)}.slide-in > div{
+    @include retina-image($filename:'#{$people-image-path}#{nth($a, 2)}', $background-size: 100% auto, $extension: jpg, $asset-pipeline: true);
+    background:{
+      size: auto 210px;
+      repeat: no-repeat;
+      position: center 0;
+    }
+    @media #{$medium-up}{
+      background-size: auto 391px;
+    }
+    @media #{$large-up}{
+      background-position: center rem-calc(-35);
+      background-image: image-url("#{$people-image-path}#{nth($a, 2)}_2x.jpg");
+      background-size: auto 670px;
+    }
+  }
+}

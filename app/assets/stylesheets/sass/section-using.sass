@@ -1,0 +1,28 @@
+.SectionUsing
+  @extend %SectionPages
+
+  &-title
+    @include grid-column(12)
+
+    @media #{$medium-up}
+      @include grid-column(10, $offset: 2, $collapse: true)
+
+  &-terminal
+    @include grid-column(12)
+
+    .terminal-window
+      width: 100%
+      height: rem-calc(350)
+      ol
+        font-size: rem-calc(11)
+      .terminal
+        padding-left: rem-calc(6)
+        padding-top: rem-calc(10)
+
+    @media #{$medium-up}
+      @include grid-column(8, $offset: 2)
+      .terminal-body
+        overflow: hidden
+
+    @media #{$large-up}
+      @include grid-column(8, $offset: 2, $collapse: true)

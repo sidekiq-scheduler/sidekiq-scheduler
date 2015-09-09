@@ -1,0 +1,201 @@
+@import url("http://netdna.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.css");
+
+@import url("http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800");
+@import url("http://fonts.googleapis.com/css?family=Open+Sans+Condensed:300,300italic,700");
+@import "foundation";
+
+@import "compass/css3/transform";
+
+$condensed: 'Open Sans Condensed', sans-serif;
+
+
+#m2m{
+  padding: 2em 0;
+  .links{
+    @include grid-column(12);
+    font-size: 90%;
+    > ul{
+      float: right;
+      a{
+        color: #4D4D4D;
+        &:hover{
+          color: #000;
+        }
+      }
+    }
+  }
+  header{
+    @include grid-column(12);
+    h1 img{
+      &[src$="png"]{
+        display: none;
+      }
+    }
+    h2{
+      font-weight: 300;
+      font-size: 2.5em;
+      line-height: 1.25em;
+      margin: .75em 0;
+      @media #{$large}{
+        font-size: 3.5em;
+      }
+    }
+    .icons{
+      @include grid-row($behavior:collapse);
+      .column{
+        @include grid-column(12/8, $collapse:true);
+        img{
+          &[src$="png"]{
+            display: none;
+          }
+        }
+      }
+    }
+  }
+}
+.diagram{
+  @include clearfix;
+  margin: 3em 0;
+  padding: 8em 0;
+  background: $primary-color;
+  text-align: center;
+  color: #F2F0EE;
+  font-family: $condensed;
+  $diagram-image-width: 396px;
+  $diagram-wrapper-width: $diagram-image-width*1.1;
+
+  @media only screen and (max-width: #{$diagram-wrapper-width}){
+    @include scale(.5);
+    width: 500%;
+    left: -200%;
+    position: relative;
+    margin: -7em auto;
+  }
+
+  .wrapper{
+    width: $diagram-wrapper-width;
+    margin: 0 auto;
+    position: relative;
+    top: -2.5em;
+    img{
+      width: 100%;
+      max-width: $diagram-image-width;
+      &[src$="png"]{
+        display: none;
+      }
+    }
+  }
+  .internet-things-data{
+    width: 100%;
+    position: absolute;
+    top: 0;
+    .column{
+      @include grid-column(4);
+      line-height: 6.5em;
+      span{
+        display: block;
+        font-size: em-calc(20);
+      }
+      &.internet, &.data{
+        top: 16em;
+      }
+    }
+  }
+  .ux-data-lean{
+    width: 230%;
+    position: absolute;
+    left: -65%;
+    top: 5.5em;
+    .column{
+      @include grid-column(4);
+      line-height: 2em;
+      span{
+        display: block;
+        font-size: 2.75em;
+        font-weight: bold;
+      }
+      small{
+        display: block;
+        font-size: em-calc(16);
+      }
+      &.ux{
+        text-align: right;
+        padding-right: .5em
+      }
+      &.data-processing{
+        top: 21em;
+      }
+      &.lean{
+        text-align: left;
+        padding-left: .5em
+      }
+    }
+  }
+}
+
+.text, .contact{
+  h3{
+    font-family: $condensed;
+    font-weight: 800;
+    text-transform: uppercase;
+    color: #C0B7AD;
+    text-align: center;
+    margin-top: 2em;
+  }
+  img{
+    border-bottom: em-calc(5) solid $primary-color;
+    width: 100%;
+  }
+  h4{
+    font-weight: 300;
+  }
+}
+
+.services{
+  @include clearfix;
+  margin: 3em 0;
+  padding: 3em 0;
+  background: $body-font-color;
+  color: #fff;
+  > .row{
+    margin-top: 2em;
+    margin-bottom: 2em;
+    &:first-child{
+      margin-bottom: 4em;
+    }
+  }
+  h2{
+    font-family: $condensed;
+    color: #fff;
+    text-align: center;
+  }
+  h3{
+    color: #fff;
+    font-weight: 300;
+  }
+  .column img{
+    margin-top: 1em;
+    &[src$="png"]{
+      display: none;
+    }
+  }
+  a{
+    text-decoration: underline;
+    color: #fff;
+  }
+}
+
+.contact{
+  h3{
+    text-transform: none;
+  }
+  > .row .row > .column{
+    @include grid-column(12/7);
+    a{
+      font-size: 2em;
+      display: block;
+      text-align: center;
+      color: $body-font-color;
+    }
+  }
+}

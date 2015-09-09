@@ -1,0 +1,20 @@
+{
+  "name": "angus-page",
+  "version": "0.0.2",
+  "dependencies": {
+    "bourbon": "~4.2.1",
+    "foundation-sass": "~5.5.1",
+    "fontawesome": "~4.3.0",
+    "google-code-prettify": "~1.0.4",
+    "jquery": "~2.1.3",
+    "jquery-waypoints": "~3.1.1",
+    "animate.css": "~3.2.3",
+    "d3": "~3.5.5"
+  },
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components"
+  ]
+}

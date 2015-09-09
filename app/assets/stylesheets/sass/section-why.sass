@@ -1,0 +1,40 @@
+.SectionWay
+  @extend %SectionPages
+
+  &-title
+    font-size: 2rem;
+
+  &-description
+    display: table
+    height: 100%
+    vertical-align: middle
+
+    &-paragraph
+      &-text
+        font-size: 1.125rem
+
+    @include grid-column(12)
+
+    @media #{$medium-up}
+      @include grid-column(8, $offset: 2)
+
+    @media #{$large-up}
+      @include grid-column(4, $offset: 2)
+
+  &-diagram
+    display: table
+    height: 100%
+    vertical-align: middle
+    text-align: center
+    padding: 0
+    @include grid-column(12)
+
+    img
+      width: 20rem;
+
+    @media #{$medium-up}
+      @include grid-column(8, $offset: 2)
+
+    @media #{$large-up}
+      @include grid-column(4, $offset: 0)
+

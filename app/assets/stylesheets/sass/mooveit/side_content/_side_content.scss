@@ -1,0 +1,128 @@
+// Width of the hidden author bio section
+
+$side-content-S: 200px;
+$side-content-M: 600px;
+$side-content-L: 800px;
+$side-content-XL: 1000px;
+
+$side-content-sizes: $side-content-S $side-content-M $side-content-L  $side-content-XL;
+$size-content-MQ: $screen $medium-up $large-up $xlarge-up;
+
+$sizes: zip($side-content-sizes, $size-content-MQ);
+
+
+body.overflow-hidden {
+  /* when author bio is visible, the out-of-focus content won't scroll */
+  overflow: hidden;
+  #content{
+    height: 100%;
+  }
+}
+
+/* --------------------------------
+
+Main components
+
+-------------------------------- */
+
+#main {
+  position: relative;
+  z-index: 1;
+  @include transition-property(transform);
+  @include transition-duration(.3s);
+  &.slide-out {
+    @each $a in $sizes{
+      @media #{nth($a, 2)}{
+        @include transform(translateX(- nth($a, 1)));
+      }
+    }
+    .side-content-overlay {
+      /* the overlay layer gets visible when the author bio slides in */
+      display: block;
+      @include animation(cd-fade-in .3s);
+    }
+  }
+}
+
+.side-content {
+  position: fixed;
+  z-index: 99;
+  top: 0;
+  right: 0;
+  height: 100%;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  background: #353535;
+  /* smooth scrolling on mobile phones and tablets */
+  @include transition-property (transform);
+  @include transition-duration(.3s);
+  @each $a in $sizes{
+    @media #{nth($a, 2)}{
+      @include transform(translateX(nth($a, 1)));
+    }
+  }
+
+  @each $a in $sizes{
+    @media #{nth($a, 2)}{
+      width: nth($a, 1);
+    }
+  }
+
+  &.slide-in {
+    /* the author bio section slides in when the user clicks on the team member picture */
+    @include transform(translateX(0));
+    @each $a in $sizes{
+      @media #{nth($a, 2)}{
+        @include transform(translateX(nth($a, 1)));
+      }
+    }
+  }
+}
+
+.side-content-wrapper{
+  background: red;
+  color: #fff;
+}
+
+.side-content-close {
+  width: rem-calc(32);
+  height: rem-calc(32);
+  overflow: hidden;
+  position: fixed;
+  top: rem-calc(10);
+  right: rem-calc(10);
+  background: image-url('v2/side-content-close.svg') no-repeat center center;
+  cursor: pointer;
+  text-indent: 100%;
+  white-space: nowrap;
+  z-index: 100;
+  display: none;
+}
+
+.side-content-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(#fff, .8);
+  cursor: pointer;
+  display: none;
+  z-index: 2;
+}
+
+/* --------------------------------
+
+xkeyframes
+
+-------------------------------- */
+
+@include keyframes(cd-fade-in) {
+  0% {
+    opacity: 0;
+  }
+
+  100% {
+    opacity: 1;
+  }
+}

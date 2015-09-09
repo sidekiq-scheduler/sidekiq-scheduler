@@ -1,0 +1,212 @@
+/**
+ * Hero
+ * ===============
+ * a html block widh a vertically-centered text inside covered with a background-image
+ *
+ * html structure:
+ *
+ * .Hero
+ *  .Hero-text
+ *    heading (h1, h2, h3,)
+ *
+ * usage:
+ *
+ *  @include hero($selector, $height, $hero-black: true, $hero-black-color)
+ *    $selector:          Use any class name in markup
+ *    $height:            Set height for desktop screen. Default is 660px. hero height is locked at 100% in mobile devices.
+ *    $hero-mask:        Set a transparent overlay mask. Use for readable texts overs. Set 'false' for layer.
+ */
+@mixin hero($selector:Hero, $height:600, $hero-mask: rgba($body-font-color, 0.8), $hero-image: true){
+  .#{$selector}{
+    height: calc(100% - 55px);
+    position: relative;
+    background-size: cover;
+    background-attachment: scroll;
+    background-position: 50% 50%;
+    background-repeat: no-repeat;
+    margin-bottom: $column-gutter;
+    @media #{$medium-up}{
+      top: 0;
+      height: rem-calc($height);
+      margin-bottom: rem-calc(100);
+    }
+    .Hero-text{
+      padding-left: $column-gutter/2;
+      padding-right: $column-gutter/2;
+      height: 100%;
+      display: table;
+      max-width: $row-width;
+      margin: 0 auto;
+      > *{
+        text-align: center;
+        display: table-cell;
+        vertical-align: middle;
+        position: relative;
+        z-index: 3;
+        margin: 0;
+        font-family: $font-family-serif;
+        font-weight: 300;
+        @if $hero-mask{
+          color: $contrasting-font-color;
+        }
+        @else{
+          color: $body-font-color;
+        }
+      }
+      .Hero-line {
+        width: 22%;
+        margin: 0 auto rem-calc(60);
+        border: 1px solid;
+        display: block;
+        &:last-child{
+          margin: rem-calc(60) auto 0;
+        }
+        @if $hero-mask{
+          border-color: $contrasting-font-color;
+        }
+        @else{
+          border-color: $body-font-color;
+        }
+      }
+      @media #{$medium-up}{
+        padding: 0;
+        height: rem-calc($height);
+      }
+      @media #{$small-only}{
+        .Hero-line{
+          border: none;
+        }
+        .rwd-break{
+          display: none;
+        }
+        h1{
+          font-size: rem-calc(24);
+        }
+        h2, h3{
+          font-size: rem-calc(18);
+        }
+      }
+    }
+    @if $hero-mask != false {
+      &:after{
+        content: '\0020';
+        position: absolute;
+        z-index: 1;
+        width: 100%;
+        height: 100%;
+        top: 0;
+        left: 0;
+        @include background(linear-gradient($hero-mask 100%, #000));
+        @media #{$large-up}{
+          height: rem-calc($height);
+        }
+      }
+    }
+  }
+}
+
+@mixin hero-image($hero-image, $selector: Hero){
+  .#{$selector}:before{
+    content: '\0020';
+    position: absolute;
+    z-index: 1;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    background-size: cover;
+    @include retina-image($filename:'#{$image-path}#{$hero-image}', $background-size: cover, $extension: jpg, $asset-pipeline: true);
+    @media #{$large-up}{
+      margin-bottom: $column-gutter * 2;
+      background-image: image-url('#{$image-path}#{$hero-image}_2x.jpg');
+    }
+  }
+}
+
+%hero{
+  @include hero;
+}
+
+@mixin ball($ball-width: rem-calc(171), $balls: 1, $ratio: 1.2){
+  width: $ball-width * $balls;
+  margin: 0 auto;
+  height: $ball-width * $ratio;
+  display: table;
+  .ball{
+    text-align: center;
+    display: table-cell;
+    vertical-align: middle;
+    width: $ball-width;
+    position: relative;
+    &:after{
+      content: '\0020';
+      display: block;
+      position: absolute;
+      background: rgba($primary-color, .8);
+      border-radius: rem-calc(9999);
+      height: $ball-width * $ratio;
+      width: $ball-width * $ratio;
+      left: -($ball-width * $ratio - $ball-width)/2;
+      top: 0;
+    }
+    span{
+      position: relative;
+      z-index: 1;
+      color: #fff;
+      font-size: rem-calc(24);
+      display: block;
+      text-align: center;
+      margin: 0 auto;
+      line-height: normal;
+    }
+  }
+}
+
+/**
+ * inline carousel
+ * ===============
+ * html structure:
+ *
+ * .inline-carousel
+ *  .viewport
+ *    %span.status#page-1
+ *    %span.status#page-2
+ *    %span.status#page-3
+ *    .pages-area
+ *      .page
+ *      .page
+ *      .page
+ *    ...
+ *
+ * usage:
+ *
+ * .inline-carousel {
+ *    @include inline-carousel(page-1 page-2 page-3)
+ *  }
+ */
+
+@mixin inline-carousel($page-ids) {
+  > div {
+    overflow: hidden;
+  }
+  .viewport {
+    position: relative;
+  }
+  $i: 0;
+  @each $id in $page-ids {
+    .pages-area.#{$id} {
+      left: -100% * $i;
+      $i: $i + 1;
+    }
+  }
+  .pages-area {
+    position: relative;
+    width: 100% * $i;
+    transition-property: left;
+    transition-duration: 1s;
+  }
+  .page {
+    float: left;
+    width: 100% / $i;
+  }
+}

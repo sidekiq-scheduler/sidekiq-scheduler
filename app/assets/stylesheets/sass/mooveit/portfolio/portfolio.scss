@@ -1,0 +1,705 @@
+$image-path-porfolio: "v2/portfolio";
+
+$projects:  zuki
+            infonet
+            namco
+            mpos
+            vpos
+            comercio
+            mapright
+            factotum
+            bcp
+            opensource;
+
+body.portfolio-index{
+  overflow: hidden;
+  &.iphone, &.ipad, &.ipod{
+    .portfolio, .portfolio > .section{
+      height: 100%;
+    }
+  }
+  .portfolio{
+    height: calc(100% - 55px);
+    margin-top: rem-calc(55);
+    @media #{$large-up}{
+      height: calc(100% - 110px);
+      margin-top: rem-calc(110);
+    }
+    > .section{
+      position: relative;
+      display: table;
+      vertical-align: middle;
+      height: 100%;
+      width: 100%;
+      > div{
+        height: 100%;
+        width: 100%;
+        display: table-cell;
+        vertical-align: middle;
+      }
+      @media #{$landscape}{
+        background-size: cover;
+      }
+      @media #{$portrait}{
+        background-size: 100% auto;
+      }
+      @each $i in $projects{
+        &##{$i}{
+          @include retina-image($filename:'#{$image-path-porfolio}/#{$i}/#{$i}', $background-size: cover, $extension: jpg, $asset-pipeline: true);
+          background-size: cover;
+          background-position: 50% 0;
+          background-repeat: no-repeat;
+          @media #{$large-up}{
+            background-image: image-url('#{$image-path-porfolio}/#{$i}/#{$i}_2x.jpg')
+          }
+        }
+      }
+    }
+  }
+  h1{
+    font-weight: 300;
+  }
+  p{
+    font-size: rem-calc(20);
+  }
+}
+
+body.portfolio-index.mobile-navigation{
+  overflow: scroll;
+  .section::after{
+    display: block;
+    content: '\0020';
+    width: 100%;
+    height: rem-calc(8);
+    position: absolute;
+    top: 0;
+    left: 0;
+    background: #000;
+    box-sizing:border-box;
+    -moz-box-sizing:border-box;
+    -webkit-box-sizing:border-box;
+    pointer-events: none;
+  }
+}
+
+.onepage-pagination{
+  $pagination-item-height: 20;
+  $pagination-item-lenght: length($projects) + 2;
+  $pagination-top-margin: - rem-calc($pagination-item-lenght * $pagination-item-height)/2;
+  margin: $pagination-top-margin 0 0;
+}
+
+.section#home{
+  h1{
+    padding: 0 $column-gutter/2;
+    @media #{$landscape}{
+      text-align: center;
+    }
+    @media #{$large-up}{
+      padding: 0;
+    }
+  }
+}
+
+.section#zuki{
+  background-size: cover;
+  text-align: center;
+  h2{
+    margin-bottom: $column-gutter/2;
+  }
+  .zukiMoto{
+    height: 50%;
+    p{
+      color: #12406f;
+      text-transform: uppercase;
+      font-weight: bold;
+      line-height: 1;
+    }
+  }
+  .zukiApp{
+    position: absolute;
+    width: 100%;
+    bottom: 0;
+    left: 0;
+  }
+  @media #{$portrait}{
+    .row{
+      height: 75%;
+    }
+    .zukiMoto{
+      padding-right: $column-gutter/2;
+      padding-left: $column-gutter/2;
+      @media #{$small-only}{
+        p{
+          font-size: rem-calc(16);
+        }
+      }
+    }
+  }
+  @media #{$landscape}{
+    .zukiLogo, .zukiMoto{
+      float: left;
+      clear: left;
+      width: 50%;
+      height: auto;
+      padding-right: rem-calc(35);
+      padding-left: rem-calc(35);
+    }
+    .zukiApp{
+      right: 0;
+      left: auto;
+      width: auto;
+      height: 100%;
+    }
+    @media #{$medium-up}{
+      .container{
+        background-image: image-url('v2/portfolio/zuki/zukiApp.png');
+        background-size: auto 100%;
+        background-position: center;
+        background-repeat: no-repeat;
+      }
+      .zukiLogo, .zukiMoto{
+        clear: none;
+        margin: 0;
+        width: 33.33%;
+        > *{
+          margin: 0;
+        }
+      }
+      .zukiLogo{
+        text-align: right;
+      }
+      .zukiMoto{
+        height: rem-calc(107);
+        display: table;
+        float: right;
+        text-align: left;
+        p{
+          display: table-cell;
+          vertical-align: bottom;
+        }
+      }
+      .zukiApp{
+        display: none;
+      }
+    }
+  }
+}
+
+.section#infonet{
+  body.portfolio-index .portfolio > &{
+    background-size: auto 50%;
+    @media #{$landscape}{
+      background-size: cover;
+    }
+    @media #{$medium-up}{
+      background-size: cover;
+    }
+  }
+  div{
+    height: 100%;
+    .column{
+      position: relative;
+      height: 25%;
+      top: 75%;
+    }
+  }
+  @media #{$landscape}{
+    @media #{$small-only}{
+      background-size: cover;
+      .row{
+        height: auto;
+        background: rgba(#fff, .75);
+        @media #{$medium-up}{
+          background: none;
+        }
+        .column{
+          height: 100%;
+          top: auto;
+          margin-top: rem-calc(25);
+        }
+      }
+    }
+  }
+  @media #{$medium-up}{
+    background-size: cover;
+    div{
+      .column{
+        height: auto;
+        top: rem-calc(50);
+      }
+    }
+  }
+}
+
+.section#namco{
+  background-size: cover;
+  > .container{
+    height: 100%;
+    @include retina-image($filename:'#{$image-path-porfolio}/namco/screenNamco', $background-size: 100% auto, $asset-pipeline: true);
+    background-size: 100% auto;
+    background-repeat: no-repeat;
+    background-position: 50% 100%;
+    > .row{
+      height: 75%;
+      @media #{$small-only}{
+        @media #{$landscape}{
+          height: auto;
+        }
+      }
+    }
+  }
+  img{
+    max-width: rem-calc(200);
+    @media #{$medium-up}{
+      max-width: rem-calc(300);
+    }
+    @media #{$large-up}{
+      max-width: rem-calc(350);
+    }
+  }
+  @media #{$landscape}{
+    @media #{$small-only}{
+      > .container{
+        background-size: auto 75% !important;
+        background-position: 100% 100%;
+        .column{
+          width: 40%;
+        }
+      }
+    }
+  }
+  @media #{$medium-up}{
+    > .container{
+      background-size: auto 50% !important;
+      background-position: center 100%;
+    }
+  }
+}
+
+.section#mpos{
+  background-size: cover;
+  > .container{
+    height: 100%;
+    @include background-image(linear-gradient(left, rgba(255, 255, 255, .75) 0, rgba(255, 255, 255, .15)));
+  }
+  .row{
+    height: 100%;
+    @include retina-image($filename:'#{$image-path-porfolio}/mpos/mposDevice', $background-size: auto 60%, $asset-pipeline: true);
+    background-position: 50% 100%;
+    background-repeat: no-repeat;
+    background-size: auto 60%;
+  }
+  .column{
+    height: 100%;
+    margin: 0 auto;
+    float: none;
+    max-width: rem-calc(230);
+    @media #{$portrait}{
+      text-align: center;
+      padding-top: rem-calc(50);
+      @media #{$medium-up}{
+        max-width: none;
+        h2{
+          margin-bottom: rem-calc(50);
+        }
+        p{
+          font-size: rem-calc(24);
+        }
+      }
+    }
+  }
+  @media #{$landscape}{
+    .row{
+      background-position: 0 100%;
+      background-size: auto 90%;
+    }
+    .column{
+      width: 50%;
+      float: left;
+      margin-left: 50%;
+      @media #{$small-only}{
+        h2{
+          margin-top: 25%;
+        }
+      }
+      @media #{$medium-up}{
+        position: relative;
+        top: 50%;
+        margin-top: rem-calc(-90);
+        p{
+          font-size: rem-calc(24);
+          margin-bottom: 0;
+        }
+      }
+    }
+  }
+}
+
+.section#vpos{
+  body.portfolio-index .portfolio > &{
+    background-size: auto 35%;
+    @media #{$landscape}{
+      background-size: cover;
+    }
+    @media #{$medium-up}{
+      background-size: cover;
+    }
+  }
+  background-color: #fafafa;
+  text-align: center;
+  > .container{
+    height: 100%;
+    vertical-align: bottom;
+    padding-bottom: $column-gutter;
+    @media #{$large-up}{
+      height: auto;
+    }
+  }
+  @media #{$small-only} and (orientation : portrait){
+    p{
+      font-size: rem-calc(16);
+    }
+  }
+  .screenVpos{
+    height: rem-calc(100);
+    background-repeat: no-repeat;
+    background-position: center 0;
+    background-size: auto 100%;
+    margin-top: rem-calc(20);
+    @include retina-image($filename:'#{$image-path-porfolio}/vpos/screenVpos', $background-size: auto 100%, $asset-pipeline: true);
+    @media #{$portrait}{
+      @media #{$medium-up}{
+        height: rem-calc(250);
+      }
+    }
+  }
+  @media #{$landscape}{
+    text-align: left;
+    background-size: cover;
+    > .container{
+      height: 100%;
+      vertical-align: middle;
+      padding-bottom: 0;
+      @media #{$medium-up}{
+        vertical-align: top;
+        padding-top: rem-calc(50);
+        p{
+          margin: rem-calc(25) 0 rem-calc(50);
+        }
+      }
+    }
+    .screenVpos{
+      background-position: $column-gutter/2 0;
+      height: rem-calc(120);
+      margin-top: 0;
+      @media #{$medium-up}{
+        height: rem-calc(250);
+      }
+    }
+  }
+}
+
+.section#comercio{
+  text-align: center;
+  body.portfolio-index .portfolio > &{
+    background-size: auto 30%;
+    background-position: 85% 0;
+    @media #{$landscape}{
+      background-size: cover;
+    }
+    @media #{$medium-up}{
+      background-size: cover;
+    }
+    @media #{$portrait}{
+      background-size: 100% auto;
+      background-position: 50% 0;
+    }
+    @media #{$small-only}{
+      p{
+        font-size: rem-calc(16);
+      }
+    }
+  }
+  .container{
+    vertical-align: bottom;
+  }
+  .row.screenComercio{
+    height: 55%;
+    background-repeat: no-repeat;
+    background-size: 70% auto;
+    background-position: 50% 100%;
+    @include retina-image($filename:'#{$image-path-porfolio}/comercio/screenComercio', $background-size: 90% auto, $asset-pipeline: true);
+  }
+  @media #{$landscape}{
+    background-size: cover;
+    body.portfolio-index .portfolio > &{
+      background-position: center 0;
+    }
+    .row.screenComercio{
+      height: 100%;
+      width: 55%;
+      margin-left: $column-gutter;
+      background-color: rgba(#fff, .9);
+      @media #{$medium-up}{
+        background-size: 90% auto;
+        background-color: transparent;
+        h2, p{
+          background-color: #fff;
+          padding: rem-calc(50 0);
+          margin-bottom: 0;
+          display: inline-block;
+          width: rem-calc(400);
+          margin: 0;
+        }
+        p{
+          padding-top: 0;
+          border-radius: 0 0 $global-radius $global-radius;
+        }
+      }
+    }
+    h2{
+      margin-top: $column-gutter;
+      @media #{$medium-up}{
+        margin-top: rem-calc(100);
+      }
+    }
+  }
+}
+
+.section#mapright{
+  background-size: cover;
+  text-align: center;
+  body.portfolio-index .portfolio > &{
+    background-position: 0 rem-calc(150);
+  }
+  .container{
+    @include retina-image($filename:'#{$image-path-porfolio}/mapright/screenMapright', $background-size: 100 auto, $extension: png, $asset-pipeline: true);
+    background-repeat: no-repeat;
+    height: 100%;
+    background-size: 100% auto;
+    background-position: 100% 100%;
+  }
+  .row{
+    height: 100%;
+    .column{
+      margin-top: $column-gutter/2;
+    }
+  }
+  @media #{$small-only}{
+    p{
+      font-size: rem-calc(16);
+    }
+  }
+  @media #{$landscape}{
+    text-align: left;
+    .container{
+      background-size: auto 75%;
+    }
+  }
+}
+
+.section#factotum{
+  body.portfolio-index .portfolio > &{
+    background-size: 100% auto;
+  }
+  background-color: #fff;
+  text-align: center;
+  .container{
+    height: 100%;
+    @include retina-image($filename:'#{$image-path-porfolio}/factotum/screenFactotum', $background-size: auto 50%, $asset-pipeline: true);
+    background-repeat: no-repeat;
+    background-position: center 25%;
+    background-size: auto 50%;
+    vertical-align: bottom;
+  }
+  @media #{$landscape}{
+    background-size: cover;
+    text-align: left;
+    .container{
+      background-color: rgba(#fff, .75);
+      background-position: percentage(10/12) center;
+      background-size: auto 90%;
+      vertical-align: middle;
+    }
+    @media #{$medium-up}{
+      .container{
+        background-color: transparent;
+      }
+      .row{
+        height: 80%;
+      }
+    }
+  }
+}
+
+.section#bcp{
+  $bcp-meassure:90px;
+  background-size: cover;
+  text-align: center;
+  .container{
+    @include retina-image($filename:'#{$image-path-porfolio}/bcp/deviceBCP', $background-size: auto 70%, $asset-pipeline: true);
+    background-repeat: no-repeat;
+    background-position: 50% 100%;
+    background-size: auto 70%;
+    .row{
+      height: 90%;
+      > .column:first-child{
+        padding-left: calc(50% - #{$bcp-meassure})
+      }
+    }
+  }
+  h2{
+    margin: 0;
+    float: left;
+    img{
+      height: $bcp-meassure;
+      width: $bcp-meassure;
+    }
+  }
+  p{
+    margin: 0;
+    float: left;
+    background: rgba(255,104,28,0.75);
+    color: #fff;
+    height: $bcp-meassure;
+    width: $bcp-meassure;
+    line-height: 1em;
+    padding-top: $bcp-meassure/2 - 16px;
+  }
+  @media #{$landscape}{
+    .container{
+      background-size: auto calc(100% - #{$column-gutter/2});
+      background-position: calc(100% - #{$column-gutter}) center;
+      .row{
+        height: auto;
+        > .column{
+          width: 50%;
+          padding-left: calc(25% - #{$bcp-meassure*1.25}) !important;
+          h2{
+            img{
+              height: $bcp-meassure*1.25;
+              width: $bcp-meassure*1.25;
+            }
+          }
+          p{
+            height: $bcp-meassure*1.25;
+            width: $bcp-meassure*1.25;
+            padding-top: ($bcp-meassure*1.25)/2 - 16px;
+            font-weight: 400;
+          }
+        }
+      }
+    }
+  }
+  @media #{$medium-up}{
+    .container{
+      background-position: 75% center;
+      background-size: auto calc(100% - #{$column-gutter*2});
+      @media #{$portrait}{
+        background-size: 45% auto;
+        background-position: 50% 100%;
+      }
+      .row{
+        > .column{
+          padding-left: calc(50% - #{$bcp-meassure*2}) !important;
+          @media #{$landscape}{
+            padding-left: calc(25% - #{$bcp-meassure*2}) !important;
+          }
+          h2{
+            img{
+              height: $bcp-meassure*2;
+              width: $bcp-meassure*2;
+            }
+          }
+          p{
+            height: $bcp-meassure*2;
+            width: $bcp-meassure*2;
+            padding-top: rem-calc(($bcp-meassure*2)/2) - 1;
+            font-size: rem-calc(24);
+          }
+        }
+      }
+    }
+  }
+}
+
+.section#opensource{
+  text-align: center;
+  background-size: cover;
+  @media #{$small-only}{
+    body.portfolio-index .portfolio > &{
+      background: none;
+      text-align: left;
+      h4{
+        font-weight: bold;
+      }
+      @media #{$landscape}{
+        p{
+          font-size: rem-calc(16);
+        }
+        .gems .column{
+          @include grid-column(3);
+          margin-left: 0 !important;
+        }
+      }
+    }
+  }
+  p{
+    margin-bottom: 0;
+  }
+  a{
+    color: #d35f5f;
+  }
+  @media #{$medium-up}{
+    h4{
+      margin-bottom: rem-calc(100);
+    }
+    .gems{
+      .column{
+        text-align: center;
+        position: relative;
+        img{
+          margin: 0 auto;
+        }
+        h5{
+          margin: rem-calc(20 0 5);
+        }
+        p{
+          font-size: rem-calc(16);
+          line-height: 1.5;
+        }
+      }
+      .rusen{
+        top: rem-calc(-20);
+        img{
+          width: rem-calc(100);
+        }
+      }
+      .angus{
+        img{
+          width: rem-calc(310);
+        }
+      }
+      .suarez{
+        top: rem-calc(100);
+        img{
+          width: rem-calc(110);
+        }
+      }
+      .sidekiq-scheduler{
+        top: rem-calc(-40);
+        img{
+          width: rem-calc(190);
+        }
+      }
+    }
+  }
+}
+
+.section#contact{
+  text-align: left;
+  @media #{$medium-up}{
+    text-align: center;
+  }
+}

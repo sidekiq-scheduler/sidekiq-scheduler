@@ -1,0 +1,103 @@
+%SectionPages
+  display: table
+  vertical-align: middle
+  height: 100%
+  width: 100%
+  background-color: #fff
+  @include grid-row($behavior: false)
+  max-width: 100%
+  max-height: rem-calc(856)
+
+  border-bottom: 1px solid #ccc
+  padding-bottom: 20%
+  padding-top: 10%;
+
+  @media #{$medium-up}
+    border-bottom: none
+    padding-bottom: 0
+    margin-bottom: 0
+
+.fork-top
+  position: absolute
+  top: 0
+  right: 0
+  border: 0
+  width: rem-calc(150)
+  height: rem-calc(150)
+
+.Header
+  top: -100px
+  opacity: 0
+  @include transition(all 0.5s ease-out)
+
+  &-show
+    top: 0
+    opacity: 1
+
+  &-logo
+    img
+      width: 9rem
+
+    @media #{$medium-up}
+      margin: -1.5rem 0 0 1.875rem !important;
+      img
+        width: 15rem
+
+@include keyframes(scroll)
+  from
+    opacity: 1
+    @include transform(translateY(0px))
+  to
+    opacity: 0
+    @include transform(translateY(10px))
+
+.container-cell
+  display: table-cell
+  vertical-align: middle
+  height: 100%
+  width: 100%
+
+.current
+  color: $body-font-color
+  border-bottom: 1px solid $body-font-color
+
+.Navbar
+  &-doc
+    @include button($padding:$button-med)
+    position: absolute
+    right: rem-calc(15)
+    border: 1px solid $primary-color !important
+    text-transform: uppercase
+    margin: rem-calc(10 0 0 20)
+    font-size: rem-calc(13)
+    padding: rem-calc(9 14)
+    background: transparent
+
+    a
+      text-decoration: none
+
+    &:hover
+      a
+        color: #fff
+
+    @media #{$large-up}
+      display: none
+
+.SectionError
+  @extend %SectionPages
+
+  text-align: center
+
+  &-status
+    font-size: 10rem
+  img
+    width: rem-calc(200)
+    display: block
+    margin: 0 auto
+    margin-bottom: rem-calc(50)
+
+@import 'section-brand'
+@import 'section-why'
+@import 'section-install'
+@import 'section-using'
+@import 'footer'

@@ -1,0 +1,54 @@
+a
+  font-weight: 400
+
+.only-child
+  &, .button
+    margin: 0
+
+.message-wrapper > .message
+  width: 100%
+  padding: $column-gutter/2
+  position: fixed
+  background: rgba($alert-color, 0.7)
+  color: $contrasting-font-color
+  z-index: 3
+  &.success
+    background: rgba($success-color, 0.7)
+  p
+    margin-bottom: 0
+
+.Grey
+  background: $white-smoke
+  padding-top: $column-gutter*2
+  padding-bottom: $column-gutter*2
+  margin-top: $column-gutter*2
+  margin-bottom: $column-gutter*2
+
+.row__padded
+  padding-top: rem-calc(140)
+  margin-bottom: rem-calc(140)
+
+
+.Call
+  background: $primary-color
+  padding-top: rem-calc(60)
+  padding-bottom: rem-calc(60)
+  margin-top: $column-gutter*2
+  h4
+    color: $contrasting-font-color
+    font-weight: 300
+    margin: 0
+    font-size: rem-calc(38)
+    text-align: center
+  a
+    color: $contrasting-font-color
+    font-weight: 300
+    &.Call-button
+      @include button($bg:$contrasting-font-color, $padding:rem-calc(12))
+      color: $primary-color
+      font-size: rem-calc(28)
+      margin-bottom: 0
+      margin-top: rem-calc(26)
+      padding:
+        left: rem-calc(30)
+        right: rem-calc(30)

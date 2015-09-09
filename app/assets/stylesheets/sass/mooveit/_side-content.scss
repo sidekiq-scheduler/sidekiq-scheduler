@@ -1,0 +1,232 @@
+// Width of the hidden author bio section
+
+$side-content-sizes:  300px     600px       800px      1000px;
+$size-content-MQ:     $screen   $medium-up  $large-up   $xlarge-up;
+
+$sizes: zip($side-content-sizes, $size-content-MQ);
+
+
+body.overflow-hidden {
+  /* when author bio is visible, the out-of-focus content won't scroll */
+  overflow: hidden;
+  padding-top: 0;
+  header{
+    z-index: 2;
+  }
+}
+
+/* --------------------------------
+
+Main components
+
+-------------------------------- */
+header{
+  @include transition-property(transform);
+  @include transition-duration(.3s);
+}
+
+#main{
+  @include transition-property(transform);
+  @include transition-duration(.3s);
+  height: 100%;
+  @media #{$medium-up}{
+    position: relative;
+    z-index: 1;
+  }
+  &.slide-out{
+    padding-top: rem-calc(110);
+  }
+}
+#main.slide-out, body.overflow-hidden header{
+  @each $a in $sizes{
+    @media #{nth($a, 2)}{
+      @include transform(translateX(- nth($a, 1)));
+    }
+  }
+}
+
+.side-content {
+  position: fixed;
+  z-index: 99;
+  top: 0;
+  right: 0;
+  height: 100%;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  background: $body-font-color;
+  color: #fff;
+
+  /* smooth scrolling on mobile phones and tablets */
+  @include transition-property (transform);
+  @include transition-duration(.3s);
+  @each $a in $sizes{
+    @media #{nth($a, 2)}{
+      @include transform(translateX(nth($a, 1)));
+    }
+  }
+
+  @each $a in $sizes{
+    @media #{nth($a, 2)}{
+      width: nth($a, 1);
+      @include transform(translateX(nth($a, 1)));
+    }
+  }
+
+  &.slide-in {
+    /* the author bio section slides in when the user clicks on the team member picture */
+    @include transform(translateX(0));
+  }
+}
+
+.side-content-close {
+  width: rem-calc(32);
+  height: rem-calc(32);
+  overflow: hidden;
+  position: fixed;
+  top: $column-gutter/2;
+  right: $column-gutter/2;
+  @media #{$large-up}{
+    right: $column-gutter;
+  }
+  background: image-url('v2/side-content-close.svg') no-repeat center center;
+  cursor: pointer;
+  text-indent: 100%;
+  white-space: nowrap;
+  z-index: 100;
+  display: none;
+  body.overflow-hidden &{
+    display: block;
+  }
+}
+
+.side-content-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(#fff, .8);
+  cursor: pointer;
+  display: none;
+  z-index: 2;
+  .overflow-hidden &{
+    display: block;
+  }
+}
+
+/* --------------------------------
+
+xkeyframes
+
+-------------------------------- */
+
+@include keyframes(cd-fade-in) {
+  0% {
+    opacity: 0;
+  }
+
+  100% {
+    opacity: 1;
+  }
+}
+
+
+/*Particular content*/
+.side-content{
+  padding: 0;
+  @media #{$medium-up}{
+    padding: $column-gutter;
+  }
+  &#testimonials{
+    .column{
+      margin: 0 auto $column-gutter;
+      clear: both;
+      float: none;
+      @media #{$large-up}{
+        max-width: 50%;
+      }
+    }
+    img{
+      height: rem-calc(160);
+      width: rem-calc(160);
+    }
+    p.cite{
+      font-size: rem-calc(18);
+    }
+  }
+  &#clients{
+    padding: $column-gutter*2 $column-gutter $column-gutter;
+    @media #{$medium-up}{
+      padding: $column-gutter*2;
+    }
+    .clients-wrapper{
+      @include grid-row;
+      background: #fff;
+      padding: $column-gutter/2;
+      > div{
+        text-align: center;
+        @include grid-column(12);
+        @media #{$medium-up}{
+          @include grid-column(4);
+        }
+        @media #{$large-up}{
+          @include grid-column(3);
+        }
+      }
+    }
+  }
+  &#value-1,
+  &#value-2,
+  &#value-3,
+  &#value-4,
+  &#value-5{
+    .row, .column{
+      height: 100%;
+    }
+    .column{
+      display: table;
+      > div{
+        display: table-cell;
+        vertical-align: middle;
+      }
+    }
+    p{
+      font-size: rem-calc(24);
+    }
+  }
+  &.side-content-team{
+    padding: 0;
+    .side-content-close{
+      background-color: rgba($body-font-color, .5);
+    }
+    p{
+      padding: $column-gutter;
+      height: 100%;
+      margin: 0;
+      position: relative;
+      padding-top: rem-calc(220);
+      @media #{$medium-up}{
+        font-size: rem-calc(20);
+        padding-top: 65%;
+        @include background-image(linear-gradient( transparent 0, transparent 20%, $body-font-color 45% ) );
+      }
+      @media #{$large-up}{
+        padding-top: rem-calc(500);
+        @include background-image(linear-gradient( transparent 0, transparent 300px, $body-font-color 600px ) );
+      }
+      span{
+        margin: 0 auto;
+        display: block;
+        &.name{
+          font-size: $h4-font-size;
+          font-weight: 800;
+        }
+        &.role{
+          font-weight: 300;
+          font-size: $h5-font-size;
+          margin-bottom: $column-gutter/2;
+        }
+      }
+    }
+  }
+}

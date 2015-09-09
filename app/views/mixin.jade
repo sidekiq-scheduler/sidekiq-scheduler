@@ -1,0 +1,18 @@
+mixin link(href, name)
+  if block
+    a(href=href)&attributes(attributes)
+      block
+  else
+    a(href=href)&attributes(attributes)= name
+
+mixin image(src)
+  img(src="images/"+src)&attributes(attributes)
+
+mixin navItem(context, page, url)
+  if block
+    li.Navbar-listItem(class = page+"-"+context)&attributes(attributes)
+      block
+  else
+    li.Navbar-listItem(class = page+"-"+context)&attributes(attributes)
+      +link(url, page)
+

@@ -1,0 +1,82 @@
+.SectionInstall
+  @extend %SectionPages
+
+  &-title
+    @include grid-column(12)
+
+    @media #{$medium-up}
+      @include grid-column(8, $offset: 2)
+
+  &-terminal
+    @include grid-column(12)
+    margin-bottom:  rem-calc(20)
+
+    @media #{$medium-up}
+      @include grid-column(8, $offset: 2)
+
+    @media #{$large-up}
+      @include grid-column(3.5, $offset: 2, $collapse: true)
+
+    .terminal-window
+      width: 100%
+      .terminal
+        padding-top: rem-calc(12)
+
+  &-sublime
+    @include grid-column(12)
+
+    @media #{$medium-up}
+      @include grid-column(8, $offset: 2)
+      .terminal-window
+        ol
+          font-size: rem-calc(16)
+
+    @media #{$large-up}
+      @include grid-column(3.5, $offset: 0, $collapse: true)
+
+    .terminal-window
+      width: 100%
+      ol
+        font-size: rem-calc(12)
+
+  .separator
+    @include grid-column(11, $offset: 0.5, $collapse: true)
+    position: relative
+    border-bottom: 1px solid DimGray
+    margin-bottom: $column-gutter
+
+
+    @media #{$medium-up}
+      @include grid-column(7, $offset: 2.5)
+
+    @media #{$large-up}
+      @include grid-column(1, $offset: 0, $collapse: true)
+      border-right: 1px solid DimGray
+      border: none
+      height: 300px
+      &:after
+        content: ''
+        height: 300px
+        width: 1px
+        background-color: DimGray
+        position: absolute
+        left: 50%
+
+    &-text
+      background-color: #FFF
+      position: absolute
+      text-align: center
+      color: DimGray
+      font-weight: 400
+      width: 50px
+      left: calc(50% - 25px)
+      padding: 5px 0px
+      height: 20px
+      top: -18px
+      @media #{$large-up}
+        width: 100%
+        text-align: center
+        top: calc(50% - 25px)
+        left: 0
+        height: auto
+        z-index: 2
