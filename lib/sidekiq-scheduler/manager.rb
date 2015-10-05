@@ -19,6 +19,7 @@ module SidekiqScheduler
     def initialize(options={})
       @enabled = options[:scheduler]
 
+      Sidekiq::Scheduler.enabled = options[:enabled]
       Sidekiq::Scheduler.dynamic = options[:dynamic] || false
       Sidekiq.schedule = options[:schedule] if options[:schedule]
     end
@@ -30,9 +31,9 @@ module SidekiqScheduler
     def start
       # Load the schedule into rufus
       # If dynamic is set, load that schedule otherwise use normal load
-      if @enabled && Sidekiq::Scheduler.dynamic
+      if @enabled && Sidekiq::Scheduler.dynamic && Sidekiq::Scheduler.enabled
         Sidekiq::Scheduler.reload_schedule!
-      elsif @enabled
+      elsif @enabled && Sidekiq::Scheduler.enabled
         Sidekiq::Scheduler.load_schedule!
       end
     end

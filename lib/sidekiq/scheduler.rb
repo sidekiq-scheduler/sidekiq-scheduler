@@ -14,6 +14,7 @@ module Sidekiq
 
     class << self
       # If set, will try to update the schedule in the loop
+      attr_accessor :enabled
       attr_accessor :dynamic
     end
 
@@ -35,22 +36,26 @@ module Sidekiq
     # Pulls the schedule from Sidekiq.schedule and loads it into the
     # rufus scheduler instance
     def self.load_schedule!
-      logger.info 'Loading Schedule'
+      if enabled
+        logger.info 'Loading Schedule'
 
-      # Need to load the schedule from redis for the first time if dynamic
-      Sidekiq.reload_schedule! if dynamic
+        # Need to load the schedule from redis for the first time if dynamic
+        Sidekiq.reload_schedule! if dynamic
 
-      logger.info 'Schedule empty! Set Sidekiq.schedule' if Sidekiq.schedule.empty?
+        logger.info 'Schedule empty! Set Sidekiq.schedule' if Sidekiq.schedule.empty?
 
-      @@scheduled_jobs = {}
+        @@scheduled_jobs = {}
 
-      Sidekiq.schedule.each do |name, config|
-        self.load_schedule_job(name, config)
+        Sidekiq.schedule.each do |name, config|
+          self.load_schedule_job(name, config)
+        end
+
+        Sidekiq.redis { |r| r.del(:schedules_changed) }
+
+        logger.info 'Schedules Loaded'
+      else
+        logger.info 'SidekiqScheduler is disabled'
       end
-
-      Sidekiq.redis { |r| r.del(:schedules_changed) }
-
-      logger.info 'Schedules Loaded'
     end
 
     # modify interval type value to value with options if options available
@@ -153,9 +158,13 @@ module Sidekiq
     end
 
     def self.reload_schedule!
-      logger.info 'Reloading Schedule'
-      self.clear_schedule!
-      self.load_schedule!
+      if enabled
+        logger.info 'Reloading Schedule'
+        self.clear_schedule!
+        self.load_schedule!
+      else
+        logger.info 'SidekiqScheduler is disabled'
+      end
     end
 
     def self.update_schedule
