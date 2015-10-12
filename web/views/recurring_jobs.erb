@@ -1,0 +1,31 @@
+<h3>Recurring Jobs</h3>
+
+<div class="table_container">
+  <table class="table table-hover table-bordered table-striped table-white">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Description</th>
+        <th>Interval</th>
+        <th>Class</th>
+        <th>Queue</th>
+        <th>Arguments</th>
+      </tr>
+    </thead>
+
+    <tbody>
+      <% @schedule.each do |name, job_spec| %>
+        <tr>
+          <td><%= name %></td>
+          <td><%= job_spec['description'] %></td>
+          <td><%= job_spec.fetch 'cron', job_spec['every'] %></td>
+          <td><%= job_spec['class'] %></td>
+          <td>
+            <a href="<%= root_path %>queues/<%= job_spec.fetch('queue', 'default') %>"><%= job_spec.fetch('queue', 'default') %></a>
+          </td>
+          <td><%= job_spec['args'] %></td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+</div>

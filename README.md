@@ -148,6 +148,17 @@ from the `config.time_zone` value, make sure it's the right format, e.g. with:
 
 A future version of sidekiq-scheduler may do this for you.
 
+### Sidekiq Web Integration
+
+SidekiqScheduler provides an extension to the Sidekiq web interface that adds a Recurring Jobs page.
+
+To use it, set up the Sidekiq web interface according to the Sidekiq documentation and then add the SidekiqScheduler::Web require:
+
+``` ruby
+require 'sidekiq/web'
+require 'sidekiq-scheduler/web'
+```
+
 ## Note on Patches / Pull Requests
 
 * Fork the project.

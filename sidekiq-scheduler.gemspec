@@ -29,5 +29,6 @@ Gem::Specification.new do |s|
   s.add_development_dependency 'minitest',    '~> 5.0'
   s.add_development_dependency 'mock_redis',  '~> 0'
   s.add_development_dependency 'simplecov',   '~> 0'
-
+  s.add_development_dependency 'rack-test'
+  s.add_development_dependency 'sinatra'
 end
