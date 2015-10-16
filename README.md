@@ -37,7 +37,7 @@ and the execute:
 sidekiq -r created_file_path.rb
 ```
 
-Look at [Loading the schedule][https://github.com/moove-it/sidekiq-scheduler/tree/0.x#loading-the-schedule]
+Look at [Loading the schedule](https://github.com/moove-it/sidekiq-scheduler/tree/0.x#loading-the-schedule)
 for information on how to load your schedule.
 
 You can add sidekiq-scheduler configuration options to sidekiq.yml config file.
