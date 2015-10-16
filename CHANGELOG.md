@@ -1,7 +1,15 @@
 # Change Log
 
-## [1.2](https://github.com/moove-it/sidekiq-scheduler/tree/1.2) (2015-10-16)
-[Full Changelog](https://github.com/moove-it/sidekiq-scheduler/compare/v0.4.1...1.2)
+## [1.2.1](https://github.com/moove-it/sidekiq-scheduler/tree/1.2.1) (2015-10-16)
+[Full Changelog](https://github.com/moove-it/sidekiq-scheduler/compare/v1.2...1.2.1)
+
+**Merged pull requests:**
+
+- Remove useless sidekiq version constraint [\#54](https://github.com/moove-it/sidekiq-scheduler/pull/54) ([snmgian](https://github.com/snmgian))
+- Bump version and add CHANGELOG [\#53](https://github.com/moove-it/sidekiq-scheduler/pull/53) ([elpic](https://github.com/elpic))
+
+## [v1.2](https://github.com/moove-it/sidekiq-scheduler/tree/v1.2) (2015-10-16)
+[Full Changelog](https://github.com/moove-it/sidekiq-scheduler/compare/v0.4.1...v1.2)
 
 **Closed issues:**
 
