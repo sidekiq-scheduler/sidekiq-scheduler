@@ -1,4 +1,8 @@
-# SidekiqScheduler
+<p align="center">
+  <a href="http://moove-it.github.io/sidekiq-scheduler/">
+    <img src="https://moove-it.github.io/sidekiq-scheduler/images/logo.png" alt="Sidekiq Scheduler" />
+  </a>
+</p>
 
 ## Note
 
@@ -22,7 +26,7 @@ details on individual methods, you might want to try the [rdoc](http://rdoc.info
 
 Add this to your Gemfile:
 ```ruby
-gem 'sidekiq-scheduler', '~> 1'
+gem 'sidekiq-scheduler', '~> 1.2'
 ```
 
 If you are using rails you are set
