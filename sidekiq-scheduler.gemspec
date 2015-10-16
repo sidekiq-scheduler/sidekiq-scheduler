@@ -18,7 +18,7 @@ Gem::Specification.new do |s|
   s.files       = Dir['{app,config,db,lib}/**/*'] + %w[MIT-LICENSE Rakefile README.md]
   s.test_files  = Dir['test/**/*']
 
-  s.add_dependency 'sidekiq',         '~> 3', '>= 2.12'
+  s.add_dependency 'sidekiq',         '~> 3'
   s.add_dependency 'redis',           '~> 3'
   s.add_dependency 'rufus-scheduler', '~> 3'
   s.add_dependency 'multi_json',      '~> 1'
