@@ -1,7 +1,20 @@
 # Change Log
 
-## [1.2.1](https://github.com/moove-it/sidekiq-scheduler/tree/1.2.1) (2015-10-16)
-[Full Changelog](https://github.com/moove-it/sidekiq-scheduler/compare/v1.2...1.2.1)
+## [1.2.2](https://github.com/moove-it/sidekiq-scheduler/tree/1.2.2) (2015-10-19)
+[Full Changelog](https://github.com/moove-it/sidekiq-scheduler/compare/v1.2.1...1.2.2)
+
+**Closed issues:**
+
+- Not seeing scheduled tasks in web [\#56](https://github.com/moove-it/sidekiq-scheduler/issues/56)
+- Issue loading sidekiq-scheduler/web [\#52](https://github.com/moove-it/sidekiq-scheduler/issues/52)
+
+**Merged pull requests:**
+
+- Add web view to gemspec [\#55](https://github.com/moove-it/sidekiq-scheduler/pull/55) ([elpic](https://github.com/elpic))
+- Fix typo in README.md [\#51](https://github.com/moove-it/sidekiq-scheduler/pull/51) ([cbetta](https://github.com/cbetta))
+
+## [v1.2.1](https://github.com/moove-it/sidekiq-scheduler/tree/v1.2.1) (2015-10-16)
+[Full Changelog](https://github.com/moove-it/sidekiq-scheduler/compare/v1.2...v1.2.1)
 
 **Merged pull requests:**
 

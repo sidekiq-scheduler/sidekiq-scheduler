@@ -9,12 +9,16 @@ module Sidekiq
 
     # We expect rufus jobs to have #params
     Rufus::Scheduler::Job.module_eval do
+
       alias_method :params, :opts
+
     end
 
     class << self
+
       # If set, will try to update the schedule in the loop
       attr_accessor :dynamic
+
     end
 
     # the Rufus::Scheduler jobs that are scheduled
