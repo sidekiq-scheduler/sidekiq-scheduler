@@ -38,11 +38,10 @@ module SidekiqScheduler
     def schedule=(schedule_hash)
       schedule_hash = prepare_schedule(schedule_hash)
 
-      if Sidekiq::Scheduler.dynamic
-        schedule_hash.each do |name, job_spec|
-          set_schedule(name, job_spec)
-        end
+      schedule_hash.each do |name, job_spec|
+        set_schedule(name, job_spec)
       end
+
       @schedule = schedule_hash
     end
 
@@ -50,10 +49,13 @@ module SidekiqScheduler
       @schedule ||= {}
     end
 
-    # reloads the schedule from redis
+    # Reloads the schedule from Redis and return it.
+    #
+    # @return Hash
     def reload_schedule!
       @schedule = get_schedule
     end
+    alias_method :schedule!, :reload_schedule!
 
     # Retrive the schedule configuration for the given name
     # if the name is nil it returns a hash with all the
