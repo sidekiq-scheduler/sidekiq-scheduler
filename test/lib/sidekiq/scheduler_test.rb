@@ -4,11 +4,29 @@ class ManagerTest < Minitest::Test
   describe 'Sidekiq::Scheduler' do
 
     before do
+      Sidekiq::Scheduler.enabled = true
       Sidekiq::Scheduler.dynamic = false
       Sidekiq.redis { |r| r.del(:schedules) }
       Sidekiq.redis { |r| r.del(:schedules_changed) }
       Sidekiq::Scheduler.clear_schedule!
       Sidekiq::Scheduler.send(:class_variable_set, :@@scheduled_jobs, {})
+    end
+
+    it 'sidekiq-scheduler enabled option is working' do
+      Sidekiq::Scheduler.enabled = false
+      assert_equal(0, Sidekiq::Scheduler.rufus_scheduler.jobs.size)
+      Sidekiq.schedule = {
+        :some_ivar_job => {
+          'cron' => '* * * * *',
+          'class' => 'SomeIvarJob',
+          'args' => '/tmp'
+        }
+      }
+
+      Sidekiq::Scheduler.load_schedule!
+
+      assert_equal(0, Sidekiq::Scheduler.rufus_scheduler.jobs.size)
+      refute Sidekiq::Scheduler.scheduled_jobs.include?(:some_ivar_job)
     end
 
     it 'enqueue constantizes' do

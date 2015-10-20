@@ -49,6 +49,30 @@ Available options are:
 
     :schedule: <the schedule to be run>
     :dynamic: <if true the schedule can be modified in runtime>
+    :enabled: <disables scheduler if true [true by default]>
+
+## Manage tasks from Unicorn/Rails server
+
+For example, if you want start sidekiq-scheduler only from Unicorn/Rails, but not from Sidekiq you can write something like this in initializer:
+
+```ruby
+# config/initializers/sidekiq_scheduler.rb
+require 'sidekiq/scheduler'
+
+puts "Sidekiq.server? is #{Sidekiq.server?.inspect}"
+puts "defined?(Rails::Server) is #{defined?(Rails::Server).inspect}"
+puts "defined?(Unicorn) is #{defined?(Unicorn).inspect}"
+
+if Rails.env == 'production' && (defined?(Rails::Server) || defined?(Unicorn))
+  Sidekiq.schedule = YAML
+    .load_file(File.expand_path('../../../config/scheduler.yml', __FILE__))
+  Sidekiq::Scheduler.reload_schedule!
+else
+  Sidekiq::Scheduler.enabled = false
+  puts "Sidekiq::Scheduler.enabled is #{Sidekiq::Scheduler.enabled.inspect}"
+end
+```
+
 
 ## Scheduled Jobs (Recurring Jobs)
 
