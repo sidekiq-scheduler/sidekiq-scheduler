@@ -188,7 +188,7 @@ class ManagerTest < Minitest::Test
         }
       )
 
-      assert_equal(1, Sidekiq::Scheduler.rufus_scheduler.all_jobs.size)
+      assert_equal(1, Sidekiq::Scheduler.rufus_scheduler.jobs.size)
       assert_equal(1, Sidekiq::Scheduler.scheduled_jobs.size)
       assert Sidekiq::Scheduler.scheduled_jobs.keys.include?('some_ivar_job')
     end
@@ -203,7 +203,7 @@ class ManagerTest < Minitest::Test
         }
       )
 
-      assert_equal(1, Sidekiq::Scheduler.rufus_scheduler.all_jobs.size)
+      assert_equal(1, Sidekiq::Scheduler.rufus_scheduler.jobs.size)
       assert_equal(1, Sidekiq::Scheduler.scheduled_jobs.size)
       assert Sidekiq::Scheduler.scheduled_jobs.keys.include?('some_ivar_job')
     end
