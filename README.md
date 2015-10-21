@@ -4,23 +4,31 @@
   </a>
 </p>
 
-## Note
-
-The master branch and releases from 1.0 are compatible with sidekiq ~> 3, for sidekiq ~> 2 support
-use versions ~> 0.
-
-## Description
+<p align="center">
+  <a href="https://badge.fury.io/rb/sidekiq-scheduler">
+    <img src="https://badge.fury.io/rb/sidekiq-scheduler.png" alt="Gem Version">
+  </a>
+  <a href="https://codeclimate.com/github/moove-it/sidekiq-scheduler">
+    <img src="https://codeclimate.com/github/moove-it/sidekiq-scheduler/badges/gpa.svg" alt="Code Climate">
+  </a>
+  <a href="https://travis-ci.org/moove-it/sidekiq-scheduler">
+    <img src="https://api.travis-ci.org/moove-it/sidekiq-scheduler.svg?branch=master" alt="Build Status">
+  </a>
+  <a href="https://coveralls.io/github/moove-it/sidekiq-scheduler?branch=master">
+    <img src="https://coveralls.io/repos/moove-it/sidekiq-scheduler/badge.svg?branch=master&service=github" alt="Coverage Status">
+  </a>
+  <a href="https://inch-ci.org/github/moove-it/sidekiq-scheduler">
+    <img src="https://inch-ci.org/github/moove-it/sidekiq-scheduler.svg?branch=master" alt="Documentation Coverage">
+  </a>
+  <a href="http://www.rubydoc.info/github/moove-it/sidekiq-scheduler">
+    <img src="https://img.shields.io/badge/yard-docs-blue.svg" alt="Documentation">
+  </a>
+</p>
 
 sidekiq-scheduler is an extension to [Sidekiq](http://github.com/mperham/sidekiq)
 that adds support for running scheduled.
 
 Scheduled jobs are like cron jobs, recurring on a regular basis.
-
-### Documentation
-
-This README covers what most people need to know. If you're looking for
-details on individual methods, you might want to try the [rdoc](http://rdoc.info/github/moove-it/sidekiq-scheduler/master/frames).
-
 
 ## Installation
 
