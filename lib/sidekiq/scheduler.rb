@@ -16,8 +16,10 @@ module Sidekiq
 
     class << self
 
-      # If set, will try to update the schedule in the loop
+      # Set to enable or disable the scheduler.
       attr_accessor :enabled
+
+      # Set to update the schedule in runtime in a given time period.
       attr_accessor :dynamic
 
     end
@@ -31,7 +33,7 @@ module Sidekiq
       if self.rufus_scheduler
         logger.info "Scheduling Info\tLast Run"
         scheduler_jobs = self.rufus_scheduler.all_jobs
-        scheduler_jobs.each do |k, v|
+        scheduler_jobs.each do |_, v|
           logger.info "#{v.t}\t#{v.last}\t"
         end
       end
@@ -115,13 +117,13 @@ module Sidekiq
     # Returns true if the given schedule config hash matches the current
     # ENV['RAILS_ENV']
     def self.rails_env_matches?(config)
-      config['rails_env'] && ENV['RAILS_ENV'] && config['rails_env'].gsub(/\s/,'').split(',').include?(ENV['RAILS_ENV'])
+      config['rails_env'] && ENV['RAILS_ENV'] && config['rails_env'].gsub(/\s/, '').split(',').include?(ENV['RAILS_ENV'])
     end
 
     def self.handle_errors
       begin
         yield
-      rescue Exception => e
+      rescue StandardError => e
         logger.info "#{e.class.name}: #{e.message}"
       end
     end

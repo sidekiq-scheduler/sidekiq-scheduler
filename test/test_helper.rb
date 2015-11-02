@@ -39,15 +39,15 @@ end
 
 class SomeJob
   include Sidekiq::Worker
-  def self.perform(repo_id, path)
+  def self.perform(_, _)
   end
 end
 
 class SomeIvarJob < SomeJob
-  sidekiq_options :queue => :ivar
+  sidekiq_options queue: :ivar
 end
 
 class SomeRealClass
   include Sidekiq::Worker
-  sidekiq_options :queue => :some_real_queue
+  sidekiq_options queue: :some_real_queue
 end
