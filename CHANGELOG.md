@@ -1,7 +1,24 @@
 # Change Log
 
-## [1.2.2](https://github.com/moove-it/sidekiq-scheduler/tree/1.2.2) (2015-10-19)
-[Full Changelog](https://github.com/moove-it/sidekiq-scheduler/compare/v1.2.1...1.2.2)
+## [1.2.3](https://github.com/moove-it/sidekiq-scheduler/tree/1.2.3) (2015-11-05)
+[Full Changelog](https://github.com/moove-it/sidekiq-scheduler/compare/v1.2.2...1.2.3)
+
+**Closed issues:**
+
+- Keep the tags up to date? [\#48](https://github.com/moove-it/sidekiq-scheduler/issues/48)
+- Scheduler giving timeout errors [\#42](https://github.com/moove-it/sidekiq-scheduler/issues/42)
+- Multiple schedules are loaded for multiple workers [\#41](https://github.com/moove-it/sidekiq-scheduler/issues/41)
+
+**Merged pull requests:**
+
+- Update README.md [\#61](https://github.com/moove-it/sidekiq-scheduler/pull/61) ([MaartenG](https://github.com/MaartenG))
+- Fixed coveralls integration [\#59](https://github.com/moove-it/sidekiq-scheduler/pull/59) ([elpic](https://github.com/elpic))
+- Improve documentation & fixed tests [\#58](https://github.com/moove-it/sidekiq-scheduler/pull/58) ([elpic](https://github.com/elpic))
+- Fixed scheduled jobs view [\#57](https://github.com/moove-it/sidekiq-scheduler/pull/57) ([elpic](https://github.com/elpic))
+- Add startup and enabled options [\#49](https://github.com/moove-it/sidekiq-scheduler/pull/49) ([artem-russkikh](https://github.com/artem-russkikh))
+
+## [v1.2.2](https://github.com/moove-it/sidekiq-scheduler/tree/v1.2.2) (2015-10-19)
+[Full Changelog](https://github.com/moove-it/sidekiq-scheduler/compare/v1.2.1...v1.2.2)
 
 **Closed issues:**
 
