@@ -1,7 +1,7 @@
 # Change Log
 
-## [1.2.3](https://github.com/moove-it/sidekiq-scheduler/tree/1.2.3) (2015-11-05)
-[Full Changelog](https://github.com/moove-it/sidekiq-scheduler/compare/v1.2.2...1.2.3)
+## [v1.2.3](https://github.com/moove-it/sidekiq-scheduler/tree/v1.2.3) (2015-11-05)
+[Full Changelog](https://github.com/moove-it/sidekiq-scheduler/compare/v1.2.2...v1.2.3)
 
 **Closed issues:**
 
@@ -61,6 +61,7 @@
 
 **Merged pull requests:**
 
+- New page Sidekiq Scheduler [\#63](https://github.com/moove-it/sidekiq-scheduler/pull/63) ([imNicoSuarez](https://github.com/imNicoSuarez))
 - Basic Sidekiq Web UI integration [\#50](https://github.com/moove-it/sidekiq-scheduler/pull/50) ([jimryan](https://github.com/jimryan))
 - Update gem version to 1.1 [\#46](https://github.com/moove-it/sidekiq-scheduler/pull/46) ([elpic](https://github.com/elpic))
 - allow the use of rufus scheduler methods \[at, in\] [\#44](https://github.com/moove-it/sidekiq-scheduler/pull/44) ([timcase](https://github.com/timcase))
