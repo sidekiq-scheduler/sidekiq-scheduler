@@ -1,4 +1,3 @@
-require 'celluloid'
 require 'redis'
 
 require 'sidekiq/util'
@@ -14,7 +13,6 @@ module SidekiqScheduler
   #
   class Manager
     include Sidekiq::Util
-    include Celluloid
 
     def initialize(options={})
       @enabled = options[:scheduler]
