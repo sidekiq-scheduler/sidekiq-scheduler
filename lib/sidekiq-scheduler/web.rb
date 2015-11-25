@@ -6,7 +6,7 @@ module SidekiqScheduler
 
     def self.registered(app)
       app.get '/recurring-jobs' do
-        @schedule = Sidekiq.schedule!
+        @schedule = (Sidekiq.schedule! || [])
 
         erb File.read(File.join(VIEW_PATH, 'recurring_jobs.erb'))
       end

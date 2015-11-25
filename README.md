@@ -167,6 +167,32 @@ Run `spring stop` to stop Spring.
 
 For more information, see [this issue](https://github.com/Moove-it/sidekiq-scheduler/issues/35#issuecomment-48067183) and [Spring's README](https://github.com/rails/spring/blob/master/README.md).
 
+### Reloading the schedules
+
+The schedules can we updated from redis, every 5 seconds the redis is checked for schedule changes,
+to update an schedule you have to:
+
+ ```ruby
+   Sidekiq.set_schedule('some_name', { 'every' => ['1m'], 'class' => 'HardWorker' })
+ ```
+
+ If the schedule did not exist it'll we created if it existed it'll be updated
+
+ ### Testing
+
+ In your tests you can check that a schedule change has been set you have to:
+ ```ruby
+   require 'sidekiq'
+   require 'sidekiq-scheduler'
+   require 'sidekiq-scheduler/test'
+
+   Sidekiq.set_schedule('some_name', { 'every' => ['1m'], 'class' => 'HardWorker' })
+
+   Sidekiq::Scheduler.schedules => { 'every' => ['1m'], 'class' => 'HardWorker' }
+   Sidekiq::Scheduler.schedules_changed => ['every']
+ ```
+
+
 ### Time zones
 
 Note that if you use the cron syntax, this will be interpreted as in the server time zone

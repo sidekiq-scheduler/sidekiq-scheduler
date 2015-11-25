@@ -1,4 +1,5 @@
 require 'sidekiq'
+require 'tilt/erb'
 
 require_relative 'sidekiq-scheduler/version'
 require_relative 'sidekiq-scheduler/manager'
@@ -23,4 +24,3 @@ Sidekiq.configure_server do |config|
   end
 
 end
-

@@ -14,26 +14,18 @@ module SidekiqScheduler
   class Manager
     include Sidekiq::Util
 
-    def initialize(options={})
-      @enabled = options[:scheduler]
-
+    def initialize(options)
       Sidekiq::Scheduler.enabled = options[:enabled]
-      Sidekiq::Scheduler.dynamic = options[:dynamic] || false
+      Sidekiq::Scheduler.dynamic = options[:dynamic]
       Sidekiq.schedule = options[:schedule] if options[:schedule]
     end
 
     def stop
-      @enabled = false
+      Sidekiq::Scheduler.clear_schedule!
     end
 
     def start
-      # Load the schedule into rufus
-      # If dynamic is set, load that schedule otherwise use normal load
-      if @enabled && Sidekiq::Scheduler.dynamic && Sidekiq::Scheduler.enabled
-        Sidekiq::Scheduler.reload_schedule!
-      elsif @enabled && Sidekiq::Scheduler.enabled
-        Sidekiq::Scheduler.load_schedule!
-      end
+      Sidekiq::Scheduler.load_schedule!
     end
 
     def reset

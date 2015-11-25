@@ -131,6 +131,40 @@ class ManagerTest < Minitest::Test
       assert_equal '/tmp/2', Sidekiq.schedule['some_ivar_job2']['args']
     end
 
+    it 'reloads the schedule from redis after 5 seconds when dynamic' do
+      Sidekiq.redis { |r| r.flushdb }
+      Sidekiq::Scheduler.clear_schedule!
+
+      Sidekiq::Scheduler.dynamic = true
+      Sidekiq.schedule = {
+        :some_ivar_job => {
+          'cron' => '* * * * *',
+          'class' => 'SomeIvarJob',
+          'args' => '/tmp'
+        }
+      }
+
+      Sidekiq::Scheduler.load_schedule!
+
+      assert Sidekiq::Scheduler.scheduled_jobs.include?('some_ivar_job')
+      assert !Sidekiq::Scheduler.scheduled_jobs.include?('some_ivar_job2')
+
+      Sidekiq.set_schedule(
+        'some_ivar_job2',
+        {
+          'cron' => '* * * * *',
+          'class' => 'SomeIvarJob',
+          'args' => '/tmp/2'
+        }
+      )
+
+      sleep(7)
+
+      assert Sidekiq::Scheduler.scheduled_jobs.include?('some_ivar_job')
+      assert Sidekiq::Scheduler.scheduled_jobs.include?('some_ivar_job2')
+    end
+
+
     it 'load_schedule_job loads a schedule' do
       Sidekiq::Scheduler.load_schedule_job(
         'some_ivar_job',
