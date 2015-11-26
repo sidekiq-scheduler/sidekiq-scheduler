@@ -34,7 +34,7 @@ Scheduled jobs are like cron jobs, recurring on a regular basis.
 
 Add this to your Gemfile:
 ```ruby
-gem 'sidekiq-scheduler', '~> 1.2'
+gem 'sidekiq-scheduler', '~> 2.0'
 ```
 
 If you are using rails you are set
