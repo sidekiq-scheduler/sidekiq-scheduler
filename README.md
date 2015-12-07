@@ -169,7 +169,7 @@ For more information, see [this issue](https://github.com/Moove-it/sidekiq-sched
 
 ### Reloading the schedules
 
-The schedules can we updated from redis, every 5 seconds the redis is checked for schedule changes,
+The schedules can be updated from redis, every 5 seconds the redis is checked for schedule changes,
 to update an schedule you have to:
 
  ```ruby
