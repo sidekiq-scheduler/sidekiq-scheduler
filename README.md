@@ -57,7 +57,7 @@ Available options are:
 
     :schedule: <the schedule to be run>
     :dynamic: <if true the schedule can be modified in runtime>
-    :enabled: <disables scheduler if true [true by default]>
+    :enabled: <enables scheduler if true [true by default]>
 
 ## Manage tasks from Unicorn/Rails server
 
