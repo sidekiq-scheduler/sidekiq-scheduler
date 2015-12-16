@@ -76,5 +76,22 @@ class ScheduleTest < Minitest::Test
       assert_equal nil, job_from_redis_without_decoding(job_id)
       assert Sidekiq.redis{ |r| r.sismember(:schedules_changed, job_id) }
     end
+
+    describe 'schedule update' do
+      let(:new_job_id)       { 'my_ivar_job_2' }
+      let(:new_job_class_id) { 'SomeIvarJob2' }
+
+      before do
+        Sidekiq::Scheduler.dynamic = true
+        Sidekiq.schedule = {job_id => cron_hash}
+      end
+
+      it 'schedule= adds new jobs to schedule and remove old ones' do
+        Sidekiq.schedule = {new_job_id => cron_hash}
+
+        assert_equal(cron_hash, job_from_redis(new_job_id))
+        assert_equal(nil, job_from_redis_without_decoding(job_id))
+      end
+    end
   end
 end
