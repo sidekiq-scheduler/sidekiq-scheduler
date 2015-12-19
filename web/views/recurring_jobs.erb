@@ -10,6 +10,7 @@
         <th>Class</th>
         <th>Queue</th>
         <th>Arguments</th>
+        <th></th>
       </tr>
     </thead>
 
@@ -24,6 +25,11 @@
             <a href="<%= root_path %>queues/<%= job_spec.fetch('queue', 'default') %>"><%= job_spec.fetch('queue', 'default') %></a>
           </td>
           <td><%= job_spec['args'] %></td>
+          <td class="text-center">
+            <a class="btn btn-warn btn-xs" href="<%= root_path %>recurring-jobs/<%= URI.escape(name) %>/enqueue">
+              Enqueue now
+            </a>
+          </td>
         </tr>
       <% end %>
     </tbody>

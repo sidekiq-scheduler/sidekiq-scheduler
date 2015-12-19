@@ -104,7 +104,7 @@ module Sidekiq
             @@scheduled_jobs[name] = self.rufus_scheduler.send(interval_type, *args, opts) do
               logger.info "queueing #{config['class']} (#{name})"
               config.delete(interval_type)
-              self.handle_errors { self.enqueue_from_config(config) }
+              self.handle_errors { self.enqueue_job(config) }
             end
 
             interval_defined = true
@@ -134,7 +134,7 @@ module Sidekiq
     end
 
     # Enqueue a job based on a config hash
-    def self.enqueue_from_config(job_config)
+    def self.enqueue_job(job_config)
       config = job_config.dup
 
       config['class'] = if config['class'].is_a?(String)

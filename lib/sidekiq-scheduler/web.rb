@@ -10,6 +10,12 @@ module SidekiqScheduler
 
         erb File.read(File.join(VIEW_PATH, 'recurring_jobs.erb'))
       end
+
+      app.get '/recurring-jobs/:name/enqueue' do
+        schedule = Sidekiq.get_schedule(params[:name])
+        Sidekiq::Scheduler.enqueue_job(schedule)
+        redirect to('/recurring-jobs')
+      end
     end
   end
 end

@@ -47,10 +47,10 @@ class ManagerTest < Minitest::Test
           'args' => ['/tmp']
         }
       )
-      Sidekiq::Scheduler.enqueue_from_config(config)
+      Sidekiq::Scheduler.enqueue_job(config)
     end
 
-    it 'enqueue_from_config respects queue params' do
+    it 'enqueue_job respects queue params' do
       config = {
         'cron' => '* * * * *',
         'class' => 'SomeIvarJob',
@@ -66,7 +66,7 @@ class ManagerTest < Minitest::Test
         }
       )
 
-      Sidekiq::Scheduler.enqueue_from_config(config)
+      Sidekiq::Scheduler.enqueue_job(config)
     end
 
     it 'config makes it into the rufus_scheduler' do
