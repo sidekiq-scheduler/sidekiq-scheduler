@@ -11,6 +11,7 @@ require 'sidekiq-scheduler'
 require 'mocha/setup'
 require 'multi_json'
 require 'mock_redis'
+require 'timecop'
 
 require 'sidekiq'
 require 'sidekiq/util'

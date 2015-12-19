@@ -158,7 +158,8 @@ class ManagerTest < Minitest::Test
         }
       )
 
-      sleep(7)
+      Timecop.travel(7 * 60)
+      sleep 0.1
 
       assert Sidekiq::Scheduler.scheduled_jobs.include?('some_ivar_job')
       assert Sidekiq::Scheduler.scheduled_jobs.include?('some_ivar_job2')
