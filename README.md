@@ -72,15 +72,19 @@ puts "defined?(Rails::Server) is #{defined?(Rails::Server).inspect}"
 puts "defined?(Unicorn) is #{defined?(Unicorn).inspect}"
 
 if Rails.env == 'production' && (defined?(Rails::Server) || defined?(Unicorn))
-  Sidekiq.schedule = YAML
-    .load_file(File.expand_path('../../../config/scheduler.yml', __FILE__))
-  Sidekiq::Scheduler.reload_schedule!
+  Sidekiq.configure_server do |config|
+
+    config.on(:startup) do
+      Sidekiq.schedule = YAML
+        .load_file(File.expand_path('../../../config/scheduler.yml', __FILE__))
+      Sidekiq::Scheduler.reload_schedule!
+    end
+  end
 else
   Sidekiq::Scheduler.enabled = false
   puts "Sidekiq::Scheduler.enabled is #{Sidekiq::Scheduler.enabled.inspect}"
 end
 ```
-
 
 ## Scheduled Jobs (Recurring Jobs)
 
@@ -138,7 +142,12 @@ you could create a Rails initializer called "config/initializer/scheduler.rb" wh
 
 ```ruby
 require 'sidekiq/scheduler'
-Sidekiq.schedule = YAML.load_file(File.expand_path("../../../config/scheduler.yml",__FILE__))
+
+Sidekiq.configure_server do |config|
+  config.on(:startup) do
+    Sidekiq.schedule =    YAML.load_file(File.expand_path("../../../config/scheduler.yml",__FILE__))
+  end
+end
 ```
 
 If you were running a non Rails project you should add code to load the workers classes before loading the schedule.
@@ -146,7 +155,13 @@ If you were running a non Rails project you should add code to load the workers 
 ```ruby
 require 'sidekiq/scheduler'
 Dir[File.expand_path('../lib/workers/*.rb',__FILE__)].each do |file| load file; end
-Sidekiq.schedule = YAML.load_file(File.expand_path("../../../config/scheduler.yml",__FILE__))
+
+Sidekiq.configure_server do |config|
+
+  config.on(:startup) do
+    Sidekiq.schedule = YAML.load_file(File.expand_path("../../../config/scheduler.yml",__FILE__))
+  end
+end
 ```
 
 You can also put your schedule information inside sidekiq.yml and load it with:
@@ -235,11 +250,6 @@ require 'sidekiq-scheduler/web'
 This work is a partial port of [resque-scheduler](https://github.com/bvandenbos/resque-scheduler) by Ben VandenBos.  
 Modified to work with the Sidekiq queueing library by Morton Jonuschat.
 Scheduling of recurring jobs has been added to v0.4.0, thanks to [Adrian Gomez](https://github.com/adrian-gomez).
-
-## Maintainers
-
-* [Morton Jonuschat](https://github.com/yabawock)
-* [Adrian Gomez](https://github.com/adrian-gomez)
 
 ## License
 

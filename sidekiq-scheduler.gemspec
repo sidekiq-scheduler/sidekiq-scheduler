@@ -22,6 +22,7 @@ Gem::Specification.new do |s|
   s.add_dependency 'redis',           '~> 3'
   s.add_dependency 'rufus-scheduler', '~> 3.1.8'
   s.add_dependency 'multi_json',      '~> 1'
+  s.add_dependency 'tilt',            '~> 2.0'
 
   s.add_development_dependency 'rake',        '~> 10.0'
   s.add_development_dependency 'timecop',     '~> 0'
