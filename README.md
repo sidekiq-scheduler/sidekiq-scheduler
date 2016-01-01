@@ -257,6 +257,6 @@ MIT License
 
 ## Copyright
 
-Copyright 2013 Moove-IT
+Copyright 2013 - 2016 Moove-IT
 Copyright 2012 Morton Jonuschat
 Some parts copyright 2010 Ben VandenBos
