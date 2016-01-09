@@ -137,14 +137,14 @@ module Sidekiq
     def self.enqueue_job(job_config)
       config = job_config.dup
 
-      config['class'] = if config['class'].is_a?(String)
-                          config['class'].constantize
-                        else
-                          config['class']
-                        end
+      config['class'] = config['class'].constantize if config['class'].is_a?(String)
       config['args'] = Array(config['args'])
 
-       Sidekiq::Client.push(config)
+      if defined?(ActiveJob) && config['class'].included_modules.include?(ActiveJob::Enqueuing)
+        config['class'].new.enqueue(config)
+      else
+        Sidekiq::Client.push(config)
+      end
     end
 
     def self.rufus_scheduler_options
