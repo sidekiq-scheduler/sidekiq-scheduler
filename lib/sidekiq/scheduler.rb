@@ -140,7 +140,7 @@ module Sidekiq
       config['class'] = config['class'].constantize if config['class'].is_a?(String)
       config['args'] = Array(config['args'])
 
-      if defined?(ActiveJob) && config['class'].included_modules.include?(ActiveJob::Enqueuing)
+      if defined?(ActiveJob::Enqueuing) && config['class'].included_modules.include?(ActiveJob::Enqueuing)
         config['class'].new.enqueue(config)
       else
         Sidekiq::Client.push(config)
