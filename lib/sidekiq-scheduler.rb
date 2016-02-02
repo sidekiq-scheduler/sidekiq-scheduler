@@ -7,10 +7,16 @@ require_relative 'sidekiq-scheduler/manager'
 Sidekiq.configure_server do |config|
 
   config.on(:startup) do
+    dynamic = Sidekiq::Scheduler.dynamic
+    dynamic = dynamic.nil? ? config.options.fetch(:dynamic, false) : dynamic
+
+    enabled = Sidekiq::Scheduler.enabled
+    enabled = enabled.nil? ? config.options.fetch(:enabled, true) : enabled
+
     scheduler_options = {
       scheduler: config.options.fetch(:scheduler, true),
-      dynamic:   config.options.fetch(:dynamic, false),
-      enabled:   config.options.fetch(:enabled, true),
+      dynamic:   dynamic,
+      enabled:   enabled,
       schedule:  config.options.fetch(:schedule, nil)
     }
 
