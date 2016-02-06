@@ -22,4 +22,5 @@ end
 
 require 'sidekiq/web' unless defined?(Sidekiq::Web)
 Sidekiq::Web.register(SidekiqScheduler::Web)
-Sidekiq::Web.tabs['Recurring Jobs'] = 'recurring-jobs'
+Sidekiq::Web.tabs['RecurringJobs'] = 'recurring-jobs'
+Sidekiq::Web.set :locales, Sidekiq::Web.locales << File.expand_path(File.dirname(__FILE__) + "/../../web/locales")

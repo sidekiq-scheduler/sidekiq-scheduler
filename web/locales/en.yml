@@ -1,0 +1,6 @@
+en:
+  RecurringJobs: Recurring Jobs
+  Name: Name
+  Description: Description
+  Interval: Interval
+  EnqueueNow: Enqueue now

@@ -1,0 +1,6 @@
+cs:
+  RecurringJobs: Pravidelně opakované
+  Name: Jméno
+  Description: Popis
+  Interval: Interval
+  EnqueueNow: Zařadit nyní
