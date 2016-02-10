@@ -1,6 +1,9 @@
 en:
-  RecurringJobs: Recurring Jobs
-  Name: Name
-  Description: Description
-  Interval: Interval
-  EnqueueNow: Enqueue now
+  recurring_jobs: Recurring Jobs
+  name: Name
+  description: Description
+  interval: Interval
+  class: Class
+  queue: Queue
+  arguments: Arguments
+  enqueue_now: Enqueue now

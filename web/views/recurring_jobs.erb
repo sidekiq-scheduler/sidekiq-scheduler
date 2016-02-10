@@ -1,15 +1,15 @@
-<h3><%= t('RecurringJobs') %></h3>
+<h3><%= t('recurring_jobs') %></h3>
 
 <div class="table_container">
   <table class="table table-hover table-bordered table-striped table-white">
     <thead>
       <tr>
-        <th><%= t('Name') %></th>
-        <th><%= t('Description') %></th>
-        <th><%= t('Interval') %></th>
-        <th><%= t('Class') %></th>
-        <th><%= t('Queue') %></th>
-        <th><%= t('Arguments') %></th>
+        <th><%= t('name') %></th>
+        <th><%= t('description') %></th>
+        <th><%= t('interval') %></th>
+        <th><%= t('class') %></th>
+        <th><%= t('queue') %></th>
+        <th><%= t('arguments') %></th>
         <th></th>
       </tr>
     </thead>
@@ -27,7 +27,7 @@
           <td><%= job_spec['args'] %></td>
           <td class="text-center">
             <a class="btn btn-warn btn-xs" href="<%= root_path %>recurring-jobs/<%= URI.escape(name) %>/enqueue">
-              <%= t('EnqueueNow') %>
+              <%= t('enqueue_now') %>
             </a>
           </td>
         </tr>

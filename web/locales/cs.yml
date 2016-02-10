@@ -1,6 +1,9 @@
 cs:
-  RecurringJobs: Pravidelně opakované
-  Name: Jméno
-  Description: Popis
-  Interval: Interval
-  EnqueueNow: Zařadit nyní
+  recurring_jobs: Pravidelně opakované
+  name: Jméno
+  description: Popis
+  interval: Interval
+  class: Třída
+  queue: Fronta
+  arguments: Argumenty
+  enqueue_now: Zařadit nyní
