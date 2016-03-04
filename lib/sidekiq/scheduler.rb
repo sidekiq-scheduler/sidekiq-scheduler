@@ -91,7 +91,7 @@ module Sidekiq
       # job should be scheduled regardless of what ENV['RAILS_ENV'] is set
       # to.
       if config['rails_env'].nil? || self.rails_env_matches?(config)
-        logger.info "Scheduling #{name} "
+        logger.info "Scheduling #{name} #{config}"
         interval_defined = false
         interval_types = %w{cron every at in}
         interval_types.each do |interval_type|
@@ -135,15 +135,12 @@ module Sidekiq
 
     # Enqueue a job based on a config hash
     def self.enqueue_job(job_config)
-      config = job_config.dup
+      config = prepare_arguments(job_config.dup)
 
-      config['class'] = config['class'].constantize if config['class'].is_a?(String)
-      config['args'] = Array(config['args'])
-
-      if defined?(ActiveJob::Enqueuing) && config['class'].included_modules.include?(ActiveJob::Enqueuing)
-        config['class'].new.enqueue(config)
+      if active_job_enqueue?(config['class'])
+        enque_with_active_job(config)
       else
-        Sidekiq::Client.push(config)
+        enque_with_sidekiq(config)
       end
     end
 
@@ -156,7 +153,7 @@ module Sidekiq
     end
 
     def self.rufus_scheduler
-      @rufus_scheduler ||= Rufus::Scheduler.new rufus_scheduler_options
+      @rufus_scheduler ||= Rufus::Scheduler.new(rufus_scheduler_options)
     end
 
     # Stops old rufus scheduler and creates a new one.  Returns the new
@@ -200,6 +197,52 @@ module Sidekiq
         self.scheduled_jobs[name].unschedule
         self.scheduled_jobs.delete(name)
       end
+    end
+
+    def self.enque_with_active_job(config)
+      initialize_active_job(config['class'], config['args']).enqueue(config)
+    end
+
+    def self.enque_with_sidekiq(config)
+      Sidekiq::Client.push(config)
+    end
+
+    def self.initialize_active_job(klass, args)
+      if args.is_a?(Array)
+        klass.new(*args)
+      else
+        klass.new(args)
+      end
+    end
+
+    # Returns true if the enqueuing needs to be done for an ActiveJob
+    #  class false otherwise.
+    #
+    # @param [Class] klass the class to check is decendant from ActiveJob
+    #
+    # @return [Boolean]
+    def self.active_job_enqueue?(klass)
+      defined?(ActiveJob::Enqueuing) && klass.included_modules.include?(ActiveJob::Enqueuing)
+    end
+
+    # Convert the given arguments in the format expected to be enqueued.
+    #
+    # @param [Hash] config the options to be converted
+    # @option config [String] class the job class
+    # @option config [Hash/Array] args the arguments to be passed to the job
+    #   class
+    #
+    # @return [Hash]
+    def self.prepare_arguments(config)
+      config['class'] = config['class'].constantize if config['class'].is_a?(String)
+
+      if config['args'].is_a?(Hash)
+        config['args'].symbolize_keys! if config['args'].respond_to?(:symbolize_keys!)
+      else
+        config['args'] = Array(config['args'])
+      end
+
+      config
     end
 
   end
