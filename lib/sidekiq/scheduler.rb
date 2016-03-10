@@ -222,7 +222,7 @@ module Sidekiq
     #
     # @return [Boolean]
     def self.active_job_enqueue?(klass)
-      defined?(ActiveJob::Enqueuing) && klass.included_modules.include?(ActiveJob::Enqueuing)
+      defined?(ActiveJob::Enqueuing) && klass.is_a?(Class) && klass.included_modules.include?(ActiveJob::Enqueuing)
     end
 
     # Convert the given arguments in the format expected to be enqueued.
@@ -234,7 +234,9 @@ module Sidekiq
     #
     # @return [Hash]
     def self.prepare_arguments(config)
-      config['class'] = config['class'].constantize if config['class'].is_a?(String)
+      if config['class'].is_a?(String) && Object.const_defined?(config['class'])
+        config['class'] = Object.const_get(config['class'])
+      end
 
       if config['args'].is_a?(Hash)
         config['args'].symbolize_keys! if config['args'].respond_to?(:symbolize_keys!)
