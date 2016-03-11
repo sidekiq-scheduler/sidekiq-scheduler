@@ -5,6 +5,7 @@ describe Sidekiq::Scheduler do
     Sidekiq::Scheduler.dynamic = false
     Sidekiq.redis { |r| r.del(:schedules) }
     Sidekiq.redis { |r| r.del(:schedules_changed) }
+    Sidekiq.options[:queues] = Sidekiq::DEFAULTS[:queues]
     Sidekiq::Scheduler.clear_schedule!
     Sidekiq::Scheduler.send(:class_variable_set, :@@scheduled_jobs, {})
   end
@@ -64,6 +65,17 @@ describe Sidekiq::Scheduler do
   end
 
   describe '.rufus_scheduler' do
+    it 'can pass options to the Rufus scheduler instance' do
+      options = { :lockfile => '/tmp/rufus_lock' }
+
+      expect(Rufus::Scheduler).to receive(:new).with(options)
+
+      Sidekiq::Scheduler.rufus_scheduler_options = options
+      Sidekiq::Scheduler.clear_schedule!
+    end
+  end
+
+  describe '.load_schedule!' do
     it 'should correctly load the job into rufus_scheduler' do
       expect {
         Sidekiq.schedule = {
@@ -80,13 +92,87 @@ describe Sidekiq::Scheduler do
       expect(Sidekiq::Scheduler.scheduled_jobs).to include(:some_ivar_job)
     end
 
-    it 'can pass options to the Rufus scheduler instance' do
-      options = { :lockfile => '/tmp/rufus_lock' }
+    context 'when job has a configured queue' do
+      before do
+        Sidekiq.schedule = {
+          :some_ivar_job => {
+            'cron'  => '* * * * *',
+            'class' => 'ReportWorker',
+            'queue' => 'reporting'
+          }
+        }
+      end
 
-      expect(Rufus::Scheduler).to receive(:new).with(options)
+      context 'when default sidekiq queues' do
+        before do
+          Sidekiq.options[:queues] = Sidekiq::DEFAULTS[:queues]
+        end
 
-      Sidekiq::Scheduler.rufus_scheduler_options = options
-      Sidekiq::Scheduler.clear_schedule!
+        it 'loads the job into the scheduler' do
+          Sidekiq::Scheduler.load_schedule!
+
+          expect(Sidekiq::Scheduler.scheduled_jobs).to include(:some_ivar_job)
+        end
+      end
+
+      context 'when sidekiq queues match job\'s one' do
+        before do
+          Sidekiq.options[:queues] = ['reporting']
+        end
+
+        it 'loads the job into the scheduler' do
+          Sidekiq::Scheduler.load_schedule!
+
+          expect(Sidekiq::Scheduler.scheduled_jobs).to include(:some_ivar_job)
+        end
+      end
+
+      context 'when sidekiq queues does not match job\'s one' do
+        before do
+          Sidekiq.options[:queues] = ['mailing']
+        end
+
+        it 'does not load the job into the scheduler' do
+          Sidekiq::Scheduler.load_schedule!
+
+          expect(Sidekiq::Scheduler.scheduled_jobs).to_not include(:some_ivar_job)
+        end
+      end
+    end
+
+    context 'when job has no configured queue' do
+      before do
+        Sidekiq.schedule = {
+          :some_ivar_job => {
+            'cron'  => '* * * * *',
+            'class' => 'ReportWorker'
+          }
+        }
+      end
+
+      context 'when configured sidekiq queues' do
+        before do
+          Sidekiq.options[:queues] = ['mailing']
+        end
+
+        it 'does not load the job into the scheduler' do
+          Sidekiq::Scheduler.load_schedule!
+
+          expect(Sidekiq::Scheduler.scheduled_jobs).to_not include(:some_ivar_job)
+        end
+      end
+
+      context 'when default sidekiq queues' do
+        before do
+          Sidekiq.options[:queues] = Sidekiq::DEFAULTS[:queues]
+        end
+
+        it 'loads the job into the scheduler' do
+          Sidekiq::Scheduler.load_schedule!
+
+          expect(Sidekiq::Scheduler.scheduled_jobs).to include(:some_ivar_job)
+        end
+      end
     end
   end
 
