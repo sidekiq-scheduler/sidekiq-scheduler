@@ -55,10 +55,15 @@ module Sidekiq
 
         logger.info 'Schedule empty! Set Sidekiq.schedule' if Sidekiq.schedule.empty?
 
+
         @@scheduled_jobs = {}
 
         Sidekiq.schedule.each do |name, config|
-          self.load_schedule_job(name, config)
+          if enabled_queue?(config['queue'])
+            self.load_schedule_job(name, config)
+          else
+            logger.info { "Ignoring #{name}, job's queue is not enabled." }
+          end
         end
 
         Sidekiq.redis { |r| r.del(:schedules_changed) }
@@ -243,6 +248,17 @@ module Sidekiq
       end
 
       config
+    end
+
+    # Returns true if a job's queue is being listened on by sidekiq
+    #
+    # @param [String] job_queue Job's queue name
+    #
+    # @return [Boolean]
+    def self.enabled_queue?(job_queue)
+      queues = Sidekiq.options[:queues]
+
+      queues.empty? || queues.include?(job_queue)
     end
 
   end
