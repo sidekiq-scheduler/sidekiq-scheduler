@@ -138,14 +138,15 @@ for handling the heavy lifting of the actual scheduling engine.
 ### Loading the schedule
 
 Let's assume your scheduled jobs are defined in a file called "config/scheduler.yml" under your Rails project,
-you could create a Rails initializer called "config/initializer/scheduler.rb" which would load the job definitions:
+you could create a Rails initializer called "config/initializers/scheduler.rb" which would load the job definitions:
 
 ```ruby
 require 'sidekiq/scheduler'
 
 Sidekiq.configure_server do |config|
   config.on(:startup) do
-    Sidekiq.schedule =    YAML.load_file(File.expand_path("../../../config/scheduler.yml",__FILE__))
+    Sidekiq.schedule = YAML.load_file(File.expand_path("../../../config/scheduler.yml",__FILE__))
+    Sidekiq::Scheduler.reload_schedule!
   end
 end
 ```
@@ -157,9 +158,9 @@ require 'sidekiq/scheduler'
 Dir[File.expand_path('../lib/workers/*.rb',__FILE__)].each do |file| load file; end
 
 Sidekiq.configure_server do |config|
-
   config.on(:startup) do
     Sidekiq.schedule = YAML.load_file(File.expand_path("../../../config/scheduler.yml",__FILE__))
+    Sidekiq::Scheduler.reload_schedule!
   end
 end
 ```
