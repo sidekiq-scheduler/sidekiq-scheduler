@@ -3,6 +3,7 @@ describe Sidekiq::Scheduler do
   before do
     Sidekiq::Scheduler.enabled = true
     Sidekiq::Scheduler.dynamic = false
+    Sidekiq::Scheduler.listened_queues_only = false
     Sidekiq.redis { |r| r.del(:schedules) }
     Sidekiq.redis { |r| r.del(:schedules_changed) }
     Sidekiq.options[:queues] = Sidekiq::DEFAULTS[:queues]
@@ -103,39 +104,59 @@ describe Sidekiq::Scheduler do
         }
       end
 
-      context 'when default sidekiq queues' do
-        before do
-          Sidekiq.options[:queues] = Sidekiq::DEFAULTS[:queues]
+      context 'when listened_queues_only flag is active' do
+        before { Sidekiq::Scheduler.listened_queues_only = true }
+
+        context 'when default sidekiq queues' do
+          before do
+            Sidekiq.options[:queues] = Sidekiq::DEFAULTS[:queues]
+          end
+
+          it 'loads the job into the scheduler' do
+            Sidekiq::Scheduler.load_schedule!
+
+            expect(Sidekiq::Scheduler.scheduled_jobs).to include(:some_ivar_job)
+          end
         end
 
-        it 'loads the job into the scheduler' do
-          Sidekiq::Scheduler.load_schedule!
+        context 'when sidekiq queues match job\'s one' do
+          before do
+            Sidekiq.options[:queues] = ['reporting']
+          end
 
-          expect(Sidekiq::Scheduler.scheduled_jobs).to include(:some_ivar_job)
+          it 'loads the job into the scheduler' do
+            Sidekiq::Scheduler.load_schedule!
+
+            expect(Sidekiq::Scheduler.scheduled_jobs).to include(:some_ivar_job)
+          end
+        end
+
+        context 'when sidekiq queues does not match job\'s one' do
+          before do
+            Sidekiq.options[:queues] = ['mailing']
+          end
+
+          it 'does not load the job into the scheduler' do
+            Sidekiq::Scheduler.load_schedule!
+
+            expect(Sidekiq::Scheduler.scheduled_jobs).to_not include(:some_ivar_job)
+          end
         end
       end
 
-      context 'when sidekiq queues match job\'s one' do
-        before do
-          Sidekiq.options[:queues] = ['reporting']
-        end
+      context 'when listened_queues_only flag is inactive' do
+        before { Sidekiq::Scheduler.listened_queues_only = false }
 
-        it 'loads the job into the scheduler' do
-          Sidekiq::Scheduler.load_schedule!
+        context 'when sidekiq queues does not match job\'s one' do
+          before do
+            Sidekiq.options[:queues] = ['mailing']
+          end
 
-          expect(Sidekiq::Scheduler.scheduled_jobs).to include(:some_ivar_job)
-        end
-      end
+          it 'loads the job into the scheduler' do
+            Sidekiq::Scheduler.load_schedule!
 
-      context 'when sidekiq queues does not match job\'s one' do
-        before do
-          Sidekiq.options[:queues] = ['mailing']
-        end
-
-        it 'does not load the job into the scheduler' do
-          Sidekiq::Scheduler.load_schedule!
-
-          expect(Sidekiq::Scheduler.scheduled_jobs).to_not include(:some_ivar_job)
+            expect(Sidekiq::Scheduler.scheduled_jobs).to include(:some_ivar_job)
+          end
         end
       end
     end
@@ -150,27 +171,47 @@ describe Sidekiq::Scheduler do
         }
       end
 
-      context 'when configured sidekiq queues' do
-        before do
-          Sidekiq.options[:queues] = ['mailing']
+      context 'when listened_queues_only flag is active' do
+        before { Sidekiq::Scheduler.listened_queues_only = true }
+
+        context 'when configured sidekiq queues' do
+          before do
+            Sidekiq.options[:queues] = ['mailing']
+          end
+
+          it 'does not load the job into the scheduler' do
+            Sidekiq::Scheduler.load_schedule!
+
+            expect(Sidekiq::Scheduler.scheduled_jobs).to_not include(:some_ivar_job)
+          end
         end
 
-        it 'does not load the job into the scheduler' do
-          Sidekiq::Scheduler.load_schedule!
+        context 'when default sidekiq queues' do
+          before do
+            Sidekiq.options[:queues] = Sidekiq::DEFAULTS[:queues]
+          end
 
-          expect(Sidekiq::Scheduler.scheduled_jobs).to_not include(:some_ivar_job)
+          it 'loads the job into the scheduler' do
+            Sidekiq::Scheduler.load_schedule!
+
+            expect(Sidekiq::Scheduler.scheduled_jobs).to include(:some_ivar_job)
+          end
         end
       end
 
-      context 'when default sidekiq queues' do
-        before do
-          Sidekiq.options[:queues] = Sidekiq::DEFAULTS[:queues]
-        end
+      context 'when listened_queues_only flag is false' do
+        before { Sidekiq::Scheduler.listened_queues_only = false }
 
-        it 'loads the job into the scheduler' do
-          Sidekiq::Scheduler.load_schedule!
+        context 'when configured sidekiq queues' do
+          before do
+            Sidekiq.options[:queues] = ['mailing']
+          end
 
-          expect(Sidekiq::Scheduler.scheduled_jobs).to include(:some_ivar_job)
+          it 'loads the job into the scheduler' do
+            Sidekiq::Scheduler.load_schedule!
+
+            expect(Sidekiq::Scheduler.scheduled_jobs).to include(:some_ivar_job)
+          end
         end
       end
     end

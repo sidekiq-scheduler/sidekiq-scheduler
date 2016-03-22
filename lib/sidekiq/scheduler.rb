@@ -22,6 +22,8 @@ module Sidekiq
       # Set to update the schedule in runtime in a given time period.
       attr_accessor :dynamic
 
+      # Set to schedule jobs only when will be pushed to queues listened by sidekiq
+      attr_accessor :listened_queues_only
     end
 
     # the Rufus::Scheduler jobs that are scheduled
@@ -59,7 +61,7 @@ module Sidekiq
         @@scheduled_jobs = {}
 
         Sidekiq.schedule.each do |name, config|
-          if enabled_queue?(config['queue'])
+          if !listened_queues_only || enabled_queue?(config['queue'])
             self.load_schedule_job(name, config)
           else
             logger.info { "Ignoring #{name}, job's queue is not enabled." }

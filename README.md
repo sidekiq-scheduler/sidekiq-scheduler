@@ -58,6 +58,8 @@ Available options are:
     :schedule: <the schedule to be run>
     :dynamic: <if true the schedule can be modified in runtime>
     :enabled: <enables scheduler if true [true by default]>
+    :scheduler:
+      :listened_queues_only: <push jobs whose queue is being listened by sidekiq [false by default]>
 
 ## Manage tasks from Unicorn/Rails server
 
@@ -248,7 +250,7 @@ require 'sidekiq-scheduler/web'
 
 ## Credits
 
-This work is a partial port of [resque-scheduler](https://github.com/bvandenbos/resque-scheduler) by Ben VandenBos.  
+This work is a partial port of [resque-scheduler](https://github.com/bvandenbos/resque-scheduler) by Ben VandenBos.
 Modified to work with the Sidekiq queueing library by Morton Jonuschat.
 Scheduling of recurring jobs has been added to v0.4.0, thanks to [Adrian Gomez](https://github.com/adrian-gomez).
 
