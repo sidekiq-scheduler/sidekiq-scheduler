@@ -36,6 +36,12 @@ class ScheduleFaker
     }.merge(default_options(options))
   end
 
+  def self.interval_schedule(options = {})
+    options = {
+      'interval' => '5m'
+    }.merge(default_options(options))
+  end
+
   def self.invalid_schedule(options = {})
     default_options(options)
   end

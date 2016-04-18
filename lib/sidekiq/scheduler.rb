@@ -100,7 +100,7 @@ module Sidekiq
       if config['rails_env'].nil? || self.rails_env_matches?(config)
         logger.info "Scheduling #{name} #{config}"
         interval_defined = false
-        interval_types = %w{cron every at in}
+        interval_types = %w{cron every at in interval}
         interval_types.each do |interval_type|
           if !config[interval_type].nil? && config[interval_type].length > 0
             args = self.optionizate_interval_value(config[interval_type])
