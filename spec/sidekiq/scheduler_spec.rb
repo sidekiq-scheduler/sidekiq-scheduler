@@ -341,6 +341,15 @@ describe Sidekiq::Scheduler do
       end
     end
 
+    context 'interval schedule' do
+      it 'loads correctly' do
+        Sidekiq::Scheduler.load_schedule_job('some_job', ScheduleFaker.interval_schedule)
+
+        expect(Sidekiq::Scheduler.rufus_scheduler.jobs.size).to be(1)
+        expect(Sidekiq::Scheduler.scheduled_jobs.keys).to eq(%w(some_job))
+      end
+    end
+
     it 'does not load without a timing option' do
       Sidekiq::Scheduler.load_schedule_job('some_job', ScheduleFaker.invalid_schedule)
 
