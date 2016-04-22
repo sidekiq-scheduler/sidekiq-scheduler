@@ -7,6 +7,8 @@ module Sidekiq
   class Scheduler
     extend Sidekiq::Util
 
+    REGISTERED_JOBS_THRESHOLD_IN_SECONDS = 24 * 60 * 60
+
     # We expect rufus jobs to have #params
     Rufus::Scheduler::Job.module_eval do
 
@@ -102,16 +104,19 @@ module Sidekiq
         interval_defined = false
         interval_types = %w{cron every at in interval}
         interval_types.each do |interval_type|
-          if !config[interval_type].nil? && config[interval_type].length > 0
-            args = self.optionizate_interval_value(config[interval_type])
+          config_interval_type = config[interval_type]
+
+          if !config_interval_type.nil? && config_interval_type.length > 0
+
+            args = self.optionizate_interval_value(config_interval_type)
 
             # We want rufus_scheduler to return a job object, not a job id
             opts = { :job => true }
 
-            @@scheduled_jobs[name] = self.rufus_scheduler.send(interval_type, *args, opts) do
-              logger.info "queueing #{config['class']} (#{name})"
+            @@scheduled_jobs[name] = self.rufus_scheduler.send(interval_type, *args, opts) do |job, time|
               config.delete(interval_type)
-              self.handle_errors { self.enqueue_job(config) }
+
+              idempotent_job_enqueue(name, time, config)
             end
 
             interval_defined = true
@@ -123,6 +128,25 @@ module Sidekiq
         unless interval_defined
           logger.info "no #{interval_types.join(' / ')} found for #{config['class']} (#{name}) - skipping"
         end
+      end
+    end
+
+    # Pushes the job into Sidekiq if not already pushed for the given time
+    #
+    # @param [String] job_name The job's name
+    # @param [Time] time The time when the job got cleared for triggering
+    # @param [Hash] config Job's config hash
+    def self.idempotent_job_enqueue(job_name, time, config)
+      registered = register_job_instance(job_name, time)
+
+      if registered
+        logger.info "queueing #{config['class']} (#{job_name})"
+
+        self.handle_errors { self.enqueue_job(config) }
+
+        remove_elder_job_instances(job_name)
+      else
+        logger.debug { "Ignoring #{job_name} job as it has been already enqueued" }
       end
     end
 
@@ -263,5 +287,38 @@ module Sidekiq
       queues.empty? || queues.include?(job_queue)
     end
 
+    # Registers a queued job instance
+    #
+    # @param [String] job_name The job's name
+    # @param [Time] time Time at which the job was cleared by the scheduler
+    #
+    # @return [Boolean] true if the job was registered, false when otherwise
+    def self.register_job_instance(job_name, time)
+      pushed_job_key = pushed_job_key(job_name)
+
+      registered, _ = Sidekiq.redis do |r|
+        r.pipelined do
+          r.zadd(pushed_job_key, time.to_i, time.to_i)
+          r.expire(pushed_job_key, REGISTERED_JOBS_THRESHOLD_IN_SECONDS)
+        end
+      end
+
+      registered
+    end
+
+    def self.remove_elder_job_instances(job_name)
+      Sidekiq.redis do |r|
+        r.zremrangebyscore(pushed_job_key(job_name), 0, Time.now.to_i - REGISTERED_JOBS_THRESHOLD_IN_SECONDS)
+      end
+    end
+
+    # Returns the key of the Redis sorted set used to store job enqueues
+    #
+    # @param [String] job_name The name of the job
+    #
+    # @return [String]
+    def self.pushed_job_key(job_name)
+      "sidekiq-scheduler:pushed:#{job_name}"
+    end
   end
 end

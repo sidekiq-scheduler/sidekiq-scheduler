@@ -4,11 +4,11 @@ describe Sidekiq::Scheduler do
     Sidekiq::Scheduler.enabled = true
     Sidekiq::Scheduler.dynamic = false
     Sidekiq::Scheduler.listened_queues_only = false
-    Sidekiq.redis { |r| r.del(:schedules) }
-    Sidekiq.redis { |r| r.del(:schedules_changed) }
+    Sidekiq.redis(&:flushall)
     Sidekiq.options[:queues] = Sidekiq::DEFAULTS[:queues]
     Sidekiq::Scheduler.clear_schedule!
     Sidekiq::Scheduler.send(:class_variable_set, :@@scheduled_jobs, {})
+    Sidekiq::Worker.clear_all
   end
 
   it 'sidekiq-scheduler enabled option is working' do
@@ -358,6 +358,78 @@ describe Sidekiq::Scheduler do
     end
   end
 
+  describe '.idempotent_job_enqueue' do
+    def enqueued_jobs_registry
+      Sidekiq.redis { |r| r.zrange(pushed_job_key, 0, -1) }
+    end
+
+    let(:config) { JobConfigurationsFaker.some_worker }
+
+    let(:job_name) { 'some-worker' }
+
+    let(:pushed_job_key) { Sidekiq::Scheduler.pushed_job_key(job_name) }
+
+    before do
+      Sidekiq.redis { |r| r.del(pushed_job_key) }
+    end
+
+    let(:time) { Time.now }
+
+    it 'enqueues a job' do
+      expect {
+        Sidekiq::Scheduler.idempotent_job_enqueue(job_name, time, config)
+      }.to change { Sidekiq::Queues[config['queue']].size }.by(1)
+    end
+
+    it 'registers the enqueued job' do
+      expect {
+        Sidekiq::Scheduler.idempotent_job_enqueue(job_name, time, config)
+      }.to change { enqueued_jobs_registry.last == time.to_i.to_s }.from(false).to(true)
+    end
+
+    context 'when elder enqueued jobs' do
+      let(:some_time_ago) { time - Sidekiq::Scheduler::REGISTERED_JOBS_THRESHOLD_IN_SECONDS }
+
+      let(:near_time_ago) { time - Sidekiq::Scheduler::REGISTERED_JOBS_THRESHOLD_IN_SECONDS  / 2 }
+
+      before  do
+        Timecop.freeze(some_time_ago) do
+          Sidekiq::Scheduler.register_job_instance(job_name, some_time_ago)
+        end
+
+        Timecop.freeze(near_time_ago) do
+          Sidekiq::Scheduler.register_job_instance(job_name, near_time_ago)
+        end
+      end
+
+      it 'deregisters elder enqueued jobs' do
+        expect {
+          Sidekiq::Scheduler.idempotent_job_enqueue(job_name, time, config)
+        }.to change { enqueued_jobs_registry.first == some_time_ago.to_i.to_s }.from(true).to(false)
+      end
+    end
+
+    context 'when the job has been previously enqueued' do
+      before { Sidekiq::Scheduler.idempotent_job_enqueue(job_name, time, config) }
+
+      it 'is not enqueued again' do
+        expect {
+          Sidekiq::Scheduler.idempotent_job_enqueue(job_name, time, config)
+        }.to_not change { Sidekiq::Queues[config['queue']].size }
+      end
+    end
+
+    context 'when it was enqueued for a different Time' do
+      before { Sidekiq::Scheduler.idempotent_job_enqueue(job_name, time - 1, config) }
+
+      it 'is enqueued again' do
+        expect {
+          Sidekiq::Scheduler.idempotent_job_enqueue(job_name, time, config)
+        }.to change { Sidekiq::Queues[config['queue']].size }.by(1)
+      end
+    end
+  end
+
   describe '.update_schedule' do
     it 'loads a new job' do
       Sidekiq::Scheduler.dynamic = true
@@ -460,6 +532,16 @@ describe Sidekiq::Scheduler do
     end
   end
 
+  describe '.enque_with_sidekiq' do
+    let(:config) { JobConfigurationsFaker.some_worker }
+
+    it 'enqueues a job into a sidekiq queue' do
+      expect {
+        Sidekiq::Scheduler.enque_with_sidekiq(config)
+      }.to change { Sidekiq::Queues[config['queue']].size }.by(1)
+    end
+  end
+
   describe '.initialize_active_job' do
     describe 'when the object has no arguments' do
       it 'should be correctly initialized' do
@@ -492,4 +574,41 @@ describe Sidekiq::Scheduler do
     end
   end
 
+  describe '.register_job_instance' do
+    let(:job_name) { 'some-worker' }
+
+    let(:pushed_job_key) { Sidekiq::Scheduler.pushed_job_key(job_name) }
+
+    let(:now) { Time.now }
+
+    it { expect(Sidekiq::Scheduler.register_job_instance(job_name, now)).to be true }
+
+    it 'stores the job instance into Redis' do
+      expect {
+        Sidekiq::Scheduler.register_job_instance(job_name, now)
+      }.to change { Sidekiq.redis { |r| r.zcard(pushed_job_key) } }.by(1)
+    end
+
+    it 'persists a expirable key' do
+      Sidekiq::Scheduler.register_job_instance(job_name, now)
+
+      Timecop.travel(Sidekiq::Scheduler::REGISTERED_JOBS_THRESHOLD_IN_SECONDS) do
+        expect(Sidekiq.redis { |r| r.exists(pushed_job_key) }).to be false
+      end
+    end
+
+    context 'when job has been previously registered' do
+      before { Sidekiq::Scheduler.register_job_instance(job_name, now) }
+
+      it { expect(Sidekiq::Scheduler.register_job_instance(job_name, now)).to be false }
+
+      context 'but with different timestamp' do
+        let(:another_timestamp) { now + 1 }
+
+        it 'is true' do
+          expect(Sidekiq::Scheduler.register_job_instance(job_name, another_timestamp)).to be true
+        end
+      end
+    end
+  end
 end

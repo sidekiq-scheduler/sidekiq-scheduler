@@ -5,6 +5,7 @@ SimpleCov.start
 Coveralls.wear!
 
 require 'sidekiq'
+require 'sidekiq/testing'
 require 'sidekiq-scheduler'
 require 'multi_json'
 require 'timecop'
