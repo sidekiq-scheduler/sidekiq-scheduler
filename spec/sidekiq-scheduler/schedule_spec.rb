@@ -1,4 +1,5 @@
 describe SidekiqScheduler::Schedule do
+  before { Sidekiq.redis(&:flushall) }
 
   def build_cron_hash
     {
@@ -13,7 +14,9 @@ describe SidekiqScheduler::Schedule do
   end
 
   def job_from_redis(job_id)
-    MultiJson.decode(job_from_redis_without_decoding(job_id))
+    if job = job_from_redis_without_decoding(job_id)
+      MultiJson.decode(job)
+    end
   end
 
   def changed_job?(job_id)
@@ -29,23 +32,33 @@ describe SidekiqScheduler::Schedule do
   let(:job_class_id) { cron_hash['class'] }
 
   describe '.schedule=' do
-    it 'sets the schedule on redis' do
-      Sidekiq::Scheduler.dynamic = true
+    before { Sidekiq::Scheduler.dynamic = true }
 
+    it 'sets the schedule on redis' do
       Sidekiq.schedule = {job_id => cron_hash}
 
       expect(cron_hash).to eq(job_from_redis(job_id))
     end
 
     it 'uses job name as \'class\' argument if it\'s missing' do
-      Sidekiq::Scheduler.dynamic = true
-
       Sidekiq.schedule = {job_class_id => cron_hash.select(&only_cron_and_args)}
 
       job = Sidekiq.schedule[job_class_id]
 
       expect(cron_hash).to eq(job_from_redis(job_class_id))
       expect(job['class']).to eq(job_class_id)
+    end
+
+    context 'when job key is a symbol' do
+      let(:job_id) { :super_job }
+
+      context 'when schedule is set twice' do
+        it 'sets the schedule on redis' do
+          2.times { Sidekiq.schedule = { job_id => cron_hash } }
+
+          expect(cron_hash).to eq(job_from_redis(job_id))
+        end
+      end
     end
   end
 
