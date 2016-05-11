@@ -37,7 +37,7 @@ module SidekiqScheduler
     # param, otherwise params is passed in as the only parameter to perform.
     def schedule=(schedule_hash)
       schedule_hash = prepare_schedule(schedule_hash)
-      to_remove = (get_all_schedules || {}).keys - schedule_hash.keys
+      to_remove = (get_all_schedules || {}).keys - schedule_hash.keys.map(&:to_s)
 
       schedule_hash.each do |name, job_spec|
         set_schedule(name, job_spec)
