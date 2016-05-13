@@ -56,7 +56,7 @@ You can add sidekiq-scheduler configuration options to sidekiq.yml config file.
 Available options are:
 
     :schedule: <the schedule to be run>
-    :dynamic: <if true the schedule can be modified in runtime>
+    :dynamic: <if true the schedule can be modified in runtime [false by default]>
     :enabled: <enables scheduler if true [true by default]>
     :scheduler:
       :listened_queues_only: <push jobs whose queue is being listened by sidekiq [false by default]>
@@ -187,15 +187,40 @@ For more information, see [this issue](https://github.com/Moove-it/sidekiq-sched
 
 ### Reloading the schedules
 
-The schedules can be updated from redis, every 5 seconds the redis is checked for schedule changes,
-to update an schedule you have to:
+Schedules are stored in Redis. To add / update an schedule, you have to:
 
- ```ruby
-Sidekiq.set_schedule('some_name', { 'every' => ['1m'], 'class' => 'HardWorker' })
+```ruby
+Sidekiq.set_schedule('heartbeat', { 'every' => ['1m'], 'class' => 'HeartbeatWorker' })
+```
+
+When `:dynamic` flag is set to `true`, schedule changes are loaded every 5 seconds.
+
+You can set that flag in the following ways.
+
+- Yaml configuration:
+```
+:dynamic: true
+```
+
+- Initializer configuration:
+```ruby
+Sidekiq.configure_server do |config|
+  # ...
+
+  config.on(:startup) do
+    # ...
+    Sidekiq::Scheduler.dynamic = true
+  end
+end
+```
+
+If `:dynamic` flag is set to false, you have to reload the schedule manually in sidekiq
+side:
+```ruby
 Sidekiq::Scheduler.reload_schedule!
- ```
+```
 
- If the schedule did not exist it'll we created if it existed it'll be updated
+If the schedule did not exist it'll we created, if it existed it'll be updated
 
 ### Testing
 
