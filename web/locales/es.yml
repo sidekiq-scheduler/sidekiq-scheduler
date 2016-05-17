@@ -1,0 +1,9 @@
+es:
+  recurring_jobs: Tareas Recurrentes
+  name: Nombre
+  description: Descripción
+  interval: Intervalo
+  class: Clase
+  queue: Cola
+  arguments: Argumentos
+  enqueue_now: Encolar ahora
