@@ -6,7 +6,12 @@ module SidekiqScheduler
 
     def self.registered(app)
       app.get '/recurring-jobs' do
-        @schedule = (Sidekiq.schedule! || [])
+        @schedule = (Sidekiq.get_schedule || [])
+
+        @schedule.each do |name, job_spec|
+          next_time = Sidekiq.redis { |r| r.hget(:next_time, name) }
+          @schedule[name][:next_time] = DateTime.parse(next_time).to_s(:long) if next_time
+        end
 
         erb File.read(File.join(VIEW_PATH, 'recurring_jobs.erb'))
       end

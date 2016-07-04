@@ -115,8 +115,7 @@ module Sidekiq
 
             @@scheduled_jobs[name] = self.rufus_scheduler.send(interval_type, *args, opts) do |job, time|
               config.delete(interval_type)
-
-              idempotent_job_enqueue(name, time, config)
+              idempotent_job_enqueue(name, time, config, job.next_time)
             end
 
             interval_defined = true
@@ -136,8 +135,9 @@ module Sidekiq
     # @param [String] job_name The job's name
     # @param [Time] time The time when the job got cleared for triggering
     # @param [Hash] config Job's config hash
-    def self.idempotent_job_enqueue(job_name, time, config)
-      registered = register_job_instance(job_name, time)
+    # @param [Time] next_time The time when the next job will run
+    def self.idempotent_job_enqueue(job_name, time, config, next_time)
+      registered = register_job_instance(job_name, time, next_time)
 
       if registered
         logger.info "queueing #{config['class']} (#{job_name})"
@@ -291,12 +291,14 @@ module Sidekiq
     #
     # @param [String] job_name The job's name
     # @param [Time] time Time at which the job was cleared by the scheduler
+    # @param [Time] next_time The time when the next job will run
     #
     # @return [Boolean] true if the job was registered, false when otherwise
-    def self.register_job_instance(job_name, time)
+    def self.register_job_instance(job_name, time, next_time)
       pushed_job_key = pushed_job_key(job_name)
 
       registered, _ = Sidekiq.redis do |r|
+        r.hset(:next_time, job_name, next_time)
         r.pipelined do
           r.zadd(pushed_job_key, time.to_i, time.to_i)
           r.expire(pushed_job_key, REGISTERED_JOBS_THRESHOLD_IN_SECONDS)

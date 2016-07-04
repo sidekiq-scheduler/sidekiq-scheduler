@@ -7,3 +7,4 @@ es:
   queue: Cola
   arguments: Argumentos
   enqueue_now: Encolar ahora
+  next_time: Próxima ejecución 

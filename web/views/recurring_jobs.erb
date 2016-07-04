@@ -10,6 +10,7 @@
         <th><%= t('class') %></th>
         <th><%= t('queue') %></th>
         <th><%= t('arguments') %></th>
+        <th><%= t('next_time') %></th>
         <th></th>
       </tr>
     </thead>
@@ -25,6 +26,7 @@
             <a href="<%= root_path %>queues/<%= job_spec.fetch('queue', 'default') %>"><%= job_spec.fetch('queue', 'default') %></a>
           </td>
           <td><%= job_spec['args'] %></td>
+          <td><%= @schedule[name][:next_time] %></td>
           <td class="text-center">
             <a class="btn btn-warn btn-xs" href="<%= root_path %>recurring-jobs/<%= URI.escape(name) %>/enqueue">
               <%= t('enqueue_now') %>
