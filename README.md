@@ -103,7 +103,6 @@ schedule frequency (in crontab syntax). The schedule is just a Hash, being most 
 stored in a YAML like so:
 
 ``` yaml
-schedule:
   CancelAbandonedOrders:
     cron: "*/5 * * * *"
 
@@ -131,7 +130,6 @@ schedule:
 You can provide options to `every` or `cron` via an Array:
 
 ``` yaml
-schedule:
   clear_leaderboards_moderator:
     every: ["30s", :first_in => '120s']
     class: CheckDaemon
