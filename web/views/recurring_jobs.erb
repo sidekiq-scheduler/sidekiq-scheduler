@@ -10,23 +10,25 @@
         <th><%= t('class') %></th>
         <th><%= t('queue') %></th>
         <th><%= t('arguments') %></th>
+        <th><%= t('next_time') %></th>
         <th></th>
       </tr>
     </thead>
 
     <tbody>
-      <% @schedule.each do |name, job_spec| %>
+      <% @presented_jobs.each do |job| %>
         <tr>
-          <td><%= name %></td>
-          <td><%= job_spec['description'] %></td>
-          <td><%= job_spec.fetch 'cron', job_spec['every'] %></td>
-          <td><%= job_spec['class'] %></td>
+          <td><%= job.name %></td>
+          <td><%= job['description'] %></td>
+          <td><%= job.interval %></td>
+          <td><%= job['class'] %></td>
           <td>
-            <a href="<%= root_path %>queues/<%= job_spec.fetch('queue', 'default') %>"><%= job_spec.fetch('queue', 'default') %></a>
+            <a href="<%= root_path %>queues/<%= job.queue %>"><%= job.queue %></a>
           </td>
-          <td><%= job_spec['args'] %></td>
+          <td><%= job['args'] %></td>
+          <td><%= job.next_time || t('no_next_time') %></td>
           <td class="text-center">
-            <a class="btn btn-warn btn-xs" href="<%= root_path %>recurring-jobs/<%= URI.escape(name) %>/enqueue">
+            <a class="btn btn-warn btn-xs" href="<%= root_path %>recurring-jobs/<%= URI.escape(job.name) %>/enqueue">
               <%= t('enqueue_now') %>
             </a>
           </td>

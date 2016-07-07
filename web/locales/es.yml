@@ -7,3 +7,5 @@ es:
   queue: Cola
   arguments: Argumentos
   enqueue_now: Encolar ahora
+  next_time: Próxima ejecución
+  no_next_time: esta tarea no se volverá a ejecutar

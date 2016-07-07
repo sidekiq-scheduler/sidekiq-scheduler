@@ -1,0 +1,54 @@
+require 'sidekiq/web_helpers'
+
+module SidekiqScheduler
+  class JobPresenter
+    attr_reader :name
+
+    include Sidekiq::WebHelpers
+
+    def initialize(name, attributes)
+      @name = name
+      @attributes = attributes
+    end
+
+    # Returns the next time execution for the job
+    #
+    # @return [String] with the job's next time
+    def next_time
+      execution_time = Sidekiq.redis { |r| r.hget(Sidekiq::Scheduler.next_times_key, name) }
+
+      relative_time(Time.parse(execution_time)) if execution_time
+    end
+
+    # Returns the interval for the job
+    #
+    # @return [String] with the job's interval
+    def interval
+      @attributes.fetch('cron', @attributes['every'])
+    end
+
+    # Returns the queue of the job
+    #
+    # @return [String] with the job's queue
+    def queue
+      @attributes.fetch('queue', 'default')
+    end
+
+    # Delegates the :[] method to the attributes' hash
+    #
+    # @return [String] with the value for that key
+    def [](key)
+      @attributes[key]
+    end
+
+    # Builds the presenter instances for the schedule hash
+    #
+    # @param schedule_hash [Hash] with the redis schedule
+    # @return [Array<JobPresenter>] an array with the instances of presenters
+    def self.build_collection(schedule_hash)
+      Hash(schedule_hash).map do |name, job_spec|
+        new(name, job_spec)
+      end
+    end
+  end
+end
