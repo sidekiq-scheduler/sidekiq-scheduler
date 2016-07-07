@@ -42,8 +42,29 @@ describe Sidekiq::Scheduler do
         'args'  => '/tmp'
       }
 
-      expect(Sidekiq::Client).to receive(:push).with(process_parameters(config))
+      expect(Sidekiq::Client).to receive(:push) do |opts|
+        expect(opts['class']).to eq(SomeWorker)
+        expect(opts['args']).to eq(['/tmp'])
+      end
 
+      Sidekiq::Scheduler.enqueue_job(config)
+    end
+
+    it 'enqueue does not fail if it cannot constantize' do
+      # The job should be loaded, since a missing rails_env means ALL envs.
+      ENV['RAILS_ENV'] = 'production'
+
+      config = {
+        'cron'  => '* * * * *',
+        'class' => 'SomeOtherWorker',
+        'queue' => 'high',
+        'args'  => '/tmp'
+      }
+
+      expect(Sidekiq::Client).to receive(:push) do |opts|
+        expect(opts['class']).to eq('SomeOtherWorker')
+        expect(opts['args']).to eq(['/tmp'])
+      end
       Sidekiq::Scheduler.enqueue_job(config)
     end
 
