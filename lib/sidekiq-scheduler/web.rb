@@ -1,3 +1,5 @@
+require_relative 'job_presenter'
+
 module SidekiqScheduler
   # Hook into *Sidekiq::Web* Sinatra app which adds a new '/recurring-jobs' page
 
@@ -6,7 +8,7 @@ module SidekiqScheduler
 
     def self.registered(app)
       app.get '/recurring-jobs' do
-        @schedule = (Sidekiq.schedule! || [])
+        @presented_jobs = JobPresenter.build_collection(Sidekiq.schedule!)
 
         erb File.read(File.join(VIEW_PATH, 'recurring_jobs.erb'))
       end
