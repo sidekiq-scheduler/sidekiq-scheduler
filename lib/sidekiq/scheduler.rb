@@ -8,6 +8,7 @@ module Sidekiq
     extend Sidekiq::Util
 
     REGISTERED_JOBS_THRESHOLD_IN_SECONDS = 24 * 60 * 60
+    RUFUS_METADATA_KEYS = %w(description at cron every in interval)
 
     # We expect rufus jobs to have #params
     Rufus::Scheduler::Job.module_eval do
@@ -239,7 +240,7 @@ module Sidekiq
       end
 
       def enque_with_sidekiq(config)
-        Sidekiq::Client.push(config)
+        Sidekiq::Client.push(sanitize_job_config(config))
       end
 
       def initialize_active_job(klass, args)
@@ -349,6 +350,10 @@ module Sidekiq
 
           idempotent_job_enqueue(name, time, config)
         end
+      end
+
+      def sanitize_job_config(config)
+        config.reject { |k, _| RUFUS_METADATA_KEYS.include?(k) }
       end
 
     end
