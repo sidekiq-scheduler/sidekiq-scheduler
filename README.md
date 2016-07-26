@@ -81,8 +81,7 @@ if Rails.env == 'production' && (defined?(Rails::Server) || defined?(Unicorn))
   Sidekiq.configure_server do |config|
 
     config.on(:startup) do
-      Sidekiq.schedule = YAML
-        .load_file(File.expand_path('../../../config/scheduler.yml', __FILE__))
+      Sidekiq.schedule = YAML.load_file(File.expand_path('../../config/scheduler.yml', __FILE__))
       Sidekiq::Scheduler.reload_schedule!
     end
   end
@@ -157,7 +156,7 @@ require 'sidekiq/scheduler'
 
 Sidekiq.configure_server do |config|
   config.on(:startup) do
-    Sidekiq.schedule = YAML.load_file(File.expand_path("../../../config/scheduler.yml",__FILE__))
+    Sidekiq.schedule = YAML.load_file(File.expand_path("../../config/scheduler.yml", __FILE__))
     Sidekiq::Scheduler.reload_schedule!
   end
 end
@@ -167,11 +166,11 @@ If you are running a non Rails project you should add code to load the workers c
 
 ```ruby
 require 'sidekiq/scheduler'
-Dir[File.expand_path('../lib/workers/*.rb',__FILE__)].each do |file| load file; end
+Dir[File.expand_path('../lib/workers/*.rb', __FILE__)].each do |file| load file; end
 
 Sidekiq.configure_server do |config|
   config.on(:startup) do
-    Sidekiq.schedule = YAML.load_file(File.expand_path("../../../config/scheduler.yml",__FILE__))
+    Sidekiq.schedule = YAML.load_file(File.expand_path("../../config/scheduler.yml", __FILE__))
     Sidekiq::Scheduler.reload_schedule!
   end
 end
