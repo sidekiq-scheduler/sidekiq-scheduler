@@ -31,37 +31,23 @@ describe Sidekiq::Scheduler do
   end
 
   describe '.enqueue_job' do
-    it 'enqueue constantizes' do
-      # The job should be loaded, since a missing rails_env means ALL envs.
-      ENV['RAILS_ENV'] = 'production'
-
-      config = {
-        'cron'  => '* * * * *',
+    let(:sidekiq_base_config) do
+      {
         'class' => 'SomeWorker',
         'queue' => 'high',
         'args'  => '/tmp'
       }
-
-      expect(Sidekiq::Client).to receive(:push).with(process_parameters(config))
-
-      Sidekiq::Scheduler.enqueue_job(config)
     end
 
-    it 'enqueue_job respects queue params' do
-      config = {
-        'cron' => '* * * * *',
-        'class' => 'SystemNotifierWorker',
-        'queue' => 'high'
-      }
+    it 'enqueue constantizes' do
+      # The job should be loaded, since a missing rails_env means ALL envs.
+      ENV['RAILS_ENV'] = 'production'
 
-      expect(Sidekiq::Client).to receive(:push).with({
-        'cron'  => '* * * * *',
-        'class' => SystemNotifierWorker,
-        'args'  => [],
-        'queue' => 'high'
-      })
+      scheduler_config = sidekiq_base_config.merge({ 'cron'  => '* * * * *' })
 
-      Sidekiq::Scheduler.enqueue_job(config)
+      expect(Sidekiq::Client).to receive(:push).with(process_parameters(sidekiq_base_config))
+
+      Sidekiq::Scheduler.enqueue_job(scheduler_config)
     end
   end
 
@@ -609,6 +595,15 @@ describe Sidekiq::Scheduler do
       expect {
         Sidekiq::Scheduler.enque_with_sidekiq(config)
       }.to change { Sidekiq::Queues[config['queue']].size }.by(1)
+    end
+
+    context 'when the config have rufus related keys' do
+      let(:rufus_config) { { Sidekiq::Scheduler::RUFUS_METADATA_KEYS.sample => "value" } }
+
+      it 'removes those keys' do
+        expect(Sidekiq::Client).to receive(:push).with(config)
+        Sidekiq::Scheduler.enque_with_sidekiq(config.merge(rufus_config))
+      end
     end
   end
 
