@@ -11,38 +11,44 @@ describe Sidekiq::Scheduler do
     Sidekiq::Worker.clear_all
   end
 
-  it 'sidekiq-scheduler enabled option is working' do
-    Sidekiq::Scheduler.enabled = false
 
-    expect(Sidekiq::Scheduler.rufus_scheduler.jobs.size).to equal(0)
+  describe '.load_schedule' do
+    context 'when the enabled option is false' do
+      let(:job_schedule) do
+        {
+          :some_ivar_job => {
+            'cron' => '* * * * *',
+            'class' => 'SomeIvarJob',
+            'args' => '/tmp'
+          }
+        }
+      end
 
-    Sidekiq.schedule = {
-      :some_ivar_job => {
-        'cron' => '* * * * *',
-        'class' => 'SomeIvarJob',
-        'args' => '/tmp'
-      }
-    }
+      before do
+        Sidekiq::Scheduler.enabled = false
+        Sidekiq.schedule = job_schedule
+        Sidekiq::Scheduler.load_schedule!
+      end
 
-    Sidekiq::Scheduler.load_schedule!
+      it 'does not increase the jobs ammount' do
+        expect(Sidekiq::Scheduler.rufus_scheduler.jobs.size).to equal(0)
+      end
 
-    expect(Sidekiq::Scheduler.rufus_scheduler.jobs.size).to equal(0)
-    expect(Sidekiq::Scheduler.scheduled_jobs).not_to include(:some_ivar_job)
+      it 'does not add the job to the scheduled jobs' do
+        expect(Sidekiq::Scheduler.scheduled_jobs).not_to include(:some_ivar_job)
+      end
+    end
   end
 
   describe '.enqueue_job' do
     let(:sidekiq_base_config) do
-      {
-        'class' => 'SomeWorker',
-        'queue' => 'high',
-        'args'  => '/tmp'
-      }
+      { 'class' => 'SomeWorker', 'queue' => 'high', 'args'  => '/tmp' }
     end
 
-    it 'enqueue constantizes' do
-      # The job should be loaded, since a missing rails_env means ALL envs.
-      ENV['RAILS_ENV'] = 'production'
+    # The job should be loaded, since a missing rails_env means ALL envs.
+    before { ENV['RAILS_ENV'] = 'production' }
 
+    it 'prepares the parameters' do
       scheduler_config = sidekiq_base_config.merge({ 'cron'  => '* * * * *' })
 
       expect(Sidekiq::Client).to receive(:push).with(process_parameters(sidekiq_base_config))
@@ -213,9 +219,9 @@ describe Sidekiq::Scheduler do
   end
 
   describe '.reload_schedule!' do
-    it 'should include new values' do
-      Sidekiq::Scheduler.dynamic = true
+    before { Sidekiq::Scheduler.dynamic = true }
 
+    it 'should include new values' do
       Sidekiq::Scheduler.load_schedule!
 
       expect {
@@ -235,7 +241,6 @@ describe Sidekiq::Scheduler do
     end
 
     it 'should remove old values that are not reincluded' do
-      Sidekiq::Scheduler.dynamic = true
       Sidekiq.schedule = {
         :some_ivar_job => {
           'cron' => '* * * * *',
@@ -254,10 +259,6 @@ describe Sidekiq::Scheduler do
     end
 
     it 'reloads the schedule from redis after 5 seconds when dynamic' do
-      Sidekiq.redis { |r| r.flushdb }
-      Sidekiq::Scheduler.clear_schedule!
-
-      Sidekiq::Scheduler.dynamic = true
       Sidekiq.set_schedule('some_job', ScheduleFaker.cron_schedule({'args' => '/tmp'}))
 
       Sidekiq::Scheduler.load_schedule!
@@ -278,139 +279,180 @@ describe Sidekiq::Scheduler do
       Sidekiq.redis { |r| r.hexists(Sidekiq::Scheduler.next_times_key, job_name) }
     end
 
-    context 'cron schedule' do
-      it 'loads correctly with no options' do
-        Sidekiq::Scheduler.load_schedule_job(job_name, ScheduleFaker.cron_schedule)
-
-        expect(Sidekiq::Scheduler.rufus_scheduler.jobs.size).to be(1)
-        expect(Sidekiq::Scheduler.scheduled_jobs.keys).to eq([job_name])
+    context 'without a timing option' do
+      before do
+        Sidekiq::Scheduler.load_schedule_job(job_name, ScheduleFaker.invalid_schedule)
       end
 
-      it 'stores the next time execution correctly with no options' do
-        Sidekiq::Scheduler.load_schedule_job(job_name, ScheduleFaker.cron_schedule)
-        expect(next_time_execution).to be
-      end
-
-      it 'sets a tag for the job with the name' do
-        Sidekiq::Scheduler.load_schedule_job(job_name, ScheduleFaker.cron_schedule)
-
-        expect(Sidekiq::Scheduler.scheduled_jobs[job_name].tags).to eq([job_name])
-      end
-
-      it 'loads correctly with options' do
-        Sidekiq::Scheduler.load_schedule_job(job_name,
-          ScheduleFaker.cron_schedule('allow_overlapping' => 'true'))
-
-        expect(Sidekiq::Scheduler.rufus_scheduler.jobs.size).to be(1)
-        expect(Sidekiq::Scheduler.scheduled_jobs.keys).to eq([job_name])
-        expect(Sidekiq::Scheduler.scheduled_jobs[job_name].params.keys).
-          to include(:allow_overlapping)
-      end
-
-      it 'stores the next time execution correctly with options' do
-        Sidekiq::Scheduler.load_schedule_job(job_name,
-          ScheduleFaker.cron_schedule('allow_overlapping' => 'true'))
-        expect(next_time_execution).to be
-      end
-
-      it 'does not load the schedule with an empty cron' do
-        Sidekiq::Scheduler.load_schedule_job(job_name,
-          ScheduleFaker.cron_schedule('cron' => ''))
-
-        expect(Sidekiq::Scheduler.rufus_scheduler.jobs.size).to be(0)
+      it 'does not put the job inside the scheduled hash' do
         expect(Sidekiq::Scheduler.scheduled_jobs.keys).to be_empty
       end
 
-      it 'does not store the next time execution correctly with options' do
-        Sidekiq::Scheduler.load_schedule_job(job_name,
-          ScheduleFaker.cron_schedule('cron' => ''))
+      it 'does not add the job to rufus scheduler' do
+        expect(Sidekiq::Scheduler.rufus_scheduler.jobs.size).to be(0)
+      end
 
+      it 'does not store the next time execution correctly' do
         expect(next_time_execution).not_to be
       end
     end
 
+    context 'cron schedule' do
+      context 'without options' do
+        before { Sidekiq::Scheduler.load_schedule_job(job_name, ScheduleFaker.cron_schedule) }
+
+        it 'adds the job to rufus scheduler' do
+          expect(Sidekiq::Scheduler.rufus_scheduler.jobs.size).to be(1)
+        end
+
+        it 'puts the job inside the scheduled hash' do
+          expect(Sidekiq::Scheduler.scheduled_jobs.keys).to eq([job_name])
+        end
+
+        it 'stores the next time execution correctly' do
+          expect(next_time_execution).to be
+        end
+
+        it 'sets a tag for the job with the name' do
+          expect(Sidekiq::Scheduler.scheduled_jobs[job_name].tags).to eq([job_name])
+        end
+      end
+
+      context 'with options' do
+        context 'when the options are valid' do
+          before do
+            Sidekiq::Scheduler.load_schedule_job(job_name,
+              ScheduleFaker.cron_schedule('allow_overlapping' => 'true'))
+          end
+
+          it 'adds the job to rufus scheduler' do
+            expect(Sidekiq::Scheduler.rufus_scheduler.jobs.size).to be(1)
+          end
+
+          it 'puts the job inside the scheduled hash' do
+            expect(Sidekiq::Scheduler.scheduled_jobs.keys).to eq([job_name])
+          end
+
+          it 'sets the default options' do
+            expect(Sidekiq::Scheduler.scheduled_jobs[job_name].params.keys).
+              to include(:allow_overlapping)
+          end
+
+          it 'stores the next time execution correctly' do
+            expect(next_time_execution).to be
+          end
+        end
+
+        context 'when the cron is empty' do
+          before do
+            Sidekiq::Scheduler.load_schedule_job(job_name, ScheduleFaker.cron_schedule('cron' => ''))
+          end
+
+          it 'does not put the job inside the scheduled hash' do
+            expect(Sidekiq::Scheduler.scheduled_jobs.keys).to be_empty
+          end
+
+          it 'does not add the job to rufus scheduler' do
+            expect(Sidekiq::Scheduler.rufus_scheduler.jobs.size).to be(0)
+          end
+
+          it 'does not store the next time execution correctly' do
+            expect(next_time_execution).not_to be
+          end
+        end
+      end
+    end
+
     context 'every schedule' do
-      it 'loads correctly with no options' do
-        Sidekiq::Scheduler.load_schedule_job(job_name, ScheduleFaker.every_schedule)
+      context 'without options' do
+        before do
+          Sidekiq::Scheduler.load_schedule_job(job_name, ScheduleFaker.every_schedule)
+        end
 
-        expect(Sidekiq::Scheduler.rufus_scheduler.jobs.size).to be(1)
-        expect(Sidekiq::Scheduler.scheduled_jobs.keys).to eq([job_name])
+        it 'adds the job to rufus scheduler' do
+          expect(Sidekiq::Scheduler.rufus_scheduler.jobs.size).to be(1)
+        end
+
+        it 'puts the job inside the scheduled hash' do
+          expect(Sidekiq::Scheduler.scheduled_jobs.keys).to eq([job_name])
+        end
+
+        it 'stores the next time execution correctly' do
+          expect(next_time_execution).to be
+        end
       end
 
-      it 'stores the next time execution correctly with no options' do
-        Sidekiq::Scheduler.load_schedule_job(job_name, ScheduleFaker.every_schedule)
-        expect(next_time_execution).to be
-      end
+      context 'with options' do
+        before do
+          Sidekiq::Scheduler.load_schedule_job(job_name,
+            ScheduleFaker.every_schedule({'first_in' => '60s'}))
+        end
 
-      it 'loads correctly with options' do
-        Sidekiq::Scheduler.load_schedule_job(job_name,
-          ScheduleFaker.every_schedule({'first_in' => '60s'}))
+        it 'adds the job to rufus scheduler' do
+          expect(Sidekiq::Scheduler.rufus_scheduler.jobs.size).to be(1)
+        end
 
-        expect(Sidekiq::Scheduler.rufus_scheduler.jobs.size).to be(1)
-        expect(Sidekiq::Scheduler.scheduled_jobs.keys).to eq([job_name])
-        expect(Sidekiq::Scheduler.scheduled_jobs[job_name].params.keys).
-          to include(:first_in)
-      end
+        it 'puts the job inside the scheduled hash' do
+          expect(Sidekiq::Scheduler.scheduled_jobs.keys).to eq([job_name])
+        end
 
-      it 'stores the next time execution correctly with options' do
-        Sidekiq::Scheduler.load_schedule_job(job_name,
-          ScheduleFaker.every_schedule({'first_in' => '60s'}))
-        expect(next_time_execution).to be
+        it 'sets the default options' do
+          expect(Sidekiq::Scheduler.scheduled_jobs[job_name].params.keys).
+            to include(:first_in)
+        end
+
+        it 'stores the next time execution correctly' do
+          expect(next_time_execution).to be
+        end
       end
     end
 
     context 'at schedule' do
-      it 'loads correctly' do
-        Sidekiq::Scheduler.load_schedule_job(job_name, ScheduleFaker.at_schedule)
+      before { Sidekiq::Scheduler.load_schedule_job(job_name, ScheduleFaker.at_schedule) }
 
+      it 'adds the job to rufus scheduler' do
         expect(Sidekiq::Scheduler.rufus_scheduler.jobs.size).to be(1)
+      end
+
+      it 'puts the job inside the scheduled hash' do
         expect(Sidekiq::Scheduler.scheduled_jobs.keys).to eq([job_name])
       end
 
       it 'stores the next time execution correctly' do
-        Sidekiq::Scheduler.load_schedule_job(job_name, ScheduleFaker.at_schedule)
         expect(next_time_execution).to be
       end
     end
 
     context 'in schedule' do
-      it 'load_schedule_job with in' do
-        Sidekiq::Scheduler.load_schedule_job(job_name, ScheduleFaker.in_schedule)
+      before { Sidekiq::Scheduler.load_schedule_job(job_name, ScheduleFaker.in_schedule) }
 
+      it 'adds the job to rufus scheduler' do
         expect(Sidekiq::Scheduler.rufus_scheduler.jobs.size).to be(1)
+      end
+
+      it 'puts the job inside the scheduled hash' do
         expect(Sidekiq::Scheduler.scheduled_jobs.keys).to eq([job_name])
       end
 
       it 'stores the next time execution correctly' do
-        Sidekiq::Scheduler.load_schedule_job(job_name, ScheduleFaker.in_schedule)
         expect(next_time_execution).to be
       end
     end
 
     context 'interval schedule' do
-      it 'loads correctly' do
-        Sidekiq::Scheduler.load_schedule_job(job_name, ScheduleFaker.interval_schedule)
+      before { Sidekiq::Scheduler.load_schedule_job(job_name, ScheduleFaker.interval_schedule) }
 
+      it 'adds the job to rufus scheduler' do
         expect(Sidekiq::Scheduler.rufus_scheduler.jobs.size).to be(1)
+      end
+
+      it 'puts the job inside the scheduled hash' do
         expect(Sidekiq::Scheduler.scheduled_jobs.keys).to eq([job_name])
       end
 
       it 'stores the next time execution correctly' do
-        Sidekiq::Scheduler.load_schedule_job(job_name, ScheduleFaker.interval_schedule)
         expect(next_time_execution).to be
       end
-    end
-
-    it 'does not load without a timing option' do
-      Sidekiq::Scheduler.load_schedule_job(job_name, ScheduleFaker.invalid_schedule)
-
-      expect(Sidekiq::Scheduler.rufus_scheduler.jobs.size).to be(0)
-      expect(Sidekiq::Scheduler.scheduled_jobs.keys).to be_empty
-    end
-
-    it 'does not stores the next time execution without a timing option' do
-      Sidekiq::Scheduler.load_schedule_job(job_name, ScheduleFaker.invalid_schedule)
-      expect(next_time_execution).not_to be
     end
   end
 
@@ -487,79 +529,100 @@ describe Sidekiq::Scheduler do
   end
 
   describe '.update_schedule' do
-    it 'loads a new job' do
+    before do
       Sidekiq::Scheduler.dynamic = true
-
       Sidekiq.set_schedule('old_job', ScheduleFaker.cron_schedule)
       Sidekiq::Scheduler.load_schedule!
-
-      Sidekiq.set_schedule('new_job', ScheduleFaker.cron_schedule)
-
-      expect {
-        Sidekiq::Scheduler.update_schedule
-      }.to change { Sidekiq::Scheduler.scheduled_jobs.keys.size }.by(1)
-
-      expect(Sidekiq::Scheduler.scheduled_jobs.keys).to include('new_job')
-      expect(Sidekiq.schedule.keys).to include('new_job')
     end
 
-    it 'removes jobs that are removed' do
-      Sidekiq::Scheduler.dynamic = true
+    context 'when a new job is added' do
+      before { Sidekiq.set_schedule('new_job', ScheduleFaker.cron_schedule) }
 
-      Sidekiq.set_schedule('old_job', ScheduleFaker.cron_schedule)
-      Sidekiq::Scheduler.load_schedule!
+      it 'increases the scheduled jobs size' do
+        expect { Sidekiq::Scheduler.update_schedule }
+          .to change { Sidekiq::Scheduler.scheduled_jobs.keys.size }.by(1)
+      end
 
-      Sidekiq.remove_schedule('old_job')
-
-      expect {
+      it 'adds the new job to the scheduled hash' do
         Sidekiq::Scheduler.update_schedule
-      }.to change { Sidekiq::Scheduler.scheduled_jobs.keys.size }.by(-1)
+        expect(Sidekiq::Scheduler.scheduled_jobs.keys).to include('new_job')
+      end
 
-      expect(Sidekiq::Scheduler.scheduled_jobs.keys).to_not include('old_job')
-      expect(Sidekiq.schedule.keys).to_not include('old_job')
+      it 'adds the new job to the schedule' do
+        Sidekiq::Scheduler.update_schedule
+        expect(Sidekiq.schedule.keys).to include('new_job')
+      end
     end
 
-    it 'updates already scheduled jobs' do
-      Sidekiq::Scheduler.dynamic = true
+    context 'when a job is removed' do
+      before do
+        Sidekiq.remove_schedule('old_job')
+      end
 
-      Sidekiq.set_schedule('old_job', ScheduleFaker.cron_schedule)
-      Sidekiq::Scheduler.load_schedule!
+      it 'decreases the scheduled jobs count' do
+        expect {
+          Sidekiq::Scheduler.update_schedule
+        }.to change { Sidekiq::Scheduler.scheduled_jobs.keys.size }.by(-1)
+      end
 
-      new_args = {
-        'cron'  => '1 * * * *',
-        'class' => 'SystemNotifierWorker',
-        'args'  => ''
-      }
-
-      Sidekiq.set_schedule('old_job', ScheduleFaker.cron_schedule(new_args))
-
-      expect {
+      it 'removes the job from the scheduled hash' do
         Sidekiq::Scheduler.update_schedule
-      }.to_not change { Sidekiq::Scheduler.scheduled_jobs.keys.size }
+        expect(Sidekiq::Scheduler.scheduled_jobs.keys).to_not include('old_job')
+      end
 
-      expect(Sidekiq::Scheduler.scheduled_jobs.keys).to include('old_job')
-      expect(Sidekiq.schedule.keys).to include('old_job')
-
-      job = Sidekiq.schedule['old_job']
-      rufus_job = Sidekiq::Scheduler.scheduled_jobs['old_job']
-
-      expect(job).to eq(new_args)
-      expect(rufus_job.original).to eq(new_args['cron'])
+      it 'removes the job from the schedule' do
+        Sidekiq::Scheduler.update_schedule
+        expect(Sidekiq.schedule.keys).to_not include('old_job')
+      end
     end
 
-    it 'removes the changed flag' do
-      Sidekiq::Scheduler.dynamic = true
+    context 'when a job is updated' do
+      let(:new_args) do
+        {
+          'cron'  => '1 * * * *',
+          'class' => 'SystemNotifierWorker',
+          'args'  => ''
+        }
+      end
+      let(:job) { Sidekiq.schedule['old_job'] }
+      let(:rufus_job) { Sidekiq::Scheduler.scheduled_jobs['old_job'] }
 
-      Sidekiq.set_schedule('old_job', ScheduleFaker.cron_schedule)
-      Sidekiq::Scheduler.load_schedule!
-
-      Sidekiq.set_schedule('old_job', ScheduleFaker.cron_schedule('cron' => '1 * * * *'))
-
-      expect {
+      before do
+        Sidekiq.set_schedule('old_job', ScheduleFaker.cron_schedule(new_args))
         Sidekiq::Scheduler.update_schedule
-      }.to_not change { Sidekiq::Scheduler.scheduled_jobs.keys.size }
+      end
 
-      expect(Sidekiq.redis { |r| r.scard(:schedules_changed) }).to be(0)
+      it 'keeps the job in the scheduled hash' do
+        expect(Sidekiq::Scheduler.scheduled_jobs.keys).to include('old_job')
+      end
+
+      it 'keeps the job in the schedule' do
+        expect(Sidekiq.schedule.keys).to include('old_job')
+      end
+
+      it 'updates the job with the new args scheduled jobs' do
+        expect(job).to eq(new_args)
+      end
+
+      it 'updates the rufus job with the new args' do
+        expect(rufus_job.original).to eq(new_args['cron'])
+      end
+    end
+
+    context 'when the job is updated' do
+      before { Sidekiq.set_schedule('old_job', ScheduleFaker.cron_schedule('cron' => '1 * * * *')) }
+
+
+      it 'does not removes the job from the scheduled hash' do
+        expect {
+          Sidekiq::Scheduler.update_schedule
+        }.to_not change { Sidekiq::Scheduler.scheduled_jobs.keys.size }
+      end
+
+      it 'resets the changed flag from redis' do
+        expect { Sidekiq::Scheduler.update_schedule }
+          .to change{ Sidekiq.redis { |r| r.scard(:schedules_changed) } }.from(1).to(0)
+      end
     end
   end
 
