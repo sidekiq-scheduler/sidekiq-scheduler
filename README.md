@@ -217,15 +217,11 @@ You can set that flag in the following ways.
 ```ruby
 Sidekiq.configure_server do |config|
   # ...
-
-  config.on(:startup) do
-    # ...
-    Sidekiq::Scheduler.dynamic = true
-  end
+  Sidekiq::Scheduler.dynamic = true
 end
 ```
 
-If `:dynamic` flag is set to false, you have to reload the schedule manually in sidekiq
+If `:dynamic` flag is set to `false`, you have to reload the schedule manually in sidekiq
 side:
 
 ```ruby
