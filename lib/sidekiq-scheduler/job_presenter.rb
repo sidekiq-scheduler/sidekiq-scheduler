@@ -24,7 +24,7 @@ module SidekiqScheduler
     #
     # @return [String] with the job's interval
     def interval
-      @attributes.fetch('cron', @attributes['every'])
+      @attributes['cron'] || @attributes['interval'] || @attributes['every']
     end
 
     # Returns the queue of the job
