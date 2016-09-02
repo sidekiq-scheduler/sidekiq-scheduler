@@ -34,13 +34,25 @@ describe SidekiqScheduler::JobPresenter do
       end
     end
 
-    context "when the attributes has not a cron key" do
-      let(:attributes) { { "every" => every_value } }
-      let(:every_value) { "every_value" }
+    context "when the attributes does not have a cron key" do
+      context "when the attributes has an interval key" do
+        let(:attributes) { { "interval" => interval_value } }
+        let(:interval_value) { "interval_value" }
 
-      it "returns the value for every key" do
-        expect(subject.interval).to eq(every_value)
+        it "returns the value for it" do
+          expect(subject.interval).to eq(interval_value)
+        end
       end
+
+      context "when the attributes does not have a cron key" do
+        let(:attributes) { { "every" => every_value } }
+        let(:every_value) { "every_value" }
+
+        it "returns the value for every key" do
+          expect(subject.interval).to eq(every_value)
+        end
+      end
+
     end
   end
 
