@@ -54,10 +54,10 @@ describe SidekiqScheduler::Manager do
         options.delete(:schedule)
       end
 
-      it 'does not modify Sidekiq.schedule' do
+      it 'deletes the previous jobs' do
         expect {
           subject
-        }.to_not change { Sidekiq.schedule }
+        }.to change { Sidekiq.schedule }.to({})
       end
     end
   end

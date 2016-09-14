@@ -346,9 +346,7 @@ module Sidekiq
         opts = { :job => true, :tags => [name] }
 
         rufus_scheduler.send(interval_type, *args, opts) do |job, time|
-          config.delete(interval_type)
-
-          idempotent_job_enqueue(name, time, config)
+          idempotent_job_enqueue(name, time, sanitize_job_config(config))
         end
       end
 
