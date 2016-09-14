@@ -41,19 +41,37 @@ describe Sidekiq::Scheduler do
   end
 
   describe '.enqueue_job' do
-    let(:sidekiq_base_config) do
-      { 'class' => 'SomeWorker', 'queue' => 'high', 'args'  => '/tmp' }
+    let(:scheduler_config) do
+      { 'class' => 'SomeWorker', 'queue' => 'high', 'args'  => '/tmp', 'cron' => '* * * * *' }
     end
 
     # The job should be loaded, since a missing rails_env means ALL envs.
     before { ENV['RAILS_ENV'] = 'production' }
 
     it 'prepares the parameters' do
-      scheduler_config = sidekiq_base_config.merge({ 'cron'  => '* * * * *' })
-
-      expect(Sidekiq::Client).to receive(:push).with(process_parameters(sidekiq_base_config))
+      expect(Sidekiq::Client).to receive(:push).with({
+        'class' => SomeWorker,
+        'queue' => 'high',
+        'args' => ['/tmp']
+      })
 
       Sidekiq::Scheduler.enqueue_job(scheduler_config)
+    end
+
+    context 'when worker class does not exist' do
+      before do
+        scheduler_config['class'] = 'NonExistentWorker'
+      end
+
+      it 'prepares the parameters' do
+        expect(Sidekiq::Client).to receive(:push).with({
+          'class' => 'NonExistentWorker',
+          'queue' => 'high',
+          'args' => ['/tmp']
+        })
+
+        Sidekiq::Scheduler.enqueue_job(scheduler_config)
+      end
     end
   end
 
