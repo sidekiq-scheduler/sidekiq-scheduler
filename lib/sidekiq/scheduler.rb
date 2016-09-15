@@ -258,7 +258,8 @@ module Sidekiq
       #
       # @return [Boolean]
       def active_job_enqueue?(klass)
-        defined?(ActiveJob::Enqueuing) && klass.included_modules.include?(ActiveJob::Enqueuing)
+        klass.is_a?(Class) && defined?(ActiveJob::Enqueuing) &&
+          klass.included_modules.include?(ActiveJob::Enqueuing)
       end
 
       # Convert the given arguments in the format expected to be enqueued.
@@ -270,7 +271,7 @@ module Sidekiq
       #
       # @return [Hash]
       def prepare_arguments(config)
-        config['class'] = config['class'].constantize if config['class'].is_a?(String)
+        config['class'] = try_to_constantize(config['class'])
 
         if config['args'].is_a?(Hash)
           config['args'].symbolize_keys! if config['args'].respond_to?(:symbolize_keys!)
@@ -279,6 +280,12 @@ module Sidekiq
         end
 
         config
+      end
+
+      def try_to_constantize(klass)
+        klass.is_a?(String) ? klass.constantize : klass
+      rescue NameError
+        klass
       end
 
       # Returns true if a job's queue is being listened on by sidekiq

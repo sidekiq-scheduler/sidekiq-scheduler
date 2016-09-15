@@ -26,17 +26,4 @@ RSpec.configure do |config|
   config.profile_examples = 10
 
   config.order = :random
-
-  def process_parameters(config)
-    config['class'] = config['class'].constantize if config['class'].is_a?(String)
-
-    if config['args'].is_a?(Hash)
-      config['args'].symbolize_keys! if config['args'].respond_to?(:symbolize_keys!)
-    else
-      config['args'] = Array(config['args'])
-    end
-
-    config
-  end
-
 end
