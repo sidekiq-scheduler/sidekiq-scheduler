@@ -1,4 +1,8 @@
-require 'sidekiq/web_helpers'
+begin
+  require 'sidekiq/web/helpers'
+rescue LoadError
+  require 'sidekiq/web_helpers'
+end
 
 module SidekiqScheduler
   class JobPresenter
