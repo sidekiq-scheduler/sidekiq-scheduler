@@ -16,7 +16,7 @@ module SidekiqScheduler
       app.get '/recurring-jobs/:name/enqueue' do
         schedule = Sidekiq.get_schedule(params[:name])
         Sidekiq::Scheduler.enqueue_job(schedule)
-        redirect to('/recurring-jobs')
+        redirect '/recurring-jobs'
       end
     end
   end
@@ -25,4 +25,4 @@ end
 require 'sidekiq/web' unless defined?(Sidekiq::Web)
 Sidekiq::Web.register(SidekiqScheduler::Web)
 Sidekiq::Web.tabs['recurring_jobs'] = 'recurring-jobs'
-Sidekiq::Web.set :locales, Sidekiq::Web.locales << File.expand_path(File.dirname(__FILE__) + "/../../web/locales")
+Sidekiq::Web.locales << File.expand_path(File.dirname(__FILE__) + "/../../web/locales")
