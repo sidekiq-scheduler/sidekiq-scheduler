@@ -16,7 +16,7 @@ module SidekiqScheduler
       app.get '/recurring-jobs/:name/enqueue' do
         schedule = Sidekiq.get_schedule(params[:name])
         Sidekiq::Scheduler.enqueue_job(schedule)
-        redirect '/recurring-jobs'
+        redirect "#{root_path}recurring-jobs"
       end
     end
   end
