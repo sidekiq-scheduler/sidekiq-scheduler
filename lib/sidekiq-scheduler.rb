@@ -21,7 +21,7 @@ Sidekiq.configure_server do |config|
     scheduler_options = {
       dynamic:   dynamic,
       enabled:   enabled,
-      schedule:  config.options.fetch(:schedule, nil),
+      schedule:  config.options.fetch(:schedule, nil).deep_stringify_keys,
       listened_queues_only: listened_queues_only
     }
 
