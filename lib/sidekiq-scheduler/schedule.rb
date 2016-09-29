@@ -1,3 +1,4 @@
+require 'hashwithindifferentaccess'
 require 'multi_json'
 
 module SidekiqScheduler
