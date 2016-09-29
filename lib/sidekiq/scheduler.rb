@@ -60,7 +60,7 @@ module Sidekiq
           logger.info 'Schedule empty! Set Sidekiq.schedule' if Sidekiq.schedule.empty?
 
 
-          @@scheduled_jobs = {}
+          @@scheduled_jobs = HashWithIndifferentAccess.new
 
           Sidekiq.schedule.each do |name, config|
             if !listened_queues_only || enabled_queue?(config['queue'])
