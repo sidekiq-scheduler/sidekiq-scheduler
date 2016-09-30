@@ -31,6 +31,7 @@ Gem::Specification.new do |s|
   s.add_development_dependency 'rspec'
   s.add_development_dependency 'mock_redis',              '~> 0'
   s.add_development_dependency 'simplecov',               '~> 0'
+  s.add_development_dependency 'byebug'
 
   if RUBY_VERSION >= '2.2.2'
     s.add_development_dependency 'activejob'

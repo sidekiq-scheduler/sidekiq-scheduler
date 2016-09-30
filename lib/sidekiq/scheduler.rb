@@ -8,7 +8,7 @@ module Sidekiq
     extend Sidekiq::Util
 
     REGISTERED_JOBS_THRESHOLD_IN_SECONDS = 24 * 60 * 60
-    RUFUS_METADATA_KEYS = %w(description at cron every in interval)
+    RUFUS_METADATA_KEYS = %w(description at cron every in interval enabled)
 
     # We expect rufus jobs to have #params
     Rufus::Scheduler::Job.module_eval do
@@ -335,8 +335,27 @@ module Sidekiq
 
       # Returns the key of the Redis hash for job's execution times hash
       #
+      # @return [String] with the key
       def next_times_key
         'sidekiq-scheduler:next_times'
+      end
+
+      # Returns the Redis's key for saving schedule states.
+      #
+      # @return [String] with the key
+      def schedules_state_key
+        'sidekiq-scheduler:states'
+      end
+
+      def job_enabled?(name)
+        job = Sidekiq.schedule[name]
+        schedule_state(name).fetch('enabled', job.fetch('enabled', true)) if job
+      end
+
+      def toggle_job_enabled(name)
+        state = schedule_state(name)
+        state['enabled'] = !job_enabled?(name)
+        set_schedule_state(name, state)
       end
 
       private
@@ -353,12 +372,30 @@ module Sidekiq
         opts = { :job => true, :tags => [name] }
 
         rufus_scheduler.send(interval_type, *args, opts) do |job, time|
-          idempotent_job_enqueue(name, time, sanitize_job_config(config))
+          idempotent_job_enqueue(name, time, sanitize_job_config(config)) if job_enabled?(name)
         end
       end
 
       def sanitize_job_config(config)
         config.reject { |k, _| RUFUS_METADATA_KEYS.include?(k) }
+      end
+
+      # Retrieves a schedule state
+      #
+      # @param name [String] with the schedule's name
+      # @return [Hash] with the schedule's state
+      def schedule_state(name)
+        state = Sidekiq.redis { |r| r.hget(schedules_state_key, name) }
+
+        state ? MultiJson.decode(state) : {}
+      end
+
+      # Saves a schedule state
+      #
+      # @param name [String] with the schedule's name
+      # @param name [Hash] with the schedule's state
+      def set_schedule_state(name, state)
+        Sidekiq.redis { |r| r.hset(schedules_state_key, name, MultiJson.encode(state)) }
       end
 
     end

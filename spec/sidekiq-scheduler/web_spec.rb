@@ -9,20 +9,26 @@ describe Sidekiq::Web do
     Sidekiq::Web
   end
 
+  let(:enabled_job_name) { 'Foo Job' }
+
+  let(:disabled_job_name) { 'Bar Job' }
+
   let(:jobs) do
     {
-      'Foo Job' => {
+      enabled_job_name => {
         'class' => 'FooClass',
         'cron' => '0 * * * * US/Eastern',
         'args' => [42],
-        'description' => 'Does foo things.'
+        'description' => 'Does foo things.',
+        'enabled' => true
       },
 
-      'Bar Job' => {
+      disabled_job_name => {
         'class' => 'BarClass',
         'every' => '1h',
         'args' => ['foo', 'bar'],
-        'queue' => 'special'
+        'queue' => 'special',
+        'enabled' => false
       }
     }
   end
@@ -60,6 +66,22 @@ describe Sidekiq::Web do
         get '/recurring-jobs'
 
         expect(last_response.body).to match(/2016-07-11T13:29:47Z/)
+      end
+    end
+  end
+
+  describe '/recurring-jobs/:name/toggle' do
+    context 'when the job is enabled' do
+      it 'disables the job' do
+        expect { get "/recurring-jobs/#{URI.escape(enabled_job_name)}/toggle" }
+          .to change { Sidekiq::Scheduler.job_enabled?(enabled_job_name) }.from(true).to(false)
+      end
+    end
+
+    context 'when the job is disabled' do
+      it 'enables the job' do
+        expect { get "/recurring-jobs/#{URI.escape(disabled_job_name)}/toggle" }
+          .to change { Sidekiq::Scheduler.job_enabled?(disabled_job_name) }.from(false).to(true)
       end
     end
   end

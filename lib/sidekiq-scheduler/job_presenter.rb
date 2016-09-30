@@ -45,6 +45,10 @@ module SidekiqScheduler
       @attributes[key]
     end
 
+    def enabled?
+      Sidekiq::Scheduler.job_enabled?(@name)
+    end
+
     # Builds the presenter instances for the schedule hash
     #
     # @param schedule_hash [Hash] with the redis schedule

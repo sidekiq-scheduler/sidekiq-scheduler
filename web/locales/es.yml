@@ -9,3 +9,5 @@ es:
   enqueue_now: Encolar ahora
   next_time: Próxima ejecución
   no_next_time: esta tarea no se volverá a ejecutar
+  disable: Inhabilitar
+  enable: Habilitar

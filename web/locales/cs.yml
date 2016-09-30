@@ -9,3 +9,5 @@ cs:
   enqueue_now: Zařadit nyní
   next_time: Příště
   no_next_time: no next execution for this job
+  disable: Zakázat
+  enable: Povolit
