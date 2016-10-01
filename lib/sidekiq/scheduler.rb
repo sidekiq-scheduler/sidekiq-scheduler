@@ -1,4 +1,3 @@
-require 'hashwithindifferentaccess'
 require 'rufus/scheduler'
 require 'thwait'
 require 'sidekiq/util'
@@ -61,7 +60,7 @@ module Sidekiq
           logger.info 'Schedule empty! Set Sidekiq.schedule' if Sidekiq.schedule.empty?
 
 
-          @@scheduled_jobs = HashWithIndifferentAccess.new
+          @@scheduled_jobs = {}
 
           Sidekiq.schedule.each do |name, config|
             if !listened_queues_only || enabled_queue?(config['queue'])

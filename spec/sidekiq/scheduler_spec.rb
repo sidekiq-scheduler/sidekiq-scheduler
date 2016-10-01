@@ -16,7 +16,7 @@ describe Sidekiq::Scheduler do
     context 'when the enabled option is false' do
       let(:job_schedule) do
         {
-          :some_ivar_job => {
+          'some_ivar_job' => {
             'cron' => '* * * * *',
             'class' => 'SomeIvarJob',
             'args' => '/tmp'
@@ -35,7 +35,7 @@ describe Sidekiq::Scheduler do
       end
 
       it 'does not add the job to the scheduled jobs' do
-        expect(Sidekiq::Scheduler.scheduled_jobs).not_to include(:some_ivar_job)
+        expect(Sidekiq::Scheduler.scheduled_jobs).not_to include('some_ivar_job')
       end
     end
   end
@@ -99,7 +99,7 @@ describe Sidekiq::Scheduler do
     it 'should correctly load the job into rufus_scheduler' do
       expect {
         Sidekiq.schedule = {
-          :some_ivar_job => {
+          'some_ivar_job' => {
             'cron'  => '* * * * *',
             'class' => 'SomeWorker',
             'args'  => '/tmp'
@@ -109,13 +109,13 @@ describe Sidekiq::Scheduler do
         Sidekiq::Scheduler.load_schedule!
       }.to change { Sidekiq::Scheduler.rufus_scheduler.jobs.size }.from(0).to(1)
 
-      expect(Sidekiq::Scheduler.scheduled_jobs).to include(:some_ivar_job)
+      expect(Sidekiq::Scheduler.scheduled_jobs).to include('some_ivar_job')
     end
 
     context 'when job has a configured queue' do
       before do
         Sidekiq.schedule = {
-          :some_ivar_job => {
+          'some_ivar_job' => {
             'cron'  => '* * * * *',
             'class' => 'ReportWorker',
             'queue' => 'reporting'
@@ -134,7 +134,7 @@ describe Sidekiq::Scheduler do
           it 'loads the job into the scheduler' do
             Sidekiq::Scheduler.load_schedule!
 
-            expect(Sidekiq::Scheduler.scheduled_jobs).to include(:some_ivar_job)
+            expect(Sidekiq::Scheduler.scheduled_jobs).to include('some_ivar_job')
           end
         end
 
@@ -146,7 +146,7 @@ describe Sidekiq::Scheduler do
           it 'loads the job into the scheduler' do
             Sidekiq::Scheduler.load_schedule!
 
-            expect(Sidekiq::Scheduler.scheduled_jobs).to include(:some_ivar_job)
+            expect(Sidekiq::Scheduler.scheduled_jobs).to include('some_ivar_job')
           end
         end
 
@@ -158,7 +158,7 @@ describe Sidekiq::Scheduler do
           it 'does not load the job into the scheduler' do
             Sidekiq::Scheduler.load_schedule!
 
-            expect(Sidekiq::Scheduler.scheduled_jobs).to_not include(:some_ivar_job)
+            expect(Sidekiq::Scheduler.scheduled_jobs).to_not include('some_ivar_job')
           end
         end
       end
@@ -174,7 +174,7 @@ describe Sidekiq::Scheduler do
           it 'loads the job into the scheduler' do
             Sidekiq::Scheduler.load_schedule!
 
-            expect(Sidekiq::Scheduler.scheduled_jobs).to include(:some_ivar_job)
+            expect(Sidekiq::Scheduler.scheduled_jobs).to include('some_ivar_job')
           end
         end
       end
@@ -183,7 +183,7 @@ describe Sidekiq::Scheduler do
     context 'when job has no configured queue' do
       before do
         Sidekiq.schedule = {
-          :some_ivar_job => {
+          'some_ivar_job' => {
             'cron'  => '* * * * *',
             'class' => 'ReportWorker'
           }
@@ -201,7 +201,7 @@ describe Sidekiq::Scheduler do
           it 'does not load the job into the scheduler' do
             Sidekiq::Scheduler.load_schedule!
 
-            expect(Sidekiq::Scheduler.scheduled_jobs).to_not include(:some_ivar_job)
+            expect(Sidekiq::Scheduler.scheduled_jobs).to_not include('some_ivar_job')
           end
         end
 
@@ -213,7 +213,7 @@ describe Sidekiq::Scheduler do
           it 'loads the job into the scheduler' do
             Sidekiq::Scheduler.load_schedule!
 
-            expect(Sidekiq::Scheduler.scheduled_jobs).to include(:some_ivar_job)
+            expect(Sidekiq::Scheduler.scheduled_jobs).to include('some_ivar_job')
           end
         end
       end
@@ -229,7 +229,7 @@ describe Sidekiq::Scheduler do
           it 'loads the job into the scheduler' do
             Sidekiq::Scheduler.load_schedule!
 
-            expect(Sidekiq::Scheduler.scheduled_jobs).to include(:some_ivar_job)
+            expect(Sidekiq::Scheduler.scheduled_jobs).to include('some_ivar_job')
           end
         end
       end
@@ -260,7 +260,7 @@ describe Sidekiq::Scheduler do
 
     it 'should remove old values that are not reincluded' do
       Sidekiq.schedule = {
-        :some_ivar_job => {
+        'some_ivar_job' => {
           'cron' => '* * * * *',
           'class' => 'SomeWorker',
           'args' => '/tmp'
