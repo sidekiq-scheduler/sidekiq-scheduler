@@ -12,7 +12,7 @@ describe SidekiqScheduler::Manager do
         enabled: true,
         dynamic: true,
         listened_queues_only: true,
-        schedule: { current: ScheduleFaker.cron_schedule( 'class' => 'CurrentJob') }
+        schedule: { 'current' => ScheduleFaker.cron_schedule }
       }
     end
 

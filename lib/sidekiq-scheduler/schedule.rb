@@ -1,4 +1,4 @@
-require 'hashwithindifferentaccess'
+require 'hashie'
 require 'multi_json'
 
 module SidekiqScheduler
@@ -118,7 +118,10 @@ module SidekiqScheduler
     private
 
     def prepare_schedule(schedule_hash)
-      prepared_hash = HashWithIndifferentAccess.new
+      schedule_hash = Hashie.stringify_keys(schedule_hash)
+
+      prepared_hash = {}
+
       schedule_hash.each do |name, job_spec|
         job_spec = job_spec.dup
         job_spec['class'] = name unless job_spec.key?('class') || job_spec.key?(:class)

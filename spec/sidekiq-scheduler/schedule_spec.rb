@@ -60,6 +60,28 @@ describe SidekiqScheduler::Schedule do
         end
       end
     end
+
+    context 'when Symbol keys' do
+      let(:symbolized_schedule) do
+        {
+          worker: { class: 'SomeWorker', every: '20s', queue: 'low', description: 'symbols' }
+        }
+      end
+
+      let(:stringified_schedule) do
+        {
+          'worker' => {
+            'class' => 'SomeWorker', 'every' => '20s', 'queue' => 'low', 'description' => 'symbols'
+          }
+        }
+      end
+
+      it 'converts them into Strings' do
+        Sidekiq.schedule = symbolized_schedule
+
+        expect(Sidekiq.schedule).to eq(stringified_schedule)
+      end
+    end
   end
 
   describe '.set_schedule' do
