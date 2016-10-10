@@ -782,4 +782,144 @@ describe Sidekiq::Scheduler do
       end
     end
   end
+
+  describe '.job_enabled?' do
+    let(:job_name) { 'job_name' }
+    let(:job_schedule) { { job_name => job_config } }
+
+    subject { Sidekiq::Scheduler.job_enabled?(job_name) }
+
+    before do
+      Sidekiq::Scheduler.enabled = false
+      Sidekiq.schedule = job_schedule
+      Sidekiq::Scheduler.load_schedule!
+    end
+
+    context 'when the job have no schedule state' do
+      context 'when the enabled base config is not set' do
+        let(:job_config) do
+          {
+            'cron' => '* * * * *',
+            'class' => 'SomeIvarJob',
+            'args' => '/tmp'
+          }
+        end
+
+        it 'returns true by default' do
+          expect(subject).to be
+        end
+      end
+
+      context 'when the enabled base config is set' do
+        let(:enabled) { false }
+        let(:job_config) do
+          {
+            'cron' => '* * * * *',
+            'class' => 'SomeIvarJob',
+            'args' => '/tmp',
+            'enabled' => enabled
+          }
+        end
+
+        it 'returns the value' do
+          expect(subject).to eq(enabled)
+        end
+      end
+    end
+
+    context 'when the job has schedule state' do
+      let(:state) { { 'enabled' => enabled } }
+
+      before do
+        Sidekiq.redis do |r|
+          r.hset(described_class.schedules_state_key, job_name, MultiJson.encode(state))
+        end
+      end
+
+
+      context 'when the enabled base config is not set' do
+        let(:enabled) { false }
+        let(:job_config) do
+          {
+            'cron' => '* * * * *',
+            'class' => 'SomeIvarJob',
+            'args' => '/tmp'
+          }
+        end
+
+        it 'returns the state value' do
+          expect(subject).to eq(enabled)
+        end
+      end
+
+      context 'when the enabled base config is set' do
+        let(:enabled) { true }
+        let(:job_config) do
+          {
+            'cron' => '* * * * *',
+            'class' => 'SomeIvarJob',
+            'args' => '/tmp',
+            'enabled' => false
+          }
+        end
+
+        it 'returns the state value' do
+          expect(subject).to eq(enabled)
+        end
+      end
+    end
+  end
+
+  describe '.toggle_job_enabled' do
+    let(:job_name) { 'job_name' }
+    let(:job_schedule) { { job_name => job_config } }
+
+    subject { Sidekiq::Scheduler.toggle_job_enabled(job_name) }
+
+    before do
+      Sidekiq::Scheduler.enabled = false
+      Sidekiq.schedule = job_schedule
+      Sidekiq::Scheduler.load_schedule!
+    end
+
+    context 'when the job has schedule state' do
+      let(:enabled) { false }
+      let(:state) { { 'enabled' => enabled } }
+      let(:job_config) do
+        {
+          'cron' => '* * * * *',
+          'class' => 'SomeIvarJob',
+          'args' => '/tmp'
+        }
+      end
+
+      before do
+        Sidekiq.redis do |r|
+          r.hset(described_class.schedules_state_key, job_name, MultiJson.encode(state))
+        end
+      end
+
+      it 'toggles the value' do
+        expect { subject }.to change { described_class.job_enabled?(job_name) }
+          .from(enabled).to(!enabled)
+      end
+    end
+
+    context 'when the job have no schedule state' do
+      let(:enabled) { false }
+      let(:job_config) do
+        {
+          'cron' => '* * * * *',
+          'class' => 'SomeIvarJob',
+          'args' => '/tmp',
+          'enabled' => enabled
+        }
+      end
+
+      it 'saves as state the toggled base config' do
+        expect { subject }.to change { described_class.job_enabled?(job_name) }
+          .from(enabled).to(!enabled)
+      end
+    end
+  end
 end

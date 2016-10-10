@@ -9,3 +9,5 @@ zh-cn:
   enqueue_now: 立即执行
   next_time: 下次执行时间
   no_next_time: 已无后续作业
+  disable: 禁用
+  enable: 启用

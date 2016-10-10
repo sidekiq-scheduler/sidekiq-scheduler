@@ -9,3 +9,5 @@ en:
   enqueue_now: Enqueue now
   next_time: Next Time
   no_next_time: no next execution for this job
+  disable: Disable
+  enable: Enable

@@ -2,6 +2,7 @@ require "sidekiq-scheduler/job_presenter"
 
 describe SidekiqScheduler::JobPresenter do
   let(:job_name) { "job_name" }
+  let(:job_config) { { 'cron' => '* * * * *', 'class' => 'SomeIvarJob', 'args' => '/tmp' } }
   let(:attributes) { {} }
 
   subject { described_class.new(job_name, attributes) }
@@ -70,6 +71,22 @@ describe SidekiqScheduler::JobPresenter do
       it "returns the default value for it" do
         expect(subject.queue).to eq("default")
       end
+    end
+  end
+
+  describe "#enabled?" do
+    before { Sidekiq.schedule = { job_name => job_config } }
+
+    subject { described_class.new(job_name, attributes).enabled? }
+
+    context "when the job is enabled" do
+      it { is_expected.to be }
+    end
+
+    context "when the job is disabled" do
+      before { Sidekiq::Scheduler.toggle_job_enabled(job_name) }
+
+      it { is_expected.not_to be }
     end
   end
 

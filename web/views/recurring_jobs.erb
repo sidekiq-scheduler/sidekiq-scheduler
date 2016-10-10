@@ -26,10 +26,15 @@
             <a href="<%= root_path %>queues/<%= job.queue %>"><%= job.queue %></a>
           </td>
           <td><%= job['args'] %></td>
-          <td><%= job.next_time || t('no_next_time') %></td>
+          <td><span style="<%= 'text-decoration:line-through' unless job.enabled? %>">
+            <%= job.next_time || t('no_next_time') %>
+          </span></td>
           <td class="text-center">
             <a class="btn btn-warn btn-xs" href="<%= root_path %>recurring-jobs/<%= URI.escape(job.name) %>/enqueue">
               <%= t('enqueue_now') %>
+            </a>
+            <a class="btn <%= job.enabled? ? "btn-primary" : "btn-warn"%> btn-xs" href="<%= root_path %>recurring-jobs/<%= URI.escape(job.name) %>/toggle">
+              <%= job.enabled? ? t('disable') : t('enable') %>
             </a>
           </td>
         </tr>
