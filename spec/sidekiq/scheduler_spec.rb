@@ -246,10 +246,10 @@ describe Sidekiq::Scheduler do
         Sidekiq.redis  { |r| r.del(:schedules) }
         Sidekiq.redis do |r|
           r.hset(:schedules, 'some_ivar_job2',
-            MultiJson.encode({
-                'cron' => '* * * * *',
-                'class' => 'SomeWorker',
-                'args' => '/tmp/2'
+            JSON({
+              'cron' => '* * * * *',
+              'class' => 'SomeWorker',
+              'args' => '/tmp/2'
             })
           )
         end
@@ -832,7 +832,7 @@ describe Sidekiq::Scheduler do
 
       before do
         Sidekiq.redis do |r|
-          r.hset(described_class.schedules_state_key, job_name, MultiJson.encode(state))
+          r.hset(described_class.schedules_state_key, job_name, JSON(state))
         end
       end
 
@@ -895,7 +895,7 @@ describe Sidekiq::Scheduler do
 
       before do
         Sidekiq.redis do |r|
-          r.hset(described_class.schedules_state_key, job_name, MultiJson.encode(state))
+          r.hset(described_class.schedules_state_key, job_name, JSON(state))
         end
       end
 

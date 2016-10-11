@@ -1,5 +1,5 @@
 require 'hashie'
-require 'multi_json'
+require 'json'
 
 module SidekiqScheduler
   module Schedule
@@ -71,7 +71,7 @@ module SidekiqScheduler
         get_all_schedules
       else
         encoded_schedule = Sidekiq.redis { |r| r.hget(:schedules, name) }
-        encoded_schedule.nil? ? nil : MultiJson.decode(encoded_schedule)
+        encoded_schedule.nil? ? nil : JSON(encoded_schedule)
       end
     end
 
@@ -83,7 +83,7 @@ module SidekiqScheduler
 
         Sidekiq.redis { |r| r.hgetall(:schedules) }.tap do |h|
           h.each do |name, config|
-            schedules[name] = MultiJson.decode(config)
+            schedules[name] = JSON(config)
           end
         end
       end
@@ -103,7 +103,7 @@ module SidekiqScheduler
     def set_schedule(name, config)
       existing_config = get_schedule(name)
       unless existing_config && existing_config == config
-        Sidekiq.redis { |r| r.hset(:schedules, name, MultiJson.encode(config)) }
+        Sidekiq.redis { |r| r.hset(:schedules, name, JSON(config)) }
         Sidekiq.redis { |r| r.sadd(:schedules_changed, name) }
       end
       config
