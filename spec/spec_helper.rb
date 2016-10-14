@@ -7,7 +7,7 @@ Coveralls.wear!
 require 'sidekiq'
 require 'sidekiq/testing'
 require 'sidekiq-scheduler'
-require 'multi_json'
+require 'json'
 require 'timecop'
 
 # Load all support files

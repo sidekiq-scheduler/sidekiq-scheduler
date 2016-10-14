@@ -2,6 +2,7 @@ require 'rufus/scheduler'
 require 'thwait'
 require 'sidekiq/util'
 require 'sidekiq-scheduler/manager'
+require 'json'
 
 module Sidekiq
   class Scheduler
@@ -387,7 +388,7 @@ module Sidekiq
       def schedule_state(name)
         state = Sidekiq.redis { |r| r.hget(schedules_state_key, name) }
 
-        state ? MultiJson.decode(state) : {}
+        state ? JSON(state) : {}
       end
 
       # Saves a schedule state
@@ -395,7 +396,7 @@ module Sidekiq
       # @param name [String] with the schedule's name
       # @param name [Hash] with the schedule's state
       def set_schedule_state(name, state)
-        Sidekiq.redis { |r| r.hset(schedules_state_key, name, MultiJson.encode(state)) }
+        Sidekiq.redis { |r| r.hset(schedules_state_key, name, JSON(state)) }
       end
 
     end
