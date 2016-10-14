@@ -145,6 +145,16 @@ seconds past the minute).
 A big shout out to [rufus-scheduler](http://github.com/jmettraux/rufus-scheduler)
 for handling the heavy lifting of the actual scheduling engine.
 
+NOTE: As schedules are persisted in Redis, an empty schedule will purge any schedule previously stored.
+sidekiq-scheduler instances running with `dynamic` flag set to `true` and empty schedule configuration will not push any job.
+Before version 2.0.8, instances matching those conditions read the previously stored schedule and push the jobs to sidekiq as usual.
+
+With version >= `2.0.8` the purge of Redis schedules config can be prevented by setting
+`enabled` flag to `false`:
+
+```yaml
+:enabled: false
+```
 ### Enabling/Disabling jobs
 
 By default all the jobs are enabled. There is an option at job's configuration to change
