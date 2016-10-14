@@ -145,6 +145,22 @@ seconds past the minute).
 A big shout out to [rufus-scheduler](http://github.com/jmettraux/rufus-scheduler)
 for handling the heavy lifting of the actual scheduling engine.
 
+### Enabling/Disabling jobs
+
+By default all the jobs are enabled. There is an option at job's configuration to change
+this behavior.
+
+``` yaml
+clear_leaderboards_moderator:
+  every: "30s"
+  class: CheckDaemon
+  enabled: false
+  description: "This job is disabled by default"
+```
+
+However, the flag can be changed through the web interface at the Recurring Jobs tab.
+
+NOTE: Changes made thorugh the UI supersede job's configuration, even after a restart.
 
 ### Loading the schedule
 
