@@ -54,7 +54,9 @@ module SidekiqScheduler
     # @param schedule_hash [Hash] with the redis schedule
     # @return [Array<JobPresenter>] an array with the instances of presenters
     def self.build_collection(schedule_hash)
-      Hash(schedule_hash).map do |name, job_spec|
+      schedule_hash ||= {}
+
+      schedule_hash.map do |name, job_spec|
         new(name, job_spec)
       end
     end
