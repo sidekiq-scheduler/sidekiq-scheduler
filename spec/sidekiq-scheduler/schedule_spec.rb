@@ -94,12 +94,30 @@ describe SidekiqScheduler::Schedule do
   end
 
   describe '.get_schedule' do
-    it 'returns a schedule' do
-      Sidekiq.set_schedule(job_id, cron_hash)
+    subject { Sidekiq.get_schedule(job_id) }
 
-      schedule = Sidekiq.get_schedule(job_id)
+    context 'when schedules previously set' do
+      before do
+        Sidekiq.set_schedule(job_id, cron_hash)
+      end
 
-      expect(schedule).to eq(job_from_redis(job_id))
+      it { should eq(job_from_redis(job_id)) }
+
+      context 'when name is not given' do
+        subject { Sidekiq.get_schedule }
+
+        it { should include(job_id => job_from_redis(job_id)) }
+      end
+    end
+
+    context 'when no schedules previously set' do
+      it { should be_nil }
+
+      context 'when name is not given' do
+        subject { Sidekiq.get_schedule }
+
+        it { should eq({}) }
+      end
     end
   end
 
@@ -113,5 +131,4 @@ describe SidekiqScheduler::Schedule do
       expect(changed_job?(job_id)).to be_truthy
     end
   end
-
 end

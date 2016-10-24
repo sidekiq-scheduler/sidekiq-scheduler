@@ -48,17 +48,5 @@ describe SidekiqScheduler::Manager do
         subject
       }.to change { Sidekiq.schedule }.to(options[:schedule])
     end
-
-    context 'when no :schedule option' do
-      before do
-        options.delete(:schedule)
-      end
-
-      it 'deletes the previous jobs' do
-        expect {
-          subject
-        }.to change { Sidekiq.schedule }.to({})
-      end
-    end
   end
 end
