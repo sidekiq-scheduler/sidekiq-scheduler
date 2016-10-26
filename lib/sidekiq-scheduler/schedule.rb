@@ -38,7 +38,7 @@ module SidekiqScheduler
     # param, otherwise params is passed in as the only parameter to perform.
     def schedule=(schedule_hash)
       schedule_hash = prepare_schedule(schedule_hash)
-      to_remove = (get_all_schedules || {}).keys - schedule_hash.keys.map(&:to_s)
+      to_remove = get_all_schedules.keys - schedule_hash.keys.map(&:to_s)
 
       schedule_hash.each do |name, job_spec|
         set_schedule(name, job_spec)
@@ -52,7 +52,7 @@ module SidekiqScheduler
     end
 
     def schedule
-      @schedule ||= {}
+      @schedule
     end
 
     # Reloads the schedule from Redis and return it.
@@ -77,10 +77,9 @@ module SidekiqScheduler
 
     # gets the schedule as it exists in redis
     def get_all_schedules
-      schedules = nil
-      if Sidekiq.redis { |r| r.exists(:schedules) }
-        schedules = {}
+      schedules = {}
 
+      if Sidekiq.redis { |r| r.exists(:schedules) }
         Sidekiq.redis { |r| r.hgetall(:schedules) }.tap do |h|
           h.each do |name, config|
             schedules[name] = JSON(config)

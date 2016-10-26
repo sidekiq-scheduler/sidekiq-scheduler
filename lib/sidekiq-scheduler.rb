@@ -18,10 +18,13 @@ Sidekiq.configure_server do |config|
     listened_queues_only = Sidekiq::Scheduler.listened_queues_only
     listened_queues_only = listened_queues_only.nil? ? scheduler[:listened_queues_only] : listened_queues_only
 
+    schedule = Sidekiq.schedule
+    schedule ||= config.options[:schedule] || {}
+
     scheduler_options = {
       dynamic:   dynamic,
       enabled:   enabled,
-      schedule:  config.options.fetch(:schedule, nil),
+      schedule:  schedule,
       listened_queues_only: listened_queues_only
     }
 
