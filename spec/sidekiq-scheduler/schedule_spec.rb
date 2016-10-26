@@ -96,10 +96,8 @@ describe SidekiqScheduler::Schedule do
   describe '.get_schedule' do
     subject { Sidekiq.get_schedule(job_id) }
 
-    context 'when schedules previously set' do
-      before do
-        Sidekiq.set_schedule(job_id, cron_hash)
-      end
+    context 'when schedules are previously set' do
+      before { Sidekiq.set_schedule(job_id, cron_hash) }
 
       it { should eq(job_from_redis(job_id)) }
 
