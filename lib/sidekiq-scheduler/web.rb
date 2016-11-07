@@ -1,3 +1,5 @@
+require 'sidekiq-scheduler'
+
 require_relative 'job_presenter'
 
 module SidekiqScheduler
