@@ -32,23 +32,27 @@ for running scheduled jobs, which are like cron jobs, recurring on a regular bas
 
 Add this to your Gemfile:
 
-```ruby
+``` ruby
 gem 'sidekiq-scheduler', '~> 2.0'
-  ```
+```
 
 If you are using Rails you are set.
 
 If you are not using Rails create a file with this content:
 
-```ruby
+``` ruby
+# config/initializers/scheduler.rb
+
 require 'sidekiq-scheduler'
-  ```
+
+Dir[File.join(__dir__, '../../lib/workers/**/*.rb')].each(&method(:require))
+```
 
 and then execute:
 
-```sh
-sidekiq -r created_file_path.rb
-  ```
+``` sh
+sidekiq -r ./config/initializers/scheduler.rb
+```
 
 Look at [Loading the schedule](https://github.com/moove-it/sidekiq-scheduler/#loading-the-schedule)
 for information on how to load your schedule.
@@ -69,7 +73,7 @@ Available options are:
 If you want start sidekiq-scheduler only from Unicorn/Rails, but not from Sidekiq you can have
 something like this in an initializer:
 
-```ruby
+``` ruby
 # config/initializers/sidekiq_scheduler.rb
 require 'sidekiq/scheduler'
 
@@ -132,7 +136,7 @@ You can provide options to `every` or `cron` via an Array:
   clear_leaderboards_moderator:
     every: ["30s", :first_in => '120s']
     class: CheckDaemon
-    queue: daemons
+    queue: low
     description: "This job will check Daemon every 30 seconds after 120 seconds after start"
 ```
 
@@ -320,7 +324,6 @@ require 'sidekiq-scheduler/web'
 
 This work is a partial port of [resque-scheduler](https://github.com/bvandenbos/resque-scheduler) by Ben VandenBos.
 Modified to work with the Sidekiq queueing library by Morton Jonuschat.
-Scheduling of recurring jobs has been added to v0.4.0, thanks to [Adrian Gomez](https://github.com/adrian-gomez).
 
 ## License
 
@@ -328,6 +331,6 @@ MIT License
 
 ## Copyright
 
-Copyright 2013 - 2016 Moove-IT
-Copyright 2012 Morton Jonuschat
-Some parts copyright 2010 Ben VandenBos
+Copyright 2013 - 2016 Moove-IT.
+Copyright 2012 Morton Jonuschat.
+Some parts copyright 2010 Ben VandenBos.
