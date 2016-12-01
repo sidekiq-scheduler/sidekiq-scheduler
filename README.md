@@ -134,7 +134,7 @@ You can provide options to `every` or `cron` via an Array:
 
 ``` yaml
   clear_leaderboards_moderator:
-    every: ["30s", :first_in => '120s']
+    every: ["30s", first_in: '120s']
     class: CheckDaemon
     queue: low
     description: "This job will check Daemon every 30 seconds after 120 seconds after start"
