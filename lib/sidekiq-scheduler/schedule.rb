@@ -123,10 +123,32 @@ module SidekiqScheduler
 
       schedule_hash.each do |name, job_spec|
         job_spec = job_spec.dup
-        job_spec['class'] = name unless job_spec.key?('class') || job_spec.key?(:class)
+
+        job_class = job_spec.fetch('class', name)
+        inferred_queue = infer_queue(job_class)
+
+        job_spec['class'] ||= job_class
+        job_spec['queue'] ||= inferred_queue unless inferred_queue.nil?
+
         prepared_hash[name] = job_spec
       end
       prepared_hash
+    end
+
+    def infer_queue(klass)
+      klass = try_to_constantize(klass)
+
+      if klass.respond_to?(:sidekiq_options)
+        klass.sidekiq_options['queue']
+      elsif klass.respond_to?(:queue_name)
+        klass.queue_name
+      end
+    end
+
+    def try_to_constantize(klass)
+      klass.is_a?(String) ? klass.constantize : klass
+    rescue NameError
+      klass
     end
   end
 end
