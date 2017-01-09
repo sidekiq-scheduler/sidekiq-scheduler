@@ -27,7 +27,7 @@ describe SidekiqScheduler::Schedule do
     Sidekiq.redis { |redis| redis.hget(:schedules, job_id) }
   end
 
-  let(:cron_hash)    { ScheduleFaker.default_options('args' => 'some_arg') }
+  let(:cron_hash)    { ScheduleFaker.default_options('args' => 'some_arg', 'queue' => 'default') }
   let(:job_id)       { 'super_job' }
   let(:job_class_id) { cron_hash['class'] }
 
@@ -80,6 +80,28 @@ describe SidekiqScheduler::Schedule do
         Sidekiq.schedule = symbolized_schedule
 
         expect(Sidekiq.schedule).to eq(stringified_schedule)
+      end
+    end
+
+    context 'when job is a sidekiq job' do
+      let(:job_id) { 'system_notifier' }
+      let(:schedule) { { 'class' => 'SystemNotifierWorker' } }
+
+      it 'infers the queue name' do
+        Sidekiq.schedule = { job_id => schedule }
+
+        expect(job_from_redis(job_id)['queue']).to eq('system')
+      end
+    end
+
+    context 'when job is an active job' do
+      let(:job_id) { 'email_sender' }
+      let(:schedule) { { 'class' => 'EmailSender' } }
+
+      it 'infers the queue name' do
+        Sidekiq.schedule = { job_id => schedule }
+
+        expect(job_from_redis(job_id)['queue']).to eq('email')
       end
     end
   end
