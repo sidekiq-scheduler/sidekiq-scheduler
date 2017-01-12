@@ -102,7 +102,7 @@ module SidekiqScheduler
     def set_schedule(name, config)
       existing_config = get_schedule(name)
       unless existing_config && existing_config == config
-        Sidekiq.redis { |r| r.hset(:schedules, name, JSON(config)) }
+        Sidekiq.redis { |r| r.hset(:schedules, name, JSON.generate(config)) }
         Sidekiq.redis { |r| r.sadd(:schedules_changed, name) }
       end
       config
