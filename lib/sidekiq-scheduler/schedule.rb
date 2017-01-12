@@ -71,7 +71,7 @@ module SidekiqScheduler
         get_all_schedules
       else
         encoded_schedule = Sidekiq.redis { |r| r.hget(:schedules, name) }
-        encoded_schedule.nil? ? nil : JSON(encoded_schedule)
+        encoded_schedule.nil? ? nil : JSON.parse(encoded_schedule)
       end
     end
 
@@ -82,7 +82,7 @@ module SidekiqScheduler
       if Sidekiq.redis { |r| r.exists(:schedules) }
         Sidekiq.redis { |r| r.hgetall(:schedules) }.tap do |h|
           h.each do |name, config|
-            schedules[name] = JSON(config)
+            schedules[name] = JSON.parse(config)
           end
         end
       end
