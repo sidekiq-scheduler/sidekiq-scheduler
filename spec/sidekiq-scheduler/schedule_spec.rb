@@ -15,7 +15,7 @@ describe SidekiqScheduler::Schedule do
 
   def job_from_redis(job_id)
     if job = job_from_redis_without_decoding(job_id)
-      JSON(job)
+      JSON.parse(job)
     end
   end
 

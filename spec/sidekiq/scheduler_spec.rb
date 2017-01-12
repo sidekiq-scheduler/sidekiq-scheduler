@@ -246,7 +246,7 @@ describe Sidekiq::Scheduler do
         Sidekiq.redis  { |r| r.del(:schedules) }
         Sidekiq.redis do |r|
           r.hset(:schedules, 'some_ivar_job2',
-            JSON({
+            JSON.generate({
               'cron' => '* * * * *',
               'class' => 'SomeWorker',
               'args' => '/tmp/2'
@@ -832,7 +832,7 @@ describe Sidekiq::Scheduler do
 
       before do
         Sidekiq.redis do |r|
-          r.hset(described_class.schedules_state_key, job_name, JSON(state))
+          r.hset(described_class.schedules_state_key, job_name, JSON.generate(state))
         end
       end
 
@@ -895,7 +895,7 @@ describe Sidekiq::Scheduler do
 
       before do
         Sidekiq.redis do |r|
-          r.hset(described_class.schedules_state_key, job_name, JSON(state))
+          r.hset(described_class.schedules_state_key, job_name, JSON.generate(state))
         end
       end
 
