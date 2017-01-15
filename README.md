@@ -6,7 +6,7 @@
 
 <p align="center">
   <a href="https://badge.fury.io/rb/sidekiq-scheduler">
-    <img src="https://badge.fury.io/rb/sidekiq-scheduler.png" alt="Gem Version">
+    <img src="https://badge.fury.io/rb/sidekiq-scheduler.svg" alt="Gem Version">
   </a>
   <a href="https://codeclimate.com/github/moove-it/sidekiq-scheduler">
     <img src="https://codeclimate.com/github/moove-it/sidekiq-scheduler/badges/gpa.svg" alt="Code Climate">
