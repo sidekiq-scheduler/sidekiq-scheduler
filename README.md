@@ -169,7 +169,7 @@ See https://github.com/jmettraux/rufus-scheduler for more information.
 
 ## Load the schedule from a different file
 
-You can place the schedule configuration in a separate file than `config/sidekiq.yml`
+You can place the schedule configuration in a separate file from `config/sidekiq.yml`
 
 ``` yaml
 # sidekiq_scheduler.yml
@@ -182,7 +182,7 @@ clear_leaderboards_contributors:
   description: 'This job resets the weekly leaderboard for contributions'
 ```
 
-Please note that `schedule` root key is not present in the separate file.
+Please notice that the `schedule` root key is not present in the separate file.
 
 To load the schedule:
 
