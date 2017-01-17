@@ -25,52 +25,265 @@
   </a>
 </p>
 
-sidekiq-scheduler is an extension to [Sidekiq](http://github.com/mperham/sidekiq) that adds support
-for running scheduled jobs, which are like cron jobs, recurring on a regular basis.
+`sidekiq-scheduler` is an extension to [Sidekiq](http://github.com/mperham/sidekiq) that
+pushes jobs in a scheduled way, mimicking cron utility.
 
 ## Installation
 
-Add this to your Gemfile:
-
-``` ruby
-gem 'sidekiq-scheduler', '~> 2.0'
+``` shell
+gem install sidekiq-scheduler
 ```
 
-If you are using Rails you are set.
+## Usage
 
-If you are not using Rails create a file with this content:
+### Hello World
+
 
 ``` ruby
-# config/initializers/scheduler.rb
+# hello-scheduler.rb
 
 require 'sidekiq-scheduler'
 
-Dir[File.join(__dir__, '../../lib/workers/**/*.rb')].each(&method(:require))
+class HelloWorld
+  include Sidekiq::Worker
+
+  def perform
+    puts 'Hello world'
+  end
+end
 ```
 
-and then execute:
+``` yaml
+# config/sidekiq.yml
+
+:schedule:
+  hello_world:
+    every: 1m   # Runs once per minute
+    class: HelloWorld
+```
+
+Run sidekiq:
 
 ``` sh
-sidekiq -r ./config/initializers/scheduler.rb
+sidekiq -r ./hello-scheduler.rb
 ```
 
-Look at [Loading the schedule](https://github.com/moove-it/sidekiq-scheduler/#loading-the-schedule)
-for information on how to load your schedule.
+You'll see the following output:
 
-You can add sidekiq-scheduler configuration options to `sidekiq.yml` config file.
+```
+2016-12-10T11:53:08.561Z 6452 TID-ovouhwvm4 INFO: Loading Schedule
+2016-12-10T11:53:08.561Z 6452 TID-ovouhwvm4 INFO: Scheduling HelloWorld {"cron"=>"0 * * * * *", "class"=>"HelloWorld"}
+2016-12-10T11:53:08.562Z 6452 TID-ovouhwvm4 INFO: Schedules Loaded
+
+2016-12-10T11:54:00.212Z 6452 TID-ovoulivew HelloWorld JID-b35f36a562733fcc5e58444d INFO: start
+Hello world
+2016-12-10T11:54:00.213Z 6452 TID-ovoulivew HelloWorld JID-b35f36a562733fcc5e58444d INFO: done: 0.001 sec
+
+2016-12-10T11:55:00.287Z 6452 TID-ovoulist0 HelloWorld JID-b7e2b244c258f3cd153c2494 INFO: start
+Hello world
+2016-12-10T11:55:00.287Z 6452 TID-ovoulist0 HelloWorld JID-b7e2b244c258f3cd153c2494 INFO: done: 0.001 sec
+```
+
+## Configuration options
+
+Configuration options are placed inside `sidekiq.yml` config file.
+
 Available options are:
 
 ``` yaml
-:schedule: <the schedule to be run>
 :dynamic: <if true the schedule can be modified in runtime [false by default]>
 :enabled: <enables scheduler if true [true by default]>
 :scheduler:
   :listened_queues_only: <push jobs whose queue is being listened by sidekiq [false by default]>
 ```
 
+## Schedule configuration
+
+The schedule is configured through the `:schedule` config entry in the sidekiq config file:
+
+``` yaml
+:schedule:
+  CancelAbandonedOrders:
+    every: 5m             # runs every 5 minutes, job's class: CancelAbandonedOrders
+
+  queue_documents_for_indexing:
+    every: 1h    # runs every 1 hour
+
+    # By default the job name will be taken as worker class name.
+    # If you want to have a different job name and class name, provide the 'class' option
+    class: QueueDocuments
+
+    queue: slow
+    args: ['*.pdf']
+    description: "This job queues pdf content for indexing in solr"
+
+    # Enable / disable a job. All jobs are enabled by default.
+    enabled: true
+```
+
+
+## Schedule types
+
+Supported types are `cron`, `every`, `interval`, `at`, `in`.
+
+Cron, every, and interval types push jobs into sidekiq in a recurrent manner.
+
+`cron` follows the same pattern as cron utility, with seconds resolution.
+
+``` yaml
+:schedule:
+  HelloWorld:
+    cron: '0 * * * * *' # Runs when second = 0
+```
+
+`every` triggers following a given frequency:
+
+``` yaml
+    every: '45m'    # Runs every 45 minutes
+```
+
+`interval` is similar to `every`, the difference between them is that `interval` type schedules the
+next execution after the interval has elapsed counting from its last job enqueue.
+
+At, and in types push jobs only once. `at` schedules in a point in time:
+``` yaml
+    at: '3001/01/01'
+```
+
+You can specify any string that `DateTime.parse` and `Chronic` understand. To enable Chronic
+strings, you must add it as a dependency.
+
+`in` triggers after a time duration has elapsed:
+
+``` yaml
+    in: 1h # pushes a sidekiq job in 1 hour, after start-up
+```
+
+You can provide options to `every` or `cron` via an Array:
+
+``` yaml
+    every: ['30s', first_in: '120s']
+```
+
+See https://github.com/jmettraux/rufus-scheduler for more information.
+
+## Load the schedule from a different file
+
+You can place the schedule configuration in a separate file from `config/sidekiq.yml`
+
+``` yaml
+# sidekiq_scheduler.yml
+
+clear_leaderboards_contributors:
+  cron: '0 30 6 * * 1'
+  class: ClearLeaderboards
+  queue: low
+  args: contributors
+  description: 'This job resets the weekly leaderboard for contributions'
+```
+
+Please notice that the `schedule` root key is not present in the separate file.
+
+To load the schedule:
+
+``` ruby
+require 'sidekiq'
+require 'sidekiq/scheduler'
+
+Sidekiq.configure_server do |config|
+  config.on(:startup) do
+    Sidekiq.schedule = YAML.load_file(File.expand_path('../../sidekiq_scheduler.yml', __FILE__))
+    Sidekiq::Scheduler.reload_schedule!
+  end
+end
+```
+
+The above code can be placed in an initializer (in `config/initializers`) that runs every time the app starts up.
+
+## Dynamic schedule
+
+The schedule can be modified after startup. To add / update a schedule, you have to:
+
+``` ruby
+Sidekiq.set_schedule('heartbeat', { 'every' => ['1m'], 'class' => 'HeartbeatWorker' })
+```
+
+If the schedule did not exist it will be created, if it existed it will be updated.
+
+When `:dynamic` flag is set to `true`, schedule changes are loaded every 5 seconds.
+
+``` yaml
+# config/sidekiq.yml
+:dynamic: true
+```
+
+If `:dynamic` flag is set to `false`, you'll have to reload the schedule manually in sidekiq
+side:
+
+``` ruby
+Sidekiq::Scheduler.reload_schedule!
+```
+
+Invoke `Sidekiq.get_schedule` to obtain the current schedule:
+
+``` ruby
+Sidekiq.get_schedule
+#  => { 'every' => '1m', 'class' => 'HardWorker' }
+```
+
+## Time zones
+
+Note that if you use the cron syntax, this will be interpreted as in the server time zone
+rather than the `config.time_zone` specified in Rails.
+
+You can explicitly specify the time zone that rufus-scheduler will use:
+
+``` yaml
+    cron: '0 30 6 * * 1 Europe/Stockholm'
+```
+
+Also note that `config.time_zone` in Rails allows for a shorthand (e.g. "Stockholm")
+that rufus-scheduler does not accept. If you write code to set the scheduler time zone
+from the `config.time_zone` value, make sure it's the right format, e.g. with:
+
+``` ruby
+ActiveSupport::TimeZone.find_tzinfo(Rails.configuration.time_zone).name
+```
+
+## Sidekiq Web Integration
+
+sidekiq-scheduler provides an extension to the Sidekiq web interface that adds a `Recurring Jobs` page.
+
+``` ruby
+# config.ru
+
+require 'sidekiq/web'
+require 'sidekiq-scheduler'
+require 'sidekiq-scheduler/web'
+
+app = Rack::Builder.new {
+  run Sidekiq::Web
+}.to_app
+
+Rack::Handler::WEBrick.run app
+```
+
+## The Spring preloader and Testing your initializer via Rails console
+
+If you're pulling in your schedule from a YML file via an initializer as shown, be aware that the Spring application preloader included with Rails will interefere with testing via the Rails console.
+
+**Spring will not reload initializers** unless the initializer is changed.  Therefore, if you're making a change to your YML schedule file and reloading Rails console to see the change, Spring will make it seem like your modified schedule is not being reloaded.
+
+To see your updated schedule, be sure to reload Spring by stopping it prior to booting the Rails console.
+
+Run `spring stop` to stop Spring.
+
+For more information, see [this issue](https://github.com/Moove-it/sidekiq-scheduler/issues/35#issuecomment-48067183) and [Spring's README](https://github.com/rails/spring/blob/master/README.md).
+
+
 ## Manage tasks from Unicorn/Rails server
 
-If you want start sidekiq-scheduler only from Unicorn/Rails, but not from Sidekiq you can have
+If you want start sidekiq-scheduler only from Unicorn/Rails, but not from sidekiq you can have
 something like this in an initializer:
 
 ``` ruby
@@ -95,242 +308,12 @@ else
 end
 ```
 
-## Scheduled Jobs (Recurring Jobs)
-
-Scheduled (or recurring) jobs are logically no different than a standard cron
-job. They are jobs that run based on a fixed schedule which is set at
-startup.
-
-The schedule is a list of Sidekiq worker classes with arguments and a
-schedule frequency (in crontab syntax). The schedule is just a Hash, being most likely
-stored in a YAML like so:
-
-``` yaml
-  CancelAbandonedOrders:
-    cron: "*/5 * * * *"
-
-  queue_documents_for_indexing:
-    cron: "0 0 * * *"
-    # you can use rufus-scheduler "every" syntax in place of cron if you prefer
-    # every: 1h
-
-    # By default the job name (Hash key) will be taken as worker class name.
-    # If you want to have a different job name and class name, provide the 'class' option
-    class: QueueDocuments
-
-    queue: high
-    args:
-    description: "This job queues all content for indexing in solr"
-
-  clear_leaderboards_contributors:
-    cron: "30 6 * * 1"
-    class: ClearLeaderboards
-    queue: low
-    args: contributors
-    description: "This job resets the weekly leaderboard for contributions"
-```
-
-You can provide options to `every` or `cron` via an Array:
-
-``` yaml
-  clear_leaderboards_moderator:
-    every: ["30s", first_in: '120s']
-    class: CheckDaemon
-    queue: low
-    description: "This job will check Daemon every 30 seconds after 120 seconds after start"
-```
-
-
-NOTE: Six parameter cron's are also supported (as they supported by
-rufus-scheduler which powers the sidekiq-scheduler process).  This allows you
-to schedule jobs per second (ie: `30 * * * * *` would fire a job every 30
-seconds past the minute).
-
-A big shout out to [rufus-scheduler](http://github.com/jmettraux/rufus-scheduler)
-for handling the heavy lifting of the actual scheduling engine.
-
-NOTE: As schedules are persisted in Redis, an empty schedule will purge any schedule previously stored.
-sidekiq-scheduler instances running with `dynamic` flag set to `true` and empty schedule configuration will not push any job.
-Before version 2.0.8, instances matching those conditions read the previously stored schedule and push the jobs to sidekiq as usual.
-
-With version >= `2.0.8` the purge of Redis schedules config can be prevented by setting
-`enabled` flag to `false`:
-
-```yaml
-:enabled: false
-```
-### Enabling/Disabling jobs
-
-By default all the jobs are enabled. There is an option at job's configuration to change
-this behavior.
-
-``` yaml
-clear_leaderboards_moderator:
-  every: "30s"
-  class: CheckDaemon
-  enabled: false
-  description: "This job is disabled by default"
-```
-
-However, the flag can be changed through the web interface at the Recurring Jobs tab.
-
-NOTE: Changes made thorugh the UI supersede job's configuration, even after a restart.
-
-### Loading the schedule
-
-Let's assume your scheduled jobs are defined in a file called `config/scheduler.yml` under your Rails project,
-you could create a Rails initializer called `config/initializers/scheduler.rb` which would load the job definitions:
-
-```ruby
-require 'sidekiq/scheduler'
-
-Sidekiq.configure_server do |config|
-  config.on(:startup) do
-    Sidekiq.schedule = YAML.load_file(File.expand_path('../../scheduler.yml', __FILE__))
-    Sidekiq::Scheduler.reload_schedule!
-  end
-end
-```
-
-If you are running a non Rails project you should add code to load the workers classes before loading the schedule.
-
-```ruby
-require 'sidekiq/scheduler'
-Dir[File.expand_path('../../../lib/workers/*.rb', __FILE__)].each do |file| load file; end
-
-Sidekiq.configure_server do |config|
-  config.on(:startup) do
-    Sidekiq.schedule = YAML.load_file(File.expand_path("../../scheduler.yml", __FILE__))
-    Sidekiq::Scheduler.reload_schedule!
-  end
-end
-```
-
-You can also put your schedule information inside sidekiq.yml and load it with:
-
-```sh
-sidekiq -C ./config/sidekiq.yml
-```
-
-#### The Spring preloader and Testing your initializer via Rails console
-
-If you're pulling in your schedule from a YML file via an initializer as shown, be aware that the Spring application preloader included with Rails will interefere with testing via the Rails console.
-
-**Spring will not reload initializers** unless the initializer is changed.  Therefore, if you're making a change to your YML schedule file and reloading Rails console to see the change, Spring will make it seem like your modified schedule is not being reloaded.
-
-To see your updated schedule, be sure to reload Spring by stopping it prior to booting the Rails console.
-
-Run `spring stop` to stop Spring.
-
-For more information, see [this issue](https://github.com/Moove-it/sidekiq-scheduler/issues/35#issuecomment-48067183) and [Spring's README](https://github.com/rails/spring/blob/master/README.md).
-
-### Reloading the schedules
-
-Schedules are stored in Redis. To add / update an schedule, you have to:
-
-```ruby
-Sidekiq.set_schedule('heartbeat', { 'every' => ['1m'], 'class' => 'HeartbeatWorker' })
-```
-
-When `:dynamic` flag is set to `true`, schedule changes are loaded every 5 seconds.
-
-You can set that flag in the following ways.
-
-- YAML configuration:
-
-```
-:dynamic: true
-```
-
-- Initializer configuration:
-
-```ruby
-Sidekiq.configure_server do |config|
-  # ...
-  Sidekiq::Scheduler.dynamic = true
-end
-```
-
-If `:dynamic` flag is set to `false`, you have to reload the schedule manually in sidekiq
-side:
-
-```ruby
-Sidekiq::Scheduler.reload_schedule!
-```
-
-If the schedule did not exist it will we created, if it existed it will be updated.
-
-### Testing
-
-In your tests you can check that a schedule change has been set you have to:
-
-```ruby
-require 'sidekiq'
-require 'sidekiq-scheduler'
-require 'sidekiq-scheduler/test'
-
-Sidekiq.set_schedule('some_name', { 'every' => ['1m'], 'class' => 'HardWorker' })
-
-Sidekiq::Scheduler.schedules
-#  => { 'every' => ['1m'], 'class' => 'HardWorker' }
-
-Sidekiq::Scheduler.schedules_changed
-#  => ['every']
-```
-
-
-### Time zones
-
-Note that if you use the cron syntax, this will be interpreted as in the server time zone
-rather than the `config.time_zone` specified in Rails.
-
-You can explicitly specify the time zone that rufus-scheduler will use:
-
-``` yaml
-cron: "30 6 * * 1 Europe/Stockholm"
-```
-
-Also note that `config.time_zone` in Rails allows for a shorthand (e.g. "Stockholm")
-that rufus-scheduler does not accept. If you write code to set the scheduler time zone
-from the `config.time_zone` value, make sure it's the right format, e.g. with:
-
-``` ruby
-ActiveSupport::TimeZone.find_tzinfo(Rails.configuration.time_zone).name
-```
-
-A future version of sidekiq-scheduler may do this for you.
-
-### Sidekiq Web Integration
-
-SidekiqScheduler provides an extension to the Sidekiq web interface that adds a Recurring Jobs page.
-
-To use it, set up the Sidekiq web interface according to the Sidekiq documentation and then add the `sidekiq-scheduler/web` require:
-
-``` ruby
-require 'sidekiq/web'
-require 'sidekiq-scheduler/web'
-```
-
-## Note on Patches / Pull Requests
-
-* Fork the project.
-* Make your feature addition or bug fix.
-* Add tests for it. This is important so it won't break it in a future version unintentionally.
-* Commit, do not mess with version, or history.
-  (if you want to have your own version, that is fine but bump version in a commit by itself so it can be ignored when merging)
-* Send a pull request. Bonus points for topic branches.
-
-## Credits
-
-This work is a partial port of [resque-scheduler](https://github.com/bvandenbos/resque-scheduler) by Ben VandenBos.
-Modified to work with the Sidekiq queueing library by Morton Jonuschat.
-
 ## License
 
 MIT License
 
 ## Copyright
 
-Copyright 2013 - 2016 Moove-IT.
+Copyright 2013 - 2017 Moove-IT.
 Copyright 2012 Morton Jonuschat.
 Some parts copyright 2010 Ben VandenBos.
