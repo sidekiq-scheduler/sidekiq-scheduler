@@ -10,9 +10,9 @@ module SidekiqScheduler
     # @return [Array]
     #
     # @example
-    #   normalize_schedule_options('15m') => ['12d', {}]
-    #   normalize_schedule_options(['15m']) => ['12d', {}]
-    #   normalize_schedule_options(['15m', first_in: '5m']) => ['12d', { first_in: '5m' }]
+    #   normalize_schedule_options('15m') => ['15m', {}]
+    #   normalize_schedule_options(['15m']) => ['15m', {}]
+    #   normalize_schedule_options(['15m', first_in: '5m']) => ['15m', { first_in: '5m' }]
     def self.normalize_schedule_options(options)
       schedule, opts = options
 
