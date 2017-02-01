@@ -284,8 +284,8 @@ describe Sidekiq::Scheduler do
       expect {
         Sidekiq.set_schedule('other_job', ScheduleFaker.cron_schedule({'args' => 'sample'}))
 
-        Timecop.travel(7 * 60)
-        sleep 0.1
+        Timecop.travel(6 * 60)
+        sleep 0.5
       }.to change { Sidekiq::Scheduler.scheduled_jobs.include?('other_job') }.to(true)
     end
   end

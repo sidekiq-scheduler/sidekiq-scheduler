@@ -2,6 +2,7 @@ require 'rufus/scheduler'
 require 'thwait'
 require 'sidekiq/util'
 require 'sidekiq-scheduler/manager'
+require 'sidekiq-scheduler/rufus_utils'
 require 'json'
 
 module Sidekiq
@@ -79,21 +80,6 @@ module Sidekiq
         end
       end
 
-      # modify interval type value to value with options if options available
-      def optionizate_interval_value(value)
-        args = value
-        if args.is_a?(::Array)
-          return args.first if args.size > 2 || !args.last.is_a?(::Hash)
-          # symbolize keys of hash for options
-          args[1] = args[1].inject({}) do |m, i|
-            key, value = i
-            m[(key.to_sym rescue key) || key] = value
-            m
-          end
-        end
-        args
-      end
-
       # Loads a job schedule into the Rufus::Scheduler and stores it in @@scheduled_jobs
       def load_schedule_job(name, config)
         # If rails_env is set in the config, enforce ENV['RAILS_ENV'] as
@@ -109,9 +95,9 @@ module Sidekiq
 
             if !config_interval_type.nil? && config_interval_type.length > 0
 
-              args = optionizate_interval_value(config_interval_type)
+              schedule, options = SidekiqScheduler::RufusUtils.normalize_schedule_options(config_interval_type)
 
-              rufus_job = new_job(name, interval_type, config, args)
+              rufus_job = new_job(name, interval_type, config, schedule, options)
               @@scheduled_jobs[name] = rufus_job
               update_job_next_time(name, rufus_job.next_time)
 
@@ -369,10 +355,10 @@ module Sidekiq
         end
       end
 
-      def new_job(name, interval_type, config, args)
-        opts = { :job => true, :tags => [name] }
+      def new_job(name, interval_type, config, schedule, options)
+        options = options.merge({ :job => true, :tags => [name] })
 
-        rufus_scheduler.send(interval_type, *args, opts) do |job, time|
+        rufus_scheduler.send(interval_type, schedule, options) do |job, time|
           idempotent_job_enqueue(name, time, sanitize_job_config(config)) if job_enabled?(name)
         end
       end
