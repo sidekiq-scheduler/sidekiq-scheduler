@@ -210,7 +210,7 @@ module Sidekiq
               unschedule_job(schedule_name)
             end
           end
-          logger.info 'Schedules Loaded'
+          logger.info 'Schedule updated'
         end
       end
 
