@@ -117,6 +117,10 @@ The schedule is configured through the `:schedule` config entry in the sidekiq c
     args: ['*.pdf']
     description: "This job queues pdf content for indexing in solr"
 
+    # Enable the `metadata` argument which will pass a Hash containing the schedule metadata
+    # as the last argument of the `perform` method. `false` by default.
+    include_metadata: true
+
     # Enable / disable a job. All jobs are enabled by default.
     enabled: true
 ```

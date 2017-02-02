@@ -73,6 +73,26 @@ describe Sidekiq::Scheduler do
         Sidekiq::Scheduler.enqueue_job(scheduler_config)
       end
     end
+
+    context 'when job is configured to receive metadata' do
+      let(:schedule_time) { Time.now }
+
+      before do
+        scheduler_config['include_metadata'] = true
+      end
+
+      it 'pushes the job with the metadata in the arguments' do
+        Timecop.freeze(schedule_time) do
+          expect(Sidekiq::Client).to receive(:push).with({
+            'class' => SomeWorker,
+            'queue' => 'high',
+            'args' => ['/tmp', {scheduled_at: schedule_time.to_f}]
+          })
+
+          Sidekiq::Scheduler.enqueue_job(scheduler_config)
+        end
+      end
+    end
   end
 
   describe '.rufus_scheduler' do
@@ -644,11 +664,11 @@ describe Sidekiq::Scheduler do
     end
   end
 
-  describe '.enque_with_active_job' do
+  describe '.enqueue_with_active_job' do
     it 'enque an object with no args' do
       expect(EmailSender).to receive(:new).with(no_args).twice.and_call_original
 
-      Sidekiq::Scheduler.enque_with_active_job({
+      Sidekiq::Scheduler.enqueue_with_active_job({
         'class' => EmailSender,
         'args'  => []
       })
@@ -661,7 +681,7 @@ describe Sidekiq::Scheduler do
         expect(AddressUpdater).to receive(:new).with(no_args).
           and_call_original
 
-        Sidekiq::Scheduler.enque_with_active_job({
+        Sidekiq::Scheduler.enqueue_with_active_job({
           'class' => AddressUpdater,
           'args'  => [100]
         })
@@ -669,12 +689,12 @@ describe Sidekiq::Scheduler do
     end
   end
 
-  describe '.enque_with_sidekiq' do
+  describe '.enqueue_with_sidekiq' do
     let(:config) { JobConfigurationsFaker.some_worker }
 
     it 'enqueues a job into a sidekiq queue' do
       expect {
-        Sidekiq::Scheduler.enque_with_sidekiq(config)
+        Sidekiq::Scheduler.enqueue_with_sidekiq(config)
       }.to change { Sidekiq::Queues[config['queue']].size }.by(1)
     end
 
@@ -683,7 +703,7 @@ describe Sidekiq::Scheduler do
 
       it 'removes those keys' do
         expect(Sidekiq::Client).to receive(:push).with(config)
-        Sidekiq::Scheduler.enque_with_sidekiq(config.merge(rufus_config))
+        Sidekiq::Scheduler.enqueue_with_sidekiq(config.merge(rufus_config))
       end
     end
   end

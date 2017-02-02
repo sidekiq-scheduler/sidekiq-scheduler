@@ -160,10 +160,15 @@ module Sidekiq
       def enqueue_job(job_config)
         config = prepare_arguments(job_config.dup)
 
+        if config['include_metadata']
+          config['args'] = arguments_with_metadata(config['args'].dup)
+          config.delete('include_metadata')
+        end
+
         if active_job_enqueue?(config['class'])
-          enque_with_active_job(config)
+          enqueue_with_active_job(config)
         else
-          enque_with_sidekiq(config)
+          enqueue_with_sidekiq(config)
         end
       end
 
@@ -222,11 +227,11 @@ module Sidekiq
         end
       end
 
-      def enque_with_active_job(config)
+      def enqueue_with_active_job(config)
         initialize_active_job(config['class'], config['args']).enqueue(config)
       end
 
-      def enque_with_sidekiq(config)
+      def enqueue_with_sidekiq(config)
         Sidekiq::Client.push(sanitize_job_config(config))
       end
 
@@ -383,6 +388,24 @@ module Sidekiq
       # @param name [Hash] with the schedule's state
       def set_schedule_state(name, state)
         Sidekiq.redis { |r| r.hset(schedules_state_key, name, JSON.generate(state)) }
+      end
+
+      # Adds a Hash with schedule metadata as the last argument to call the worker.
+      # @example when parameter is an array
+      #   arguments_with_metadata(['arg1']) #=> ['arg1', {:scheduled_at => 1486039908.574729}]
+      # @example when parameter is a hash
+      #   arguments_with_metadata({arg1: 'value'}) #=> {:arg1 => 'value', :metadata => {:scheduled_at => 1486039908.574729}}
+      #
+      # @param args [Array|Hash]
+      # @return [Array|Hash] arguments with added metadata
+      def arguments_with_metadata(args)
+        metadata_hash = {scheduled_at: Time.now.to_f}
+        if args.is_a? Array
+          args.push(metadata_hash)
+        elsif args.is_a? Hash
+          args[:metadata] = metadata_hash
+        end
+        args
       end
 
     end
