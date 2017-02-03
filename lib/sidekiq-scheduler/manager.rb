@@ -18,7 +18,7 @@ module SidekiqScheduler
       Sidekiq::Scheduler.enabled = options[:enabled]
       Sidekiq::Scheduler.dynamic = options[:dynamic]
       Sidekiq::Scheduler.listened_queues_only = options[:listened_queues_only]
-      Sidekiq.schedule = options[:schedule]
+      Sidekiq.schedule = options[:schedule] if Sidekiq::Scheduler.enabled
     end
 
     def stop
