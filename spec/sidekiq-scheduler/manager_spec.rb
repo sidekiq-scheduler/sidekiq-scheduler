@@ -1,5 +1,4 @@
 describe SidekiqScheduler::Manager do
-
   describe '.new' do
     let(:previous_schedule) do
       {
@@ -47,6 +46,21 @@ describe SidekiqScheduler::Manager do
       expect {
         subject
       }.to change { Sidekiq.schedule }.to(options[:schedule])
+    end
+
+    context 'when not enabled' do
+      let(:options) do
+        {
+          enabled: false,
+          schedule: { 'current' => ScheduleFaker.cron_schedule('queue' => 'default') }
+        }
+      end
+
+      it 'does not set Sidekiq.schedule' do
+        expect {
+          subject
+        }.not_to change { Sidekiq.schedule }
+      end
     end
   end
 end
