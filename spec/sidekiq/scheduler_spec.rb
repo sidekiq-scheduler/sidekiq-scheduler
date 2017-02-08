@@ -41,21 +41,41 @@ describe Sidekiq::Scheduler do
   end
 
   describe '.enqueue_job' do
+    let(:schedule_time) { Time.now }
+    let(:args) { '/tmp' }
     let(:scheduler_config) do
-      { 'class' => 'SomeWorker', 'queue' => 'high', 'args'  => '/tmp', 'cron' => '* * * * *' }
+      { 'class' => 'SomeWorker', 'queue' => 'high', 'args'  => args, 'cron' => '* * * * *' }
     end
 
     # The job should be loaded, since a missing rails_env means ALL envs.
     before { ENV['RAILS_ENV'] = 'production' }
 
-    it 'prepares the parameters' do
-      expect(Sidekiq::Client).to receive(:push).with({
-        'class' => SomeWorker,
-        'queue' => 'high',
-        'args' => ['/tmp']
-      })
+    context 'when it is a sidekiq worker' do
+      it 'prepares the parameters' do
+        expect(Sidekiq::Client).to receive(:push).with({
+          'class' => SomeWorker,
+          'queue' => 'high',
+          'args' => ['/tmp']
+        })
 
-      Sidekiq::Scheduler.enqueue_job(scheduler_config)
+        Sidekiq::Scheduler.enqueue_job(scheduler_config, schedule_time)
+      end
+    end
+
+    context 'when it is an activejob worker' do
+      before do
+        scheduler_config['class'] = EmailSender
+      end
+
+      specify 'enqueues the job as active job' do
+        expect_any_instance_of(EmailSender).to receive(:enqueue).with({
+          'class' => EmailSender,
+          'queue' => 'high',
+          'args' => ['/tmp']
+        })
+
+        Sidekiq::Scheduler.enqueue_job(scheduler_config, schedule_time)
+      end
     end
 
     context 'when worker class does not exist' do
@@ -70,28 +90,93 @@ describe Sidekiq::Scheduler do
           'args' => ['/tmp']
         })
 
-        Sidekiq::Scheduler.enqueue_job(scheduler_config)
+        Sidekiq::Scheduler.enqueue_job(scheduler_config, schedule_time)
       end
     end
 
     context 'when job is configured to receive metadata' do
-      let(:schedule_time) { Time.now }
-
       before do
         scheduler_config['include_metadata'] = true
       end
 
-      it 'pushes the job with the metadata in the arguments' do
-        Timecop.freeze(schedule_time) do
-          expect(Sidekiq::Client).to receive(:push).with({
-            'class' => SomeWorker,
+      context 'when called without a time argument' do
+        specify 'uses the current time' do
+          Timecop.freeze(schedule_time) do
+            expect(Sidekiq::Client).to receive(:push).with({
+              'class' => SomeWorker,
+              'queue' => 'high',
+              'args' => ['/tmp', {scheduled_at: schedule_time.to_f}]
+            })
+
+            Sidekiq::Scheduler.enqueue_job(scheduler_config)
+          end
+        end
+      end
+
+      context 'when arguments are already expanded' do
+        it 'pushes the job with the metadata as the last argument' do
+          Timecop.freeze(schedule_time) do
+            expect(Sidekiq::Client).to receive(:push).with({
+              'class' => SomeWorker,
+              'queue' => 'high',
+              'args' => ['/tmp', {scheduled_at: schedule_time.to_f}]
+            })
+
+            Sidekiq::Scheduler.enqueue_job(scheduler_config, schedule_time)
+          end
+        end
+      end
+
+      context 'when it is an active job worker' do
+        before do
+          scheduler_config['class'] = EmailSender
+        end
+
+        specify 'enqueues the job as active job' do
+          expect_any_instance_of(EmailSender).to receive(:enqueue).with({
+            'class' => EmailSender,
             'queue' => 'high',
             'args' => ['/tmp', {scheduled_at: schedule_time.to_f}]
           })
 
-          Sidekiq::Scheduler.enqueue_job(scheduler_config)
+          Sidekiq::Scheduler.enqueue_job(scheduler_config, schedule_time)
         end
       end
+
+      context 'when arguments contain a hash' do
+        let(:args) { { 'dir' => '/tmp' } }
+
+        it 'pushes the job with the metadata as the last argument' do
+          Timecop.freeze(schedule_time) do
+            expect(Sidekiq::Client).to receive(:push).with({
+              'class' => SomeWorker,
+              'queue' => 'high',
+              'args' => [{dir: '/tmp'}, {scheduled_at: schedule_time.to_f}]
+            })
+
+            Sidekiq::Scheduler.enqueue_job(scheduler_config, schedule_time)
+          end
+        end
+      end
+
+      context 'when arguments are empty' do
+        before do
+          scheduler_config.delete('args')
+        end
+
+        it 'pushes the job with the metadata as the only argument' do
+          Timecop.freeze(schedule_time) do
+            expect(Sidekiq::Client).to receive(:push).with({
+              'class' => SomeWorker,
+              'queue' => 'high',
+              'args' => [{scheduled_at: schedule_time.to_f}]
+            })
+
+            Sidekiq::Scheduler.enqueue_job(scheduler_config, schedule_time)
+          end
+        end
+      end
+
     end
   end
 
@@ -303,8 +388,7 @@ describe Sidekiq::Scheduler do
 
       expect {
         Sidekiq.set_schedule('other_job', ScheduleFaker.cron_schedule({'args' => 'sample'}))
-
-        Timecop.travel(6 * 60)
+        Timecop.travel(7 * 60)
         sleep 0.5
       }.to change { Sidekiq::Scheduler.scheduled_jobs.include?('other_job') }.to(true)
     end
