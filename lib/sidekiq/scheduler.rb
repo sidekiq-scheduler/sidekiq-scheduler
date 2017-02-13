@@ -403,7 +403,7 @@ module Sidekiq
       #
       # @param args [Array|Hash]
       # @param metadata [Hash]
-      # @return [Array|Hash] arguments with added metadata
+      # @return [Array] arguments with added metadata
       def arguments_with_metadata(args, metadata)
         if args.is_a? Array
           [*args, metadata]

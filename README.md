@@ -125,6 +125,34 @@ The schedule is configured through the `:schedule` config entry in the sidekiq c
     enabled: true
 ```
 
+### Schedule metadata
+You can configure Sidekiq-scheduler to pass an argument with metadata about the scheduling process
+to the worker's `perform` method.
+
+In the configuration file add the following on each worker class entry:
+
+```yaml
+
+  SampleWorker:
+    include_metadata: true
+```
+
+On your `perform` method, expect an additional argument:
+
+```ruby
+  def perform(args, ..., metadata)
+    # Do something with the metadata
+  end
+```
+
+The `metadata` hash contains the following keys:
+
+```ruby
+  metadata.keys =>
+    [
+      :scheduled_at # The epoch when the job was scheduled to run
+    ]
+```
 
 ## Schedule types
 
