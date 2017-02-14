@@ -117,10 +117,42 @@ The schedule is configured through the `:schedule` config entry in the sidekiq c
     args: ['*.pdf']
     description: "This job queues pdf content for indexing in solr"
 
+    # Enable the `metadata` argument which will pass a Hash containing the schedule metadata
+    # as the last argument of the `perform` method. `false` by default.
+    include_metadata: true
+
     # Enable / disable a job. All jobs are enabled by default.
     enabled: true
 ```
 
+### Schedule metadata
+You can configure Sidekiq-scheduler to pass an argument with metadata about the scheduling process
+to the worker's `perform` method.
+
+In the configuration file add the following on each worker class entry:
+
+```yaml
+
+  SampleWorker:
+    include_metadata: true
+```
+
+On your `perform` method, expect an additional argument:
+
+```ruby
+  def perform(args, ..., metadata)
+    # Do something with the metadata
+  end
+```
+
+The `metadata` hash contains the following keys:
+
+```ruby
+  metadata.keys =>
+    [
+      :scheduled_at # The epoch when the job was scheduled to run
+    ]
+```
 
 ## Schedule types
 

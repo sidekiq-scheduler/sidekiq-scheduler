@@ -124,7 +124,7 @@ module Sidekiq
         if registered
           logger.info "queueing #{config['class']} (#{job_name})"
 
-          handle_errors { enqueue_job(config) }
+          handle_errors { enqueue_job(config, time) }
 
           remove_elder_job_instances(job_name)
         else
@@ -157,13 +157,20 @@ module Sidekiq
       end
 
       # Enqueue a job based on a config hash
-      def enqueue_job(job_config)
+      #
+      # @param job_config [Hash] the job configuration
+      # @param time [Time] time the job is enqueued
+      def enqueue_job(job_config, time=Time.now)
         config = prepare_arguments(job_config.dup)
 
+        if config.delete('include_metadata')
+          config['args'] = arguments_with_metadata(config['args'], scheduled_at: time.to_f)
+        end
+
         if active_job_enqueue?(config['class'])
-          enque_with_active_job(config)
+          enqueue_with_active_job(config)
         else
-          enque_with_sidekiq(config)
+          enqueue_with_sidekiq(config)
         end
       end
 
@@ -222,11 +229,12 @@ module Sidekiq
         end
       end
 
-      def enque_with_active_job(config)
-        initialize_active_job(config['class'], config['args']).enqueue(config)
+      def enqueue_with_active_job(config)
+        # TODO Does ActiveJob really need to get the config data in the `enqueue` call?
+        initialize_active_job(config['class'], config['args']).enqueue(sanitize_job_config(config))
       end
 
-      def enque_with_sidekiq(config)
+      def enqueue_with_sidekiq(config)
         Sidekiq::Client.push(sanitize_job_config(config))
       end
 
@@ -383,6 +391,25 @@ module Sidekiq
       # @param name [Hash] with the schedule's state
       def set_schedule_state(name, state)
         Sidekiq.redis { |r| r.hset(schedules_state_key, name, JSON.generate(state)) }
+      end
+
+      # Adds a Hash with schedule metadata as the last argument to call the worker.
+      # It currently returns the schedule time as a Float number representing the milisencods
+      # since epoch.
+      #
+      # @example with hash argument
+      #   arguments_with_metadata({value: 1}, scheduled_at: Time.now)
+      #   #=> [{value: 1}, {scheduled_at: <miliseconds since epoch>}]
+      #
+      # @param args [Array|Hash]
+      # @param metadata [Hash]
+      # @return [Array] arguments with added metadata
+      def arguments_with_metadata(args, metadata)
+        if args.is_a? Array
+          [*args, metadata]
+        else
+          [args, metadata]
+        end
       end
 
     end
