@@ -3,6 +3,7 @@ require 'thwait'
 require 'sidekiq/util'
 require 'sidekiq-scheduler/manager'
 require 'sidekiq-scheduler/rufus_utils'
+require 'sidekiq-scheduler/config_hash'
 require 'json'
 
 module Sidekiq
@@ -266,6 +267,8 @@ module Sidekiq
       #
       # @return [Hash]
       def prepare_arguments(config)
+        config = SidekiqScheduler::ConfigHash.new(config)
+
         config['class'] = try_to_constantize(config['class'])
 
         if config['args'].is_a?(Hash)
