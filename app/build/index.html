@@ -119,7 +119,7 @@ gem 'sidekiq-scheduler', '~> 1'
       <div class="container-cell">
         <div class="row">
           <h2 class="SectionUsing-title">Using</h2>
-          <div class="SectionUsing-terminal">
+          <div class="SectionUsing-hello-scheduler">
             <div class="terminal-window">
               <header>
                 <div class="terminal-button green"></div>
@@ -127,8 +127,75 @@ gem 'sidekiq-scheduler', '~> 1'
                 <div class="terminal-button red"></div>
               </header>
               <section class="terminal">
-                <p><span class="terminal-arrow"><i class="fa fa-long-arrow-right"></i></span><span class="terminal-tilde">~</span><span class="command">gem install sidekiq-scheduler</span></p>
-                <p><span class="terminal-arrow"><i class="fa fa-long-arrow-right"></i></span><span class="terminal-tilde">~</span><span class="command">sidekiq</span></p>
+                <header class="terminal-header">
+                  <ul>
+                    <li>hello-scheduler.rb</li>
+                  </ul>
+                </header>
+                <section class="terminal-body">
+                  <pre class="prettyprint linenums lang-rb"><code>require 'sidekiq-scheduler'
+
+class HelloWorld
+  include Sidekiq::Worker
+
+  def perform
+    puts 'Hello world!'
+  end
+end</code></pre>
+                </section>
+              </section>
+              <footer class="terminal-footer"></footer>
+            </div>
+          </div>
+          <div class="separator"></div>
+          <div class="SectionUsing-config">
+            <div class="terminal-window">
+              <header>
+                <div class="terminal-button green"></div>
+                <div class="terminal-button yellow"></div>
+                <div class="terminal-button red"></div>
+              </header>
+              <section class="terminal">
+                <header class="terminal-header">
+                  <ul>
+                    <li>config/sidekiq.yml</li>
+                  </ul>
+                </header>
+                <section class="terminal-body">
+                  <pre class="prettyprint linenums lang-rb"><code>:schedule:
+  hello_world:
+    every: 1m   # Runs once per minute
+    class: HelloWorld
+</code></pre>
+                </section>
+              </section>
+              <footer class="terminal-footer"></footer>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="SectionUsing-run">
+            <div class="terminal-window">
+              <header>
+                <div class="terminal-button green"></div>
+                <div class="terminal-button yellow"></div>
+                <div class="terminal-button red"></div>
+              </header>
+              <section class="terminal">
+                <div><span class="terminal-arrow"><i class="fa fa-long-arrow-right"></i></span><span class="terminal-tilde">~</span><span class="command">sidekiq -r ./hello-scheduler.rb</span><span class="prompt"></span><span class="typed-cursor"></span></div>
+                <div>
+                  <pre class="prettyprint linenumss lang-sh"><code>Booting Sidekiq 4.2.10 with redis options {:url=>nil}
+
+Scheduling hello_world {"every"=>"1m", "class"=>"HelloWorld", "queue"=>"default"}
+
+Starting processing, hit Ctrl-C to stop
+queueing HelloWorld (hello_world)
+HelloWorld ... start
+
+Hello world!
+
+HelloWorld ... done: 0.001 sec</code></pre>
+                </div>
               </section>
             </div>
           </div>

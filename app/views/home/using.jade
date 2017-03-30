@@ -4,28 +4,85 @@ section#using.SectionUsing
       h2.SectionUsing-title
         | Using
 
-      .SectionUsing-terminal
+      .SectionUsing-hello-scheduler
         .terminal-window
           header
             .terminal-button.green
             .terminal-button.yellow
             .terminal-button.red
           section.terminal
-            p
+            header.terminal-header
+              ul
+                li hello-scheduler.rb
+
+            section.terminal-body
+              pre.prettyprint.linenums.lang-rb
+                code
+                  :verbatim
+                    require 'sidekiq-scheduler'
+
+                    class HelloWorld
+                      include Sidekiq::Worker
+
+                      def perform
+                        puts 'Hello world!'
+                      end
+                    end
+          footer.terminal-footer
+
+      .separator
+
+      .SectionUsing-config
+        .terminal-window
+          header
+            .terminal-button.green
+            .terminal-button.yellow
+            .terminal-button.red
+          section.terminal
+            header.terminal-header
+              ul
+                li config/sidekiq.yml
+            section.terminal-body
+              pre.prettyprint.linenums.lang-rb
+                code
+                  :verbatim
+                    :schedule:
+                      hello_world:
+                        every: 1m   # Runs once per minute
+                        class: HelloWorld
+
+          footer.terminal-footer
+
+    .row
+      .SectionUsing-run
+        .terminal-window
+          header
+            .terminal-button.green
+            .terminal-button.yellow
+            .terminal-button.red
+          section.terminal
+            div
               span.terminal-arrow
                 i.fa.fa-long-arrow-right
               span.terminal-tilde
                 | ~
               span.command
-                | gem install sidekiq-scheduler
-            p
-              span.terminal-arrow
-                i.fa.fa-long-arrow-right
-              span.terminal-tilde
-                | ~
-              span.command
-                | sidekiq
+                | sidekiq -r ./hello-scheduler.rb
+              span.prompt
+              span.typed-cursor
+            div
+              pre.prettyprint.linenumss.lang-sh
+                code
+                  :verbatim
+                    Booting Sidekiq 4.2.10 with redis options {:url=>nil}
 
+                    Scheduling hello_world {"every"=>"1m", "class"=>"HelloWorld", "queue"=>"default"}
 
+                    Starting processing, hit Ctrl-C to stop
+                    queueing HelloWorld (hello_world)
+                    HelloWorld ... start
 
+                    Hello world!
+
+                    HelloWorld ... done: 0.001 sec
 

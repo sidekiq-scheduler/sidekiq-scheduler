@@ -8,7 +8,10 @@ rm -rf build
 
 mkdir build
 
-grunt precompile
+yarn
+yarn run bower install
+yarn run grunt -- precompile
+
 ./node_modules/jade/bin/jade.js views/home/index.jade --out ./build/ --pretty
 
 cp -r public/* build/

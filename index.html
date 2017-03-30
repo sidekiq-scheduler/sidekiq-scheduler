@@ -10,8 +10,7 @@
     <header itemscope="" itemtype="http://schema.org/Organization" class="Header">
       <div class="Header-wrapper"><a href="/" class="Header-logo"><img src="images/ss_logo.svg"></a>
         <nav class="Navbar">
-          <div class="Navbar-doc">
-            <a href="http://www.rubydoc.info/github/moove-it/sidekiq-scheduler" target="_blank">docs</a>
+          <div class="Navbar-doc"><a href="https://github.com/Moove-it/sidekiq-scheduler" target="_blank">docs</a>
           </div>
           <ul class="Navbar-list">
                 <li class="Navbar-listItem why-index"><a href="#why">why</a>
@@ -20,8 +19,7 @@
                 </li>
                 <li class="Navbar-listItem using-index"><a href="#using">using</a>
                 </li>
-                <li class="Navbar-listItem docs-index Navbar-listItem--doc">
-                  <a href="http://www.rubydoc.info/github/moove-it/sidekiq-scheduler" target="_blank">docs</a>
+                <li class="Navbar-listItem docs-index Navbar-listItem--doc"><a href="https://github.com/Moove-it/sidekiq-scheduler" target="_blank">docs</a>
                 </li>
           </ul>
         </nav>
@@ -45,7 +43,7 @@
         </div><a href="#why" class="SectionBrand-scroll"><i class="fa fa-chevron-down"></i></a>
       </div>
     </section>
-    <div class="fork-top"><a href="https://github.com/moove-it/sidekiq-scheduler" target="_blank"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://camo.githubusercontent.com/38ef81f8aca64bb9a64448d0d70f1308ef5341ab/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f6461726b626c75655f3132313632312e706e67" alt="Fork me on GitHub" data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png"></a></div>
+    <div class="fork-top"><a href="https://github.com/Moove-it/sidekiq-scheduler" target="_blank"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://camo.githubusercontent.com/38ef81f8aca64bb9a64448d0d70f1308ef5341ab/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f6461726b626c75655f3132313632312e706e67" alt="Fork me on GitHub" data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png"></a></div>
     <section id="why" class="SectionWay">
       <div class="container-cell">
         <div class="row">
@@ -61,7 +59,7 @@
                 </p>
                 <p class="SectionWay-description-paragraph-text">
                   To use it in a rails application, add to you Gemfile:
-                  gem 'sidekiq-scheduler', '~> 2.0’
+                  gem 'sidekiq-scheduler', '~> 1’
                   and the execute:
                   sidekiq
                 </p>
@@ -121,7 +119,7 @@ gem 'sidekiq-scheduler', '~> 1'
       <div class="container-cell">
         <div class="row">
           <h2 class="SectionUsing-title">Using</h2>
-          <div class="SectionUsing-terminal">
+          <div class="SectionUsing-hello-scheduler">
             <div class="terminal-window">
               <header>
                 <div class="terminal-button green"></div>
@@ -129,8 +127,75 @@ gem 'sidekiq-scheduler', '~> 1'
                 <div class="terminal-button red"></div>
               </header>
               <section class="terminal">
-                <p><span class="terminal-arrow"><i class="fa fa-long-arrow-right"></i></span><span class="terminal-tilde">~</span><span class="command">gem install sidekiq-scheduler</span></p>
-                <p><span class="terminal-arrow"><i class="fa fa-long-arrow-right"></i></span><span class="terminal-tilde">~</span><span class="command">sidekiq</span></p>
+                <header class="terminal-header">
+                  <ul>
+                    <li>hello-scheduler.rb</li>
+                  </ul>
+                </header>
+                <section class="terminal-body">
+                  <pre class="prettyprint linenums lang-rb"><code>require 'sidekiq-scheduler'
+
+class HelloWorld
+  include Sidekiq::Worker
+
+  def perform
+    puts 'Hello world!'
+  end
+end</code></pre>
+                </section>
+              </section>
+              <footer class="terminal-footer"></footer>
+            </div>
+          </div>
+          <div class="separator"></div>
+          <div class="SectionUsing-config">
+            <div class="terminal-window">
+              <header>
+                <div class="terminal-button green"></div>
+                <div class="terminal-button yellow"></div>
+                <div class="terminal-button red"></div>
+              </header>
+              <section class="terminal">
+                <header class="terminal-header">
+                  <ul>
+                    <li>config/sidekiq.yml</li>
+                  </ul>
+                </header>
+                <section class="terminal-body">
+                  <pre class="prettyprint linenums lang-rb"><code>:schedule:
+  hello_world:
+    every: 1m   # Runs once per minute
+    class: HelloWorld
+</code></pre>
+                </section>
+              </section>
+              <footer class="terminal-footer"></footer>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="SectionUsing-run">
+            <div class="terminal-window">
+              <header>
+                <div class="terminal-button green"></div>
+                <div class="terminal-button yellow"></div>
+                <div class="terminal-button red"></div>
+              </header>
+              <section class="terminal">
+                <div><span class="terminal-arrow"><i class="fa fa-long-arrow-right"></i></span><span class="terminal-tilde">~</span><span class="command">sidekiq -r ./hello-scheduler.rb</span><span class="prompt"></span><span class="typed-cursor"></span></div>
+                <div>
+                  <pre class="prettyprint linenumss lang-sh"><code>Booting Sidekiq 4.2.10 with redis options {:url=>nil}
+
+Scheduling hello_world {"every"=>"1m", "class"=>"HelloWorld", "queue"=>"default"}
+
+Starting processing, hit Ctrl-C to stop
+queueing HelloWorld (hello_world)
+HelloWorld ... start
+
+Hello world!
+
+HelloWorld ... done: 0.001 sec</code></pre>
+                </div>
               </section>
             </div>
           </div>

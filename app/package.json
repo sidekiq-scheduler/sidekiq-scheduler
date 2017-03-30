@@ -3,13 +3,18 @@
   "version": "0.0.2",
   "private": true,
   "scripts": {
+    "bower": "bower",
+    "grunt": "grunt",
     "start": "node ./bin/www"
   },
   "dependencies": {
     "body-parser": "~1.10.2",
+    "bower": "^1.8.0",
     "cookie-parser": "~1.3.3",
     "debug": "~2.1.1",
     "express": "~4.11.1",
+    "grunt-cli": "^1.2.0",
+    "grunt-parallel": "^0.5.1",
     "jade": "~1.6.0",
     "morgan": "~1.5.1",
     "sass": "~0.5.0",
@@ -17,6 +22,7 @@
   },
   "devDependencies": {
     "grunt": "~0.4.5",
+    "grunt-autoprefixer": "~0.2.20130806",
     "grunt-concurrent": "~1.0.0",
     "grunt-contrib-concat": "~0.5.0",
     "grunt-contrib-cssmin": "~0.10.0",
@@ -27,7 +33,6 @@
     "grunt-express": "~1.4.1",
     "grunt-sass": "1.0.0",
     "grunt-usemin": "^2.1.1",
-    "load-grunt-tasks": "^3.1.0",
-    "grunt-autoprefixer": "~0.2.20130806"
+    "load-grunt-tasks": "^3.1.0"
   }
 }
