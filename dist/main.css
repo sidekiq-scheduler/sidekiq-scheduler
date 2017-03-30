@@ -11942,8 +11942,10 @@ li.L9 {
   padding-right: 0.9375rem;
   width: 100%;
   float: left; }
-  .SectionWay-description-paragraph-text {
-    font-size: 1.125rem; }
+  .SectionWay-description-paragraph {
+    margin-top: 2.5rem; }
+    .SectionWay-description-paragraph-text {
+      font-size: 1.125rem; }
   @media only screen and (min-width: 40.0625em) {
     .SectionWay-description {
       padding-left: 0.9375rem;
