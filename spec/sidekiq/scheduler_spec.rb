@@ -68,10 +68,16 @@ describe Sidekiq::Scheduler do
       end
 
       specify 'enqueues the job as active job' do
+        expect(EmailSender).to receive(:new).with(
+          '/tmp',
+        ).and_return(double(:job).as_null_object)
+
+        Sidekiq::Scheduler.enqueue_job(scheduler_config, schedule_time)
+      end
+
+      specify 'enqueue to the configured queue' do
         expect_any_instance_of(EmailSender).to receive(:enqueue).with({
-          'class' => EmailSender,
-          'queue' => 'high',
-          'args' => ['/tmp']
+          queue: 'high'
         })
 
         Sidekiq::Scheduler.enqueue_job(scheduler_config, schedule_time)
@@ -133,10 +139,17 @@ describe Sidekiq::Scheduler do
         end
 
         specify 'enqueues the job as active job' do
+          expect(EmailSender).to receive(:new).with(
+            '/tmp',
+            { scheduled_at: schedule_time.to_f }
+          ).and_return(double(:job).as_null_object)
+
+          Sidekiq::Scheduler.enqueue_job(scheduler_config, schedule_time)
+        end
+
+        specify 'enqueue to the configured queue' do
           expect_any_instance_of(EmailSender).to receive(:enqueue).with({
-            'class' => EmailSender,
-            'queue' => 'high',
-            'args' => ['/tmp', {scheduled_at: schedule_time.to_f}]
+            queue: 'high'
           })
 
           Sidekiq::Scheduler.enqueue_job(scheduler_config, schedule_time)
@@ -758,7 +771,7 @@ describe Sidekiq::Scheduler do
       })
     end
 
-    describe 'enque an object with args' do
+    describe 'enqueue an object with args' do
       it 'should be correctly enqueued' do
         expect(AddressUpdater).to receive(:new).with(100).
           and_call_original
