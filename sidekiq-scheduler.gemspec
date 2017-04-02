@@ -1,22 +1,18 @@
 $:.push File.expand_path('../lib', __FILE__)
 
-# Maintain your gem's version:
 require 'sidekiq-scheduler/version'
 
-# Describe your gem and declare its dependencies:
 Gem::Specification.new do |s|
-
   s.name        = 'sidekiq-scheduler'
   s.version     = SidekiqScheduler::VERSION
-  s.authors     = ['Morton Jonuschat', 'Adrian Gomez']
-  s.email       = ['adrian_g171@hotmail.com']
+  s.authors     = ['Morton Jonuschat', 'Moove-it']
+  s.email       = ['sidekiq-scheduler@moove-it.com']
   s.license     = 'MIT'
-  s.homepage    = 'https://github.com/moove-it/sidekiq-scheduler'
+  s.homepage    = 'https://moove-it.github.io/sidekiq-scheduler/'
   s.summary     = 'Light weight job scheduling extension for Sidekiq'
-  s.description = 'Light weight job scheduling extension for Sidekiq that adds support for queueing items in the future.'
+  s.description = 'Light weight job scheduling extension for Sidekiq that adds support for queueinga jobs in a recurring way.'
 
-  s.files       = Dir['{app,config,db,lib,web}/**/*'] + %w[MIT-LICENSE Rakefile README.md]
-  s.test_files  = Dir['test/**/*']
+  s.files       = Dir['{lib,web}/**/*'] + %w[MIT-LICENSE Rakefile README.md]
 
   s.add_dependency 'hashie',          '~> 3.4'
   s.add_dependency 'sidekiq',         '>= 3'
