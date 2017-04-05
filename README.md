@@ -290,15 +290,12 @@ sidekiq-scheduler provides an extension to the Sidekiq web interface that adds a
 # config.ru
 
 require 'sidekiq/web'
-require 'sidekiq-scheduler'
 require 'sidekiq-scheduler/web'
 
-app = Rack::Builder.new {
-  run Sidekiq::Web
-}.to_app
-
-Rack::Handler::WEBrick.run app
+run Sidekiq::Web
 ```
+
+![Sidekiq Web Integration](https://github.com/moove-it/sidekiq-scheduler/raw/master/images/recurring-jobs-ui-tab.png)
 
 ## The Spring preloader and Testing your initializer via Rails console
 
