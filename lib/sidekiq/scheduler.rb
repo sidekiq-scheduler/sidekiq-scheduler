@@ -230,8 +230,9 @@ module Sidekiq
       end
 
       def enqueue_with_active_job(config)
-        # TODO Does ActiveJob really need to get the config data in the `enqueue` call?
-        initialize_active_job(config['class'], config['args']).enqueue(sanitize_job_config(config))
+        options = { queue: config['queue'] }
+
+        initialize_active_job(config['class'], config['args']).enqueue(options)
       end
 
       def enqueue_with_sidekiq(config)
