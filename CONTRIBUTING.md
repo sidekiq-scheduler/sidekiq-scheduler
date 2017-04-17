@@ -1,6 +1,6 @@
 # Contributing to sidekiq-scheduler
 
-The following guide set some guidelines to contribute with Fakeit, please read it before start contributing.
+The following guide set some guidelines to contribute with Sidekiq-Scheduler, please read it before start contributing.
 
 ### General
 
