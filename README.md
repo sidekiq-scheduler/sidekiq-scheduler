@@ -58,7 +58,7 @@ end
 
 :schedule:
   hello_world:
-    every: 1m   # Runs once per minute
+    cron: '0 * * * * *'   # Runs once per minute
     class: HelloWorld
 ```
 
@@ -104,10 +104,10 @@ The schedule is configured through the `:schedule` config entry in the sidekiq c
 ``` yaml
 :schedule:
   CancelAbandonedOrders:
-    every: 5m             # runs every 5 minutes, job's class: CancelAbandonedOrders
+    cron: '0 */5 * * * *'   # Runs when second = 0, every 5 minutes
 
   queue_documents_for_indexing:
-    every: 1h    # runs every 1 hour
+    cron: '0 0 * * * *'   # Runs every hour
 
     # By default the job name will be taken as worker class name.
     # If you want to have a different job name and class name, provide the 'class' option
