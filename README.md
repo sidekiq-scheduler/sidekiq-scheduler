@@ -284,8 +284,8 @@ ActiveSupport::TimeZone.find_tzinfo(Rails.configuration.time_zone).name
 
 ## Notes about running on Multiple Hosts
 
-`cron` and `at` jobs are pushed once despite the number of `sidekiq-scheduler` running instances,
-assumming that time deltas between hosts is lesser than 24 hours.
+`cron` and `at` jobs are pushed once regardless of the number of `sidekiq-scheduler` running instances,
+assumming that time deltas between hosts is less than 24 hours.
 
 `every`, `interval` and `in` jobs will be pushed once per host.
 
