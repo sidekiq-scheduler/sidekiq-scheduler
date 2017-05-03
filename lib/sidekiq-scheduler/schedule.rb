@@ -1,5 +1,6 @@
-require 'hashie'
 require 'json'
+
+require 'sidekiq-scheduler/utils'
 
 module SidekiqScheduler
   module Schedule
@@ -117,7 +118,7 @@ module SidekiqScheduler
     private
 
     def prepare_schedule(schedule_hash)
-      schedule_hash = Hashie.stringify_keys(schedule_hash)
+      schedule_hash = SidekiqScheduler::Utils.stringify_keys(schedule_hash)
 
       prepared_hash = {}
 

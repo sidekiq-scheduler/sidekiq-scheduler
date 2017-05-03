@@ -1,4 +1,4 @@
-require 'hashie'
+require 'sidekiq-scheduler/utils'
 
 module SidekiqScheduler
   class RufusUtils
@@ -20,7 +20,7 @@ module SidekiqScheduler
         opts = {}
       end
 
-      opts = Hashie.symbolize_keys(opts)
+      opts = SidekiqScheduler::Utils.symbolize_keys(opts)
 
       return schedule, opts
     end
