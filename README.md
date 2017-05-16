@@ -1,6 +1,8 @@
+# sidekiq-scheduler
+
 <p align="center">
   <a href="http://moove-it.github.io/sidekiq-scheduler/">
-    <img src="https://moove-it.github.io/sidekiq-scheduler/images/logo.png" alt="Sidekiq Scheduler" />
+    <img src="https://moove-it.github.io/sidekiq-scheduler/images/small-logo.svg" width="468px" height="200px" alt="Sidekiq Scheduler" />
   </a>
 </p>
 
