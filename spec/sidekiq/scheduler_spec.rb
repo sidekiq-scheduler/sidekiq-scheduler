@@ -268,6 +268,32 @@ describe Sidekiq::Scheduler do
           end
         end
 
+        context 'when stringified sidekiq queues match symbolized job\'s one' do
+          before do
+            Sidekiq.options[:queues] = ['reporting']
+            Sidekiq.schedule['some_ivar_job']['queue'] = :reporting
+          end
+
+          it 'loads the job into the scheduler' do
+            Sidekiq::Scheduler.load_schedule!
+
+            expect(Sidekiq::Scheduler.scheduled_jobs).to include('some_ivar_job')
+          end
+        end
+
+        context 'when symbolized sidekiq queues match stringified job\'s one' do
+          before do
+            Sidekiq.options[:queues] = ['reporting']
+            Sidekiq.schedule['some_ivar_job']['queue'] = :reporting
+          end
+
+          it 'loads the job into the scheduler' do
+            Sidekiq::Scheduler.load_schedule!
+
+            expect(Sidekiq::Scheduler.scheduled_jobs).to include('some_ivar_job')
+          end
+        end
+
         context 'when sidekiq queues does not match job\'s one' do
           before do
             Sidekiq.options[:queues] = ['mailing']

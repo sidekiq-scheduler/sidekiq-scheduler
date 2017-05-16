@@ -63,9 +63,10 @@ module Sidekiq
 
 
           @@scheduled_jobs = {}
+          queues = sidekiq_queues
 
           Sidekiq.schedule.each do |name, config|
-            if !listened_queues_only || enabled_queue?(config['queue'])
+            if !listened_queues_only || enabled_queue?(config['queue'].to_s, queues)
               load_schedule_job(name, config)
             else
               logger.info { "Ignoring #{name}, job's queue is not enabled." }
@@ -284,14 +285,15 @@ module Sidekiq
         klass
       end
 
-      # Returns true if a job's queue is being listened on by sidekiq
+      # Returns true if a job's queue is included in the array of queues
+      #
+      # If queues are empty, returns true.
       #
       # @param [String] job_queue Job's queue name
+      # @param [Array<String>] queues
       #
       # @return [Boolean]
-      def enabled_queue?(job_queue)
-        queues = Sidekiq.options[:queues]
-
+      def enabled_queue?(job_queue, queues)
         queues.empty? || queues.include?(job_queue)
       end
 
@@ -413,6 +415,9 @@ module Sidekiq
         end
       end
 
+      def sidekiq_queues
+        Sidekiq.options[:queues].map(&:to_s)
+      end
     end
   end
 end
