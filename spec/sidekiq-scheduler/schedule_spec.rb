@@ -20,7 +20,7 @@ describe SidekiqScheduler::Schedule do
   end
 
   def changed_job?(job_id)
-    Sidekiq.redis { |redis| redis.sismember(:schedules_changed, job_id) }
+    Sidekiq.redis { |redis| !!redis.zrank(:schedules_changed, job_id) }
   end
 
   def job_from_redis_without_decoding(job_id)

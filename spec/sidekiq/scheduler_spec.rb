@@ -780,9 +780,9 @@ describe Sidekiq::Scheduler do
         }.to_not change { Sidekiq::Scheduler.scheduled_jobs.keys.size }
       end
 
-      it 'resets the changed flag from redis' do
+      it 'resets the instance variable current_change_score' do
         expect { Sidekiq::Scheduler.update_schedule }
-          .to change{ Sidekiq.redis { |r| r.scard(:schedules_changed) } }.from(1).to(0)
+          .to change{ Sidekiq::Scheduler.instance_variable_get(:@current_changed_score) }.to be_a Float
       end
     end
   end
