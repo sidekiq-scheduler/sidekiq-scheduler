@@ -1,10 +1,9 @@
 require 'sidekiq-scheduler/utils'
 
 describe SidekiqScheduler::Utils do
-  subject(:utils) { described_class }
 
   describe '.stringify_keys' do
-    subject(:result) { utils.stringify_keys(object) }
+    subject { described_class.stringify_keys(object) }
 
     context 'with a Hash' do
       let(:object) do
@@ -33,7 +32,7 @@ describe SidekiqScheduler::Utils do
         }
       end
 
-      it { should eq(expected) }
+      it { is_expected.to eq(expected) }
     end
 
     context 'with an Array' do
@@ -71,20 +70,19 @@ describe SidekiqScheduler::Utils do
         ]
       end
 
-      it { should eq(expected) }
+      it { is_expected.to eq(expected) }
     end
 
     context 'with some other object' do
       let(:object) { Object.new }
-
       let(:expected) { object }
 
-      it { should eq(expected) }
+      it { is_expected.to eq(expected) }
     end
   end
 
   describe '.symbolize_keys' do
-    subject(:result) { utils.symbolize_keys(object) }
+    subject { described_class.symbolize_keys(object) }
 
     context 'with a Hash' do
       let(:object) do
@@ -111,7 +109,7 @@ describe SidekiqScheduler::Utils do
         }
       end
 
-      it { should eq(expected) }
+      it { is_expected.to eq(expected) }
     end
 
     context 'with an Array' do
@@ -149,15 +147,14 @@ describe SidekiqScheduler::Utils do
         ]
       end
 
-      it { should eq(expected) }
+      it { is_expected.to eq(expected) }
     end
 
     context 'with some other object' do
       let(:object) { Object.new }
-
       let(:expected) { object }
 
-      it { should eq(expected) }
+      it { is_expected.to eq(expected) }
     end
   end
 end

@@ -49,7 +49,8 @@ class ScheduleFaker
   def self.default_options(options = {})
     {
       'class' => 'SomeWorker',
-      'args'  => 'some_arg'
+      'args'  => 'some_arg',
+      'queue' => 'default'
     }.merge(options)
   end
 
