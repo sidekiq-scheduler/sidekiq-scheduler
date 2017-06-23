@@ -53,6 +53,8 @@ module SidekiqScheduler
     end
 
     def schedule
+      reload_schedule! unless @schedule
+
       @schedule
     end
 
