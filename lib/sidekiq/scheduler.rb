@@ -54,6 +54,7 @@ module Sidekiq
           # Load schedule from redis for the first time if dynamic
           if dynamic
             Sidekiq.reload_schedule!
+            @current_changed_score = Time.now.to_f
             rufus_scheduler.every('5s') do
               update_schedule
             end
@@ -73,7 +74,7 @@ module Sidekiq
             end
           end
 
-          Sidekiq.redis { |r| r.del(:schedules_changed) }
+          Sidekiq.redis { |r| r.del(:schedules_changed) unless r.type(:schedules_changed) == 'zset' }
 
           logger.info 'Schedules Loaded'
         else
@@ -207,10 +208,15 @@ module Sidekiq
       end
 
       def update_schedule
-        if Sidekiq.redis { |r| r.scard(:schedules_changed) } > 0
+        last_changed_score, @current_changed_score = @current_changed_score, Time.now.to_f
+        schedule_changes = Sidekiq.redis do |r|
+          r.zrangebyscore :schedules_changed, last_changed_score, "(#{@current_changed_score}"
+        end
+
+        if schedule_changes.size > 0
           logger.info 'Updating schedule'
           Sidekiq.reload_schedule!
-          while schedule_name = Sidekiq.redis { |r| r.spop(:schedules_changed) }
+          schedule_changes.each do |schedule_name|
             if Sidekiq.schedule.keys.include?(schedule_name)
               unschedule_job(schedule_name)
               load_schedule_job(schedule_name, Sidekiq.schedule[schedule_name])

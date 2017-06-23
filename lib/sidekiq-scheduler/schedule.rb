@@ -106,7 +106,7 @@ module SidekiqScheduler
       existing_config = get_schedule(name)
       unless existing_config && existing_config == config
         Sidekiq.redis { |r| r.hset(:schedules, name, JSON.generate(config)) }
-        Sidekiq.redis { |r| r.sadd(:schedules_changed, name) }
+        Sidekiq.redis { |r| r.zadd(:schedules_changed, Time.now.to_f, name) }
       end
       config
     end
@@ -114,7 +114,7 @@ module SidekiqScheduler
     # remove a given schedule by name
     def remove_schedule(name)
       Sidekiq.redis { |r| r.hdel(:schedules, name) }
-      Sidekiq.redis { |r| r.sadd(:schedules_changed, name) }
+      Sidekiq.redis { |r| r.zadd(:schedules_changed, Time.now.to_f, name) }
     end
 
     private
