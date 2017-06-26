@@ -2,6 +2,7 @@ require 'sidekiq-scheduler/job_presenter'
 
 describe SidekiqScheduler::JobPresenter do
   subject(:job_presenter) { described_class.new(job_name, attributes) }
+
   let(:job_name) { 'job_name' }
   let(:attributes) { {} }
 
@@ -10,12 +11,15 @@ describe SidekiqScheduler::JobPresenter do
   describe '#next_time' do
     subject { job_presenter.next_time }
 
+    before { Sidekiq::Scheduler.update_job_next_time(job_name, next_time) }
+
     context "when the job doesn't have a next time in redis" do
+      let(:next_time) { nil }
+
       it { is_expected.to be_nil }
     end
 
     context 'when the job has a next time in redis' do
-      before { Sidekiq::Scheduler.update_job_next_time(job_name, next_time) }
       let(:next_time) { Time.now }
 
       it { is_expected.to eq(job_presenter.relative_time(next_time)) }
@@ -25,22 +29,22 @@ describe SidekiqScheduler::JobPresenter do
   describe '#interval' do
     subject { job_presenter.interval }
 
-    let(:attributes) { { 'cron' => 'cron_value' } }
+    context 'with "cron" key' do
+      let(:attributes) { { 'cron' => 'cron_value' } }
 
-    it { is_expected.to eq('cron_value') }
+      it { is_expected.to eq('cron_value') }
+    end
 
-    context "when the attributes don't have a cron key" do
-      context 'when the attributes have an interval key' do
-        let(:attributes) { { 'interval' => 'interval_value' } }
+    context 'with "interval" key' do
+      let(:attributes) { { 'interval' => 'interval_value' } }
 
-        it { is_expected.to eq('interval_value') }
-      end
+      it { is_expected.to eq('interval_value') }
+    end
 
-      context 'when the attributes have an every key' do
-        let(:attributes) { { 'every' => 'every_value' } }
+    context 'with "every" key' do
+      let(:attributes) { { 'every' => 'every_value' } }
 
-        it { is_expected.to eq('every_value') }
-      end
+      it { is_expected.to eq('every_value') }
     end
   end
 

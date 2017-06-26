@@ -22,19 +22,41 @@ describe SidekiqScheduler::Manager do
     context 'when enabled option is true' do
       let(:enabled) { true }
 
-      it { expect { subject }.to change { Sidekiq::Scheduler.enabled }.to(options[:enabled]) }
-      it { expect { subject }.to change { Sidekiq::Scheduler.dynamic }.to(options[:dynamic]) }
-      it { expect { subject }.to change { Sidekiq::Scheduler.listened_queues_only }.to(options[:listened_queues_only]) }
-      it { expect { subject }.to change { Sidekiq.schedule }.to(options[:schedule]) }
+      it {
+        expect { subject }.to change { Sidekiq::Scheduler.enabled }.to(options[:enabled])
+      }
+
+      it {
+        expect { subject }.to change { Sidekiq::Scheduler.dynamic }.to(options[:dynamic])
+      }
+
+      it {
+        expect { subject }.to change { Sidekiq::Scheduler.listened_queues_only }.to(options[:listened_queues_only])
+      }
+
+      it {
+        expect { subject }.to change { Sidekiq.schedule }.to(options[:schedule])
+      }
     end
 
     context 'when enabled option is false' do
       let(:enabled) { false }
 
-      it { expect { subject }.to change { Sidekiq::Scheduler.enabled }.to(options[:enabled]) }
-      it { expect { subject }.to change { Sidekiq::Scheduler.dynamic }.to(options[:dynamic]) }
-      it { expect { subject }.to change { Sidekiq::Scheduler.listened_queues_only }.to(options[:listened_queues_only]) }
-      it { expect { subject }.not_to change { Sidekiq.schedule } }
+      it {
+        expect { subject }.to change { Sidekiq::Scheduler.enabled }.to(options[:enabled])
+      }
+
+      it {
+        expect { subject }.to change { Sidekiq::Scheduler.dynamic }.to(options[:dynamic])
+      }
+
+      it {
+        expect { subject }.to change { Sidekiq::Scheduler.listened_queues_only }.to(options[:listened_queues_only])
+      }
+
+      it {
+        expect { subject }.not_to change { Sidekiq.schedule }
+      }
     end
   end
 end

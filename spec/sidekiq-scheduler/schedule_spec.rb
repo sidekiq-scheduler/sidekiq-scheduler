@@ -12,21 +12,20 @@ describe SidekiqScheduler::Schedule do
     it 'sets the schedule on redis' do
       subject
 
-      job = Store.job_from_redis(job_id)
+      job = SidekiqScheduler::Store.job_from_redis(job_id)
 
       expect(job).to eq(schedule)
-      expect(job['class']).to eq(schedule['class'])
     end
 
-    context "when 'class' argument is not set" do
+    context 'when "class" argument is not set' do
       let(:job_id) { 'SomeWorker' }
 
       before { schedule.reject! { |key| key == 'class' } }
 
-      it "uses job name as 'class' argument" do
+      it 'uses job name as "class" argument' do
         subject
 
-        job = Store.job_from_redis(job_id)
+        job = SidekiqScheduler::Store.job_from_redis(job_id)
 
         expect(job).to eq(schedule.merge('class' => job_id))
         expect(job['class']).to eq(job_id)
@@ -53,7 +52,7 @@ describe SidekiqScheduler::Schedule do
         it 'sets the schedule on redis' do
           2.times { subject }
 
-          expect(Store.job_from_redis(job_id)).to eq(schedule)
+          expect(SidekiqScheduler::Store.job_from_redis(job_id)).to eq(schedule)
         end
       end
     end
@@ -65,7 +64,7 @@ describe SidekiqScheduler::Schedule do
       it 'infers the queue name' do
         subject
 
-        expect(Store.job_from_redis(job_id)['queue']).to eq('system')
+        expect(SidekiqScheduler::Store.job_from_redis(job_id)['queue']).to eq('system')
       end
     end
 
@@ -76,7 +75,7 @@ describe SidekiqScheduler::Schedule do
       it 'infers the queue name' do
         subject
 
-        expect(Store.job_from_redis(job_id)['queue']).to eq('email')
+        expect(SidekiqScheduler::Store.job_from_redis(job_id)['queue']).to eq('email')
       end
     end
   end
@@ -88,8 +87,8 @@ describe SidekiqScheduler::Schedule do
     it 'set_schedule can set an individual schedule' do
       Sidekiq.set_schedule(job_id, schedule)
 
-      expect(Store.job_from_redis(job_id)).to eq(schedule)
-      expect(Store.changed_job?(job_id)).to be_truthy
+      expect(SidekiqScheduler::Store.job_from_redis(job_id)).to eq(schedule)
+      expect(SidekiqScheduler::Store.changed_job?(job_id)).to be_truthy
     end
   end
 
@@ -105,13 +104,13 @@ describe SidekiqScheduler::Schedule do
       context 'when name is given' do
         let(:args) { 'super_job' }
 
-        it { is_expected.to eq(Store.job_from_redis(job_id)) }
+        it { is_expected.to eq(SidekiqScheduler::Store.job_from_redis(job_id)) }
       end
 
       context 'when name is not given' do
         let(:args) {}
 
-        it { is_expected.to include(job_id => Store.job_from_redis(job_id)) }
+        it { is_expected.to include(job_id => SidekiqScheduler::Store.job_from_redis(job_id)) }
       end
     end
 
@@ -139,8 +138,8 @@ describe SidekiqScheduler::Schedule do
     it 'removes a schedule from redis' do
       Sidekiq.remove_schedule(job_id)
 
-      expect(Store.job_from_redis_without_decoding(job_id)).to be_nil
-      expect(Store.changed_job?(job_id)).to be_truthy
+      expect(SidekiqScheduler::Store.job_from_redis_without_decoding(job_id)).to be_nil
+      expect(SidekiqScheduler::Store.changed_job?(job_id)).to be_truthy
     end
   end
 end
