@@ -71,18 +71,17 @@ describe Sidekiq::Web do
   end
 
   describe '/recurring-jobs/:name/toggle' do
-    context 'when the job is enabled' do
-      it 'disables the job' do
-        expect { get "/recurring-jobs/#{URI.escape(enabled_job_name)}/toggle" }
-          .to change { Sidekiq::Scheduler.job_enabled?(enabled_job_name) }.from(true).to(false)
-      end
+    subject { get "/recurring-jobs/#{URI.escape(enabled_job_name)}/toggle" }
+
+    it 'toggles job enabled flag' do
+      expect { subject }
+        .to change { Sidekiq::Scheduler.job_enabled?(enabled_job_name) }.from(true).to(false)
     end
 
-    context 'when the job is disabled' do
-      it 'enables the job' do
-        expect { get "/recurring-jobs/#{URI.escape(disabled_job_name)}/toggle" }
-          .to change { Sidekiq::Scheduler.job_enabled?(disabled_job_name) }.from(false).to(true)
-      end
+    it 'reloads the schedule' do
+      expect(Sidekiq).to receive(:reload_schedule!)
+
+      get "/recurring-jobs/#{URI.escape(enabled_job_name)}/toggle"
     end
   end
 
