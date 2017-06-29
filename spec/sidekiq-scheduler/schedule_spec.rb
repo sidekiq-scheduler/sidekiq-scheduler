@@ -151,24 +151,4 @@ describe SidekiqScheduler::Schedule do
       expect(changed_job?(job_id)).to be_truthy
     end
   end
-
-  describe 'instance methods' do
-    let(:concrete_class) do
-      Class.new do
-        include SidekiqScheduler::Schedule
-      end
-    end
-
-    subject { concrete_class.new }
-
-    describe '#schedule' do
-      before do
-        subject.set_schedule(job_id, cron_hash)
-      end
-
-      it 'returns the schedule' do
-        expect(subject.schedule).to include(job_id)
-      end
-    end
-  end
 end
