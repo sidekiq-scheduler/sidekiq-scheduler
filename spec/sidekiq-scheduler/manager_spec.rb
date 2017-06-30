@@ -1,14 +1,11 @@
 describe SidekiqScheduler::Manager do
+
   describe '.new' do
-    let(:previous_schedule) do
-      {
-        previous: ScheduleFaker.cron_schedule
-      }
-    end
+    subject { described_class.new(options) }
 
     let(:options) do
       {
-        enabled: true,
+        enabled: enabled,
         dynamic: true,
         listened_queues_only: true,
         schedule: { 'current' => ScheduleFaker.cron_schedule('queue' => 'default') }
@@ -19,48 +16,47 @@ describe SidekiqScheduler::Manager do
       Sidekiq::Scheduler.enabled = nil
       Sidekiq::Scheduler.dynamic = nil
       Sidekiq::Scheduler.listened_queues_only = nil
-      Sidekiq.schedule = previous_schedule
+      Sidekiq.schedule = { previous: ScheduleFaker.cron_schedule }
     end
 
-    subject { described_class.new(options) }
+    context 'when enabled option is true' do
+      let(:enabled) { true }
 
-    it 'sets Sidekiq::Scheduler.enabled flag' do
-      expect {
-        subject
-      }.to change { Sidekiq::Scheduler.enabled }.to(options[:enabled])
+      it {
+        expect { subject }.to change { Sidekiq::Scheduler.enabled }.to(options[:enabled])
+      }
+
+      it {
+        expect { subject }.to change { Sidekiq::Scheduler.dynamic }.to(options[:dynamic])
+      }
+
+      it {
+        expect { subject }.to change { Sidekiq::Scheduler.listened_queues_only }.to(options[:listened_queues_only])
+      }
+
+      it {
+        expect { subject }.to change { Sidekiq.schedule }.to(options[:schedule])
+      }
     end
 
-    it 'sets Sidekiq::Scheduler.dynamic flag' do
-      expect {
-        subject
-      }.to change { Sidekiq::Scheduler.dynamic }.to(options[:dynamic])
-    end
+    context 'when enabled option is false' do
+      let(:enabled) { false }
 
-    it 'sets Sidekiq::Scheduler.listened_queues_only flag' do
-      expect {
-        subject
-      }.to change { Sidekiq::Scheduler.listened_queues_only }.to(options[:listened_queues_only])
-    end
+      it {
+        expect { subject }.to change { Sidekiq::Scheduler.enabled }.to(options[:enabled])
+      }
 
-    it 'sets Sidekiq.schedule' do
-      expect {
-        subject
-      }.to change { Sidekiq.schedule }.to(options[:schedule])
-    end
+      it {
+        expect { subject }.to change { Sidekiq::Scheduler.dynamic }.to(options[:dynamic])
+      }
 
-    context 'when not enabled' do
-      let(:options) do
-        {
-          enabled: false,
-          schedule: { 'current' => ScheduleFaker.cron_schedule('queue' => 'default') }
-        }
-      end
+      it {
+        expect { subject }.to change { Sidekiq::Scheduler.listened_queues_only }.to(options[:listened_queues_only])
+      }
 
-      it 'does not set Sidekiq.schedule' do
-        expect {
-          subject
-        }.not_to change { Sidekiq.schedule }
-      end
+      it {
+        expect { subject }.not_to change { Sidekiq.schedule }
+      }
     end
   end
 end

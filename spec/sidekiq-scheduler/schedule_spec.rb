@@ -1,85 +1,59 @@
 describe SidekiqScheduler::Schedule do
   before { Sidekiq.redis(&:flushall) }
 
-  def build_cron_hash
-    {
-      'cron'  => '* * * * *',
-      'class' => 'SomeIvarJob',
-      'args'  => '/tmp/75'
-    }
-  end
-
-  def only_cron_and_args
-    -> (key, _) { %w(cron args).include?(key) }
-  end
-
-  def job_from_redis(job_id)
-    if job = job_from_redis_without_decoding(job_id)
-      JSON.parse(job)
-    end
-  end
-
-  def changed_job?(job_id)
-    Sidekiq.redis { |redis| !!redis.zrank(:schedules_changed, job_id) }
-  end
-
-  def job_from_redis_without_decoding(job_id)
-    Sidekiq.redis { |redis| redis.hget(:schedules, job_id) }
-  end
-
-  let(:cron_hash)    { ScheduleFaker.default_options('args' => 'some_arg', 'queue' => 'default') }
-  let(:job_id)       { 'super_job' }
-  let(:job_class_id) { cron_hash['class'] }
-
   describe '.schedule=' do
+    subject { Sidekiq.schedule = { job_id => schedule } }
+
+    let(:job_id) { 'super_job' }
+    let(:schedule) { ScheduleFaker.default_options }
+
     before { Sidekiq::Scheduler.dynamic = true }
 
     it 'sets the schedule on redis' do
-      Sidekiq.schedule = {job_id => cron_hash}
+      subject
 
-      expect(cron_hash).to eq(job_from_redis(job_id))
+      job = SidekiqScheduler::Store.job_from_redis(job_id)
+
+      expect(job).to eq(schedule)
     end
 
-    it 'uses job name as \'class\' argument if it\'s missing' do
-      Sidekiq.schedule = {job_class_id => cron_hash.select(&only_cron_and_args)}
+    context 'when "class" argument is not set' do
+      let(:job_id) { 'SomeWorker' }
 
-      job = Sidekiq.schedule[job_class_id]
+      before { schedule.reject! { |key| key == 'class' } }
 
-      expect(cron_hash).to eq(job_from_redis(job_class_id))
-      expect(job['class']).to eq(job_class_id)
-    end
+      it 'uses job name as "class" argument' do
+        subject
 
-    context 'when job key is a symbol' do
-      let(:job_id) { :super_job }
+        job = SidekiqScheduler::Store.job_from_redis(job_id)
 
-      context 'when schedule is set twice' do
-        it 'sets the schedule on redis' do
-          2.times { Sidekiq.schedule = { job_id => cron_hash } }
-
-          expect(cron_hash).to eq(job_from_redis(job_id))
-        end
+        expect(job).to eq(schedule.merge('class' => job_id))
+        expect(job['class']).to eq(job_id)
       end
     end
 
-    context 'when Symbol keys' do
-      let(:symbolized_schedule) do
-        {
-          worker: { class: 'SomeWorker', every: '20s', queue: 'low', description: 'symbols' }
-        }
-      end
+    context 'when using symbol keys' do
+      let(:job_id) { :worker }
+      let(:schedule) { { class: 'SomeWorker', every: '20s', queue: 'low', description: 'symbols' } }
 
-      let(:stringified_schedule) do
-        {
+      it 'converts them into strings' do
+        subject
+
+        expect(Sidekiq.schedule).to eq({
           'worker' => {
             'class' => 'SomeWorker', 'every' => '20s', 'queue' => 'low', 'description' => 'symbols'
           }
-        }
+        })
       end
 
-      it 'converts them into Strings' do
-        Sidekiq.schedule = symbolized_schedule
+      context 'when schedule is set twice' do
+        let(:schedule) { ScheduleFaker.default_options }
 
-        expect(Sidekiq.schedule).to eq(stringified_schedule)
+        it 'sets the schedule on redis' do
+          2.times { subject }
+
+          expect(SidekiqScheduler::Store.job_from_redis(job_id)).to eq(schedule)
+        end
       end
     end
 
@@ -88,9 +62,9 @@ describe SidekiqScheduler::Schedule do
       let(:schedule) { { 'class' => 'SystemNotifierWorker' } }
 
       it 'infers the queue name' do
-        Sidekiq.schedule = { job_id => schedule }
+        subject
 
-        expect(job_from_redis(job_id)['queue']).to eq('system')
+        expect(SidekiqScheduler::Store.job_from_redis(job_id)['queue']).to eq('system')
       end
     end
 
@@ -99,56 +73,73 @@ describe SidekiqScheduler::Schedule do
       let(:schedule) { { 'class' => 'EmailSender' } }
 
       it 'infers the queue name' do
-        Sidekiq.schedule = { job_id => schedule }
+        subject
 
-        expect(job_from_redis(job_id)['queue']).to eq('email')
+        expect(SidekiqScheduler::Store.job_from_redis(job_id)['queue']).to eq('email')
       end
     end
   end
 
   describe '.set_schedule' do
-    it 'set_schedule can set an individual schedule' do
-      Sidekiq.set_schedule(job_id, cron_hash)
+    let(:job_id) { 'super_job' }
+    let(:schedule) { ScheduleFaker.default_options }
 
-      expect(cron_hash).to eq(job_from_redis(job_id))
-      expect(changed_job?(job_id)).to be_truthy
+    it 'set_schedule can set an individual schedule' do
+      Sidekiq.set_schedule(job_id, schedule)
+
+      expect(SidekiqScheduler::Store.job_from_redis(job_id)).to eq(schedule)
+      expect(SidekiqScheduler::Store.changed_job?(job_id)).to be_truthy
     end
   end
 
   describe '.get_schedule' do
-    subject { Sidekiq.get_schedule(job_id) }
+    subject { Sidekiq.get_schedule(args) }
 
     context 'when schedules are previously set' do
-      before { Sidekiq.set_schedule(job_id, cron_hash) }
+      let(:job_id) { 'super_job' }
+      let(:schedule) { ScheduleFaker.default_options }
 
-      it { should eq(job_from_redis(job_id)) }
+      before { Sidekiq.set_schedule(job_id, schedule) }
+
+      context 'when name is given' do
+        let(:args) { 'super_job' }
+
+        it { is_expected.to eq(SidekiqScheduler::Store.job_from_redis(job_id)) }
+      end
 
       context 'when name is not given' do
-        subject { Sidekiq.get_schedule }
+        let(:args) {}
 
-        it { should include(job_id => job_from_redis(job_id)) }
+        it { is_expected.to include(job_id => SidekiqScheduler::Store.job_from_redis(job_id)) }
       end
     end
 
-    context 'when no schedules previously set' do
-      it { should be_nil }
+    context 'when no schedules are previously set' do
+      context 'when name is given' do
+        let(:args) { 'super_job' }
+
+        it { is_expected.to be_nil }
+      end
 
       context 'when name is not given' do
-        subject { Sidekiq.get_schedule }
+        let(:args) {}
 
-        it { should eq({}) }
+        it { is_expected.to be_empty }
       end
     end
   end
 
   describe '.remove_schedule' do
-    it 'removes a schedule from redis' do
-      Sidekiq.set_schedule(job_id, cron_hash)
+    let(:job_id) { 'super_job' }
+    let(:schedule) { ScheduleFaker.default_options }
 
+    before { Sidekiq.set_schedule(job_id, schedule) }
+
+    it 'removes a schedule from redis' do
       Sidekiq.remove_schedule(job_id)
 
-      expect(job_from_redis_without_decoding(job_id)).to be_nil
-      expect(changed_job?(job_id)).to be_truthy
+      expect(SidekiqScheduler::Store.job_from_redis_without_decoding(job_id)).to be_nil
+      expect(SidekiqScheduler::Store.changed_job?(job_id)).to be_truthy
     end
   end
 end

@@ -742,7 +742,8 @@ describe Sidekiq::Scheduler do
         {
           'cron'  => '1 * * * *',
           'class' => 'SystemNotifierWorker',
-          'args'  => ''
+          'args'  => '',
+          'queue' => 'some_queue'
         }
       end
       let(:job) { Sidekiq.schedule['old_job'] }

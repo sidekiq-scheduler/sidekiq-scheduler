@@ -1,15 +1,16 @@
 describe SidekiqScheduler::RufusUtils do
-  subject(:utils) { described_class }
 
   describe '.normalize_schedule_options' do
+    subject { described_class.normalize_schedule_options(args) }
+
     context 'with schedule only' do
       let(:args) { '10s' }
 
       it 'returns the schedule and empty options' do
-        schedule, opts = utils.normalize_schedule_options(args)
+        schedule, opts = subject
 
         expect(schedule).to eq('10s')
-        expect(opts).to eq({})
+        expect(opts).to be_empty
       end
     end
 
@@ -17,18 +18,18 @@ describe SidekiqScheduler::RufusUtils do
       let(:args) { ['10s'] }
 
       it 'returns the schedule and empty options' do
-        schedule, opts = utils.normalize_schedule_options(args)
+        schedule, opts = subject
 
         expect(schedule).to eq('10s')
-        expect(opts).to eq({})
+        expect(opts).to be_empty
       end
     end
 
     context 'with schedule only and options' do
-      let(:args) { utils.normalize_schedule_options(['10s', first_in: '5m']) }
+      let(:args) { ['10s', first_in: '5m'] }
 
       it 'returns both of them' do
-        schedule, opts = utils.normalize_schedule_options(args)
+        schedule, opts = subject
 
         expect(schedule).to eq('10s')
         expect(opts).to include(first_in: '5m')
@@ -39,7 +40,7 @@ describe SidekiqScheduler::RufusUtils do
       let(:args) { ['10s', { first_in: '5m' }, { tag: 'test' }] }
 
       it 'ignores them' do
-        schedule, opts, extra = utils.normalize_schedule_options(args);
+        schedule, opts, extra = subject
 
         expect(schedule).to eq('10s')
         expect(opts).to include(first_in: '5m')
@@ -51,10 +52,10 @@ describe SidekiqScheduler::RufusUtils do
       let(:args) { ['10s', true] }
 
       it 'returns an empty options hash' do
-        schedule, opts = utils.normalize_schedule_options(args)
+        schedule, opts = subject
 
         expect(schedule).to eq('10s')
-        expect(opts).to eq({})
+        expect(opts).to be_empty
       end
     end
   end
