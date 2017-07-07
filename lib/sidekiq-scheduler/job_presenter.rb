@@ -24,6 +24,15 @@ module SidekiqScheduler
       relative_time(Time.parse(execution_time)) if execution_time
     end
 
+    # Returns the last execution time for the job
+    #
+    # @return [String] with the job's last time
+    def last_time
+      execution_time = Sidekiq.redis { |r| r.hget(Sidekiq::Scheduler.last_times_key, name) }
+
+      relative_time(Time.parse(execution_time)) if execution_time
+    end
+
     # Returns the interval for the job
     #
     # @return [String] with the job's interval

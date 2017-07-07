@@ -7,6 +7,7 @@ cs:
   queue: Fronta
   arguments: Argumenty
   enqueue_now: Zařadit nyní
+  last_time: Naposled
   next_time: Příště
   no_next_time: no next execution for this job
   disable: Zakázat
