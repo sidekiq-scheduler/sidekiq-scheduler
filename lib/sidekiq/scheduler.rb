@@ -149,7 +149,7 @@ module Sidekiq
       # @param [String] name The job's name
       # @param [Time] last_time The job's last execution time
       def update_job_last_time(name, last_time)
-        Sidekiq.redis { |r| r.hset(last_times_key, name, last_time) }
+        Sidekiq.redis { |r| r.hset(last_times_key, name, last_time) } if last_time
       end
 
       # Returns true if the given schedule config hash matches the current

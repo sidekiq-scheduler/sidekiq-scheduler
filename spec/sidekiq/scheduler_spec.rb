@@ -949,6 +949,12 @@ describe Sidekiq::Scheduler do
 
       expect(job_last_time).to eq(last_time)
     end
+
+    context 'when last_time is nil' do
+      let(:last_time) { nil }
+
+      it { is_expected.to be_nil }
+    end
   end
 
   describe '.job_enabled?' do
