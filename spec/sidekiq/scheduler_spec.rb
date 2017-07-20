@@ -195,7 +195,6 @@ describe Sidekiq::Scheduler do
 
   describe '.rufus_scheduler' do
     let(:job) { double('job', tags: ['tag'], next_time: 'next_time') }
-    let(:redis_connection) { Sidekiq.redis { |connection| connection } }
 
     it 'can pass options to the Rufus scheduler instance' do
       options = { :lockfile => '/tmp/rufus_lock' }
@@ -208,14 +207,14 @@ describe Sidekiq::Scheduler do
 
     it 'sets a trigger to update the next execution time for the jobs' do
       expect(Sidekiq::Scheduler).to receive(:update_job_next_time)
-        .with(job.tags[0], job.next_time, redis_connection)
+        .with(job.tags[0], job.next_time)
 
       Sidekiq::Scheduler.rufus_scheduler.on_post_trigger(job, 'triggered_time')
     end
 
     it 'sets a trigger to update the last execution time for the jobs' do
       expect(Sidekiq::Scheduler).to receive(:update_job_last_time)
-        .with(job.tags[0], 'triggered_time', redis_connection)
+        .with(job.tags[0], 'triggered_time')
 
       Sidekiq::Scheduler.rufus_scheduler.on_post_trigger(job, 'triggered_time')
     end
@@ -936,104 +935,19 @@ describe Sidekiq::Scheduler do
         expect(job_next_time).to eq(next_time)
       end
     end
-
-    context 'when passing the redis_connection parameter' do
-      subject { described_class.update_job_next_time(job_name, next_time, redis_connection) }
-
-      let(:redis_connection) { Sidekiq.redis { |connection| connection } }
-
-      context 'when the next time is nil' do
-        let(:next_time) { nil }
-
-        it "deletes the job's next time from redis" do
-          subject
-          job_next_time = SidekiqScheduler::Store.job_next_execution_time(job_name)
-
-          expect(job_next_time).not_to be
-        end
-
-        it 'deletes the next time value using the connection passed as parameter' do
-          expect(redis_connection).to receive(:hdel)
-            .with(described_class.next_times_key, job_name)
-
-          subject
-        end
-      end
-
-      context 'when the next time is present' do
-        let(:next_time) { 'next_time' }
-
-        it 'adds the value to redis for the job' do
-          subject
-          job_next_time = SidekiqScheduler::Store.job_next_execution_time(job_name)
-
-          expect(job_next_time).to eq(next_time)
-        end
-
-        it 'sets the next time value using the connection passed as parameter' do
-          expect(redis_connection).to receive(:hset)
-            .with(described_class.next_times_key, job_name, next_time)
-
-          subject
-        end
-      end
-    end
   end
 
   describe '.update_job_last_time' do
     subject { described_class.update_job_last_time(job_name, last_time) }
 
     let(:job_name) { 'job_name' }
+    let(:last_time) { 'last_time' }
 
-    context 'when the next time is nil' do
-      let(:last_time) { nil }
+    it 'should add the last time value to redis for the job' do
+      subject
+      job_last_time = SidekiqScheduler::Store.job_last_execution_time(job_name)
 
-      it { is_expected.to be_nil }
-    end
-
-    context 'when the next time is present' do
-      let(:last_time) { 'last_time' }
-
-      it 'adds the value to redis for the job' do
-        subject
-        job_last_time = SidekiqScheduler::Store.job_last_execution_time(job_name)
-
-        expect(job_last_time).to eq(last_time)
-      end
-    end
-
-    context 'when passing the redis_connection parameter' do
-      subject { described_class.update_job_last_time(job_name, last_time, redis_connection) }
-
-      let(:redis_connection) { Sidekiq.redis { |connection| connection } }
-
-      context 'when the last time is nil' do
-        let(:last_time) { nil }
-
-        it "shouldn't set the last execution time" do
-          expect(redis_connection).not_to receive(:hset)
-
-          expect(subject).to be_nil
-        end
-      end
-
-      context 'when the last time is present' do
-        let(:last_time) { 'last_time' }
-
-        it 'adds the value to redis for the job' do
-          subject
-          job_last_time = SidekiqScheduler::Store.job_last_execution_time(job_name)
-
-          expect(job_last_time).to eq(last_time)
-        end
-
-        it 'sets the next time value using the connection passed as parameter' do
-          expect(redis_connection).to receive(:hset)
-            .with(described_class.last_times_key, job_name, last_time)
-
-          subject
-        end
-      end
+      expect(job_last_time).to eq(last_time)
     end
   end
 

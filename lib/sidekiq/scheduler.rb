@@ -138,18 +138,9 @@ module Sidekiq
       #
       # @param [String] name The job's name
       # @param [Time] next_time The job's next time execution
-      # @param [Sidekiq::RedisConnection] redis_connection The connection to redis
-      def update_job_next_time(name, next_time, redis_connection = nil)
-        if redis_connection
-          if next_time
-            redis_connection.hset(next_times_key, name, next_time)
-          else
-            redis_connection.hdel(next_times_key, name)
-          end
-        else
-          Sidekiq.redis do |r|
-            next_time ? r.hset(next_times_key, name, next_time) : r.hdel(next_times_key, name)
-          end
+      def update_job_next_time(name, next_time)
+        Sidekiq.redis do |r|
+          next_time ? r.hset(next_times_key, name, next_time) : r.hdel(next_times_key, name)
         end
       end
 
@@ -157,15 +148,8 @@ module Sidekiq
       #
       # @param [String] name The job's name
       # @param [Time] last_time The job's last execution time
-      # @param [Sidekiq::RedisConnection] redis_connection The connection to redis
-      def update_job_last_time(name, last_time, redis_connection = nil)
-        if last_time
-          if redis_connection
-            redis_connection.hset(last_times_key, name, last_time)
-          else
-            Sidekiq.redis { |r| r.hset(last_times_key, name, last_time) }
-          end
-        end
+      def update_job_last_time(name, last_time)
+        Sidekiq.redis { |r| r.hset(last_times_key, name, last_time) }
       end
 
       # Returns true if the given schedule config hash matches the current
@@ -398,10 +382,8 @@ module Sidekiq
       def new_rufus_scheduler
         Rufus::Scheduler.new(rufus_scheduler_options).tap do |scheduler|
           scheduler.define_singleton_method(:on_post_trigger) do |job, triggered_time|
-            Sidekiq.redis do |redis_connection|
-              Sidekiq::Scheduler.update_job_next_time(job.tags[0], job.next_time, redis_connection)
-              Sidekiq::Scheduler.update_job_last_time(job.tags[0], triggered_time, redis_connection)
-            end
+            Sidekiq::Scheduler.update_job_last_time(job.tags[0], triggered_time)
+            Sidekiq::Scheduler.update_job_next_time(job.tags[0], job.next_time)
           end
         end
       end
