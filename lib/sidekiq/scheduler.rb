@@ -144,6 +144,14 @@ module Sidekiq
         end
       end
 
+      # Pushes job's last execution time
+      #
+      # @param [String] name The job's name
+      # @param [Time] last_time The job's last execution time
+      def update_job_last_time(name, last_time)
+        Sidekiq.redis { |r| r.hset(last_times_key, name, last_time) } if last_time
+      end
+
       # Returns true if the given schedule config hash matches the current
       # ENV['RAILS_ENV']
       def rails_env_matches?(config)
@@ -344,6 +352,13 @@ module Sidekiq
         'sidekiq-scheduler:next_times'
       end
 
+      # Returns the key of the Redis hash for job's last execution times hash
+      #
+      # @return [String] with the key
+      def last_times_key
+        'sidekiq-scheduler:last_times'
+      end
+
       # Returns the Redis's key for saving schedule states.
       #
       # @return [String] with the key
@@ -367,6 +382,7 @@ module Sidekiq
       def new_rufus_scheduler
         Rufus::Scheduler.new(rufus_scheduler_options).tap do |scheduler|
           scheduler.define_singleton_method(:on_post_trigger) do |job, triggered_time|
+            Sidekiq::Scheduler.update_job_last_time(job.tags[0], triggered_time)
             Sidekiq::Scheduler.update_job_next_time(job.tags[0], job.next_time)
           end
         end

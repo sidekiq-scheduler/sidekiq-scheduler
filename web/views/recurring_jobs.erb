@@ -10,6 +10,7 @@
         <th><%= t('class') %></th>
         <th><%= t('queue') %></th>
         <th><%= t('arguments') %></th>
+        <th><%= t('last_time') %></th>
         <th><%= t('next_time') %></th>
         <th></th>
       </tr>
@@ -26,9 +27,12 @@
             <a href="<%= root_path %>queues/<%= job.queue %>"><%= job.queue %></a>
           </td>
           <td><%= job['args'] %></td>
-          <td><span style="<%= 'text-decoration:line-through' unless job.enabled? %>">
-            <%= job.next_time || t('no_next_time') %>
-          </span></td>
+          <td><%= job.last_time %></td>
+          <td>
+            <span style="<%= 'text-decoration:line-through' unless job.enabled? %>">
+              <%= job.next_time || t('no_next_time') %>
+            </span>
+          </td>
           <td class="text-center">
             <a class="btn btn-warn btn-xs" href="<%= root_path %>recurring-jobs/<%= URI.escape(job.name) %>/enqueue">
               <%= t('enqueue_now') %>

@@ -209,7 +209,14 @@ describe Sidekiq::Scheduler do
       expect(Sidekiq::Scheduler).to receive(:update_job_next_time)
         .with(job.tags[0], job.next_time)
 
-      Sidekiq::Scheduler.rufus_scheduler.on_post_trigger(job, 'time')
+      Sidekiq::Scheduler.rufus_scheduler.on_post_trigger(job, 'triggered_time')
+    end
+
+    it 'sets a trigger to update the last execution time for the jobs' do
+      expect(Sidekiq::Scheduler).to receive(:update_job_last_time)
+        .with(job.tags[0], 'triggered_time')
+
+      Sidekiq::Scheduler.rufus_scheduler.on_post_trigger(job, 'triggered_time')
     end
   end
 
@@ -903,17 +910,17 @@ describe Sidekiq::Scheduler do
   end
 
   describe '.update_job_next_time' do
-    let(:job_name) { 'job_name' }
-    let(:job_next_time) do
-      described_class.redis { |r| r.hget(described_class.next_times_key, job_name) }
-    end
+    subject { described_class.update_job_next_time(job_name, next_time) }
 
-    before { described_class.update_job_next_time(job_name, next_time) }
+    let(:job_name) { 'job_name' }
 
     context 'when the next time is nil' do
       let(:next_time) { nil }
 
-      it 'deletes the job\'s next time from redis' do
+      it "deletes the job's next time from redis" do
+        subject
+        job_next_time = SidekiqScheduler::Store.job_next_execution_time(job_name)
+
         expect(job_next_time).not_to be
       end
     end
@@ -922,8 +929,31 @@ describe Sidekiq::Scheduler do
       let(:next_time) { 'next_time' }
 
       it 'adds the value to redis for the job' do
+        subject
+        job_next_time = SidekiqScheduler::Store.job_next_execution_time(job_name)
+
         expect(job_next_time).to eq(next_time)
       end
+    end
+  end
+
+  describe '.update_job_last_time' do
+    subject { described_class.update_job_last_time(job_name, last_time) }
+
+    let(:job_name) { 'job_name' }
+    let(:last_time) { 'last_time' }
+
+    it 'should add the last time value to redis for the job' do
+      subject
+      job_last_time = SidekiqScheduler::Store.job_last_execution_time(job_name)
+
+      expect(job_last_time).to eq(last_time)
+    end
+
+    context 'when last_time is nil' do
+      let(:last_time) { nil }
+
+      it { is_expected.to be_nil }
     end
   end
 
@@ -1065,5 +1095,17 @@ describe Sidekiq::Scheduler do
           .from(enabled).to(!enabled)
       end
     end
+  end
+
+  describe '.next_times_key' do
+    subject { described_class.next_times_key }
+
+    it { is_expected.to eq('sidekiq-scheduler:next_times') }
+  end
+
+  describe '.last_times_key' do
+    subject { described_class.last_times_key }
+
+    it { is_expected.to eq('sidekiq-scheduler:last_times') }
   end
 end

@@ -26,6 +26,24 @@ describe SidekiqScheduler::JobPresenter do
     end
   end
 
+  describe '#last_time' do
+    subject { job_presenter.last_time }
+
+    before { Sidekiq::Scheduler.update_job_last_time(job_name, last_time) }
+
+    context "when the job doesn't have a next time in redis" do
+      let(:last_time) { nil }
+
+      it { is_expected.to be_nil }
+    end
+
+    context 'when the job has a last time in redis' do
+      let(:last_time) { Time.now }
+
+      it { is_expected.to eq(job_presenter.relative_time(last_time)) }
+    end
+  end
+
   describe '#interval' do
     subject { job_presenter.interval }
 
