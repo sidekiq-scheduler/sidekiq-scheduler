@@ -16,7 +16,7 @@ Gem::Specification.new do |s|
 
   s.add_dependency 'sidekiq',         '>= 3'
   s.add_dependency 'redis',           '~> 3'
-  s.add_dependency 'rufus-scheduler', '~> 3.2'
+  s.add_dependency 'rufus-scheduler', '>= 3.2', '< 4.0'
   s.add_dependency 'tilt',            '>= 1.4.0'
 
   s.add_development_dependency 'rake',                    '~> 10.0'
