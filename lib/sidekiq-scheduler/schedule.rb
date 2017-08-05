@@ -141,8 +141,6 @@ module SidekiqScheduler
 
       if klass.respond_to?(:sidekiq_options)
         klass.sidekiq_options['queue']
-      elsif klass.respond_to?(:queue_name)
-        klass.queue_name
       end
     end
 
