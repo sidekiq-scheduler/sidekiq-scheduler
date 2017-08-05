@@ -245,7 +245,9 @@ module Sidekiq
       end
 
       def enqueue_with_active_job(config)
-        options = { queue: config['queue'] }
+        options = {
+          queue: config['queue']
+        }.keep_if { |_, v| !v.nil? }
 
         initialize_active_job(config['class'], config['args']).enqueue(options)
       end

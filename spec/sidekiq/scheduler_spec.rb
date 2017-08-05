@@ -82,6 +82,18 @@ describe Sidekiq::Scheduler do
 
         Sidekiq::Scheduler.enqueue_job(scheduler_config, schedule_time)
       end
+
+      context 'when queue is not configured' do
+        before do
+          scheduler_config.delete('queue')
+        end
+
+        specify 'does not include :queue option' do
+          expect_any_instance_of(EmailSender).to receive(:enqueue).with({})
+
+          Sidekiq::Scheduler.enqueue_job(scheduler_config, schedule_time)
+        end
+      end
     end
 
     context 'when worker class does not exist' do
