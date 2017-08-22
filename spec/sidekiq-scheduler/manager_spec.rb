@@ -7,6 +7,7 @@ describe SidekiqScheduler::Manager do
       {
         enabled: enabled,
         dynamic: true,
+        dynamic_every: '5s',
         listened_queues_only: true,
         schedule: { 'current' => ScheduleFaker.cron_schedule('queue' => 'default') }
       }
@@ -15,6 +16,7 @@ describe SidekiqScheduler::Manager do
     before do
       Sidekiq::Scheduler.enabled = nil
       Sidekiq::Scheduler.dynamic = nil
+      Sidekiq::Scheduler.dynamic_every = nil
       Sidekiq::Scheduler.listened_queues_only = nil
       Sidekiq.schedule = { previous: ScheduleFaker.cron_schedule }
     end
