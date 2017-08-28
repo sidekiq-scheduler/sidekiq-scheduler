@@ -487,7 +487,7 @@ describe Sidekiq::Scheduler do
 
     let(:job_name) { 'some_job' }
     let(:next_time_execution) do
-      Sidekiq.redis { |r| r.hexists(Sidekiq::Scheduler.next_times_key, job_name) }
+      Sidekiq.redis { |r| r.hexists(SidekiqScheduler::RedisManager.next_times_key, job_name) }
     end
 
     context 'without a timing option' do
@@ -676,7 +676,7 @@ describe Sidekiq::Scheduler do
 
     let(:job_name) { 'some-worker' }
 
-    let(:pushed_job_key) { Sidekiq::Scheduler.pushed_job_key(job_name) }
+    let(:pushed_job_key) { SidekiqScheduler::RedisManager.pushed_job_key(job_name) }
 
     before do
       Sidekiq.redis { |r| r.del(pushed_job_key) }
@@ -697,9 +697,9 @@ describe Sidekiq::Scheduler do
     end
 
     context 'when elder enqueued jobs' do
-      let(:some_time_ago) { time - Sidekiq::Scheduler::REGISTERED_JOBS_THRESHOLD_IN_SECONDS }
+      let(:some_time_ago) { time - SidekiqScheduler::RedisManager::REGISTERED_JOBS_THRESHOLD_IN_SECONDS }
 
-      let(:near_time_ago) { time - Sidekiq::Scheduler::REGISTERED_JOBS_THRESHOLD_IN_SECONDS  / 2 }
+      let(:near_time_ago) { time - SidekiqScheduler::RedisManager::REGISTERED_JOBS_THRESHOLD_IN_SECONDS  / 2 }
 
       before  do
         Timecop.freeze(some_time_ago) do
@@ -917,7 +917,7 @@ describe Sidekiq::Scheduler do
   describe '.register_job_instance' do
     let(:job_name) { 'some-worker' }
 
-    let(:pushed_job_key) { Sidekiq::Scheduler.pushed_job_key(job_name) }
+    let(:pushed_job_key) { SidekiqScheduler::RedisManager.pushed_job_key(job_name) }
 
     let(:now) { Time.now }
 
@@ -932,7 +932,7 @@ describe Sidekiq::Scheduler do
     it 'persists a expirable key' do
       Sidekiq::Scheduler.register_job_instance(job_name, now)
 
-      Timecop.travel(Sidekiq::Scheduler::REGISTERED_JOBS_THRESHOLD_IN_SECONDS) do
+      Timecop.travel(SidekiqScheduler::RedisManager::REGISTERED_JOBS_THRESHOLD_IN_SECONDS) do
         expect(Sidekiq.redis { |r| r.exists(pushed_job_key) }).to be false
       end
     end
@@ -1049,7 +1049,7 @@ describe Sidekiq::Scheduler do
 
       before do
         Sidekiq.redis do |r|
-          r.hset(described_class.schedules_state_key, job_name, JSON.generate(state))
+          r.hset(SidekiqScheduler::RedisManager.schedules_state_key, job_name, JSON.generate(state))
         end
       end
 
@@ -1112,7 +1112,7 @@ describe Sidekiq::Scheduler do
 
       before do
         Sidekiq.redis do |r|
-          r.hset(described_class.schedules_state_key, job_name, JSON.generate(state))
+          r.hset(SidekiqScheduler::RedisManager.schedules_state_key, job_name, JSON.generate(state))
         end
       end
 
@@ -1138,17 +1138,5 @@ describe Sidekiq::Scheduler do
           .from(enabled).to(!enabled)
       end
     end
-  end
-
-  describe '.next_times_key' do
-    subject { described_class.next_times_key }
-
-    it { is_expected.to eq('sidekiq-scheduler:next_times') }
-  end
-
-  describe '.last_times_key' do
-    subject { described_class.last_times_key }
-
-    it { is_expected.to eq('sidekiq-scheduler:last_times') }
   end
 end

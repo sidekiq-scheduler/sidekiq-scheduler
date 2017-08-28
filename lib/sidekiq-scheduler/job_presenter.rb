@@ -3,6 +3,7 @@ begin
 rescue LoadError
   require 'sidekiq/web_helpers'
 end
+require 'sidekiq-scheduler/redis_manager'
 
 module SidekiqScheduler
   class JobPresenter
@@ -19,7 +20,7 @@ module SidekiqScheduler
     #
     # @return [String] with the job's next time
     def next_time
-      execution_time = Sidekiq.redis { |r| r.hget(Sidekiq::Scheduler.next_times_key, name) }
+      execution_time = SidekiqScheduler::RedisManager.get_job_next_time(name)
 
       relative_time(Time.parse(execution_time)) if execution_time
     end
@@ -28,7 +29,7 @@ module SidekiqScheduler
     #
     # @return [String] with the job's last time
     def last_time
-      execution_time = Sidekiq.redis { |r| r.hget(Sidekiq::Scheduler.last_times_key, name) }
+      execution_time = SidekiqScheduler::RedisManager.get_job_last_time(name)
 
       relative_time(Time.parse(execution_time)) if execution_time
     end

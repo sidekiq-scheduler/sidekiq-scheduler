@@ -1,6 +1,7 @@
 require 'json'
 
 require 'sidekiq-scheduler/utils'
+require_relative 'redis_manager'
 
 module SidekiqScheduler
   module Schedule
@@ -71,7 +72,7 @@ module SidekiqScheduler
       if name.nil?
         get_all_schedules
       else
-        encoded_schedule = Sidekiq.redis { |r| r.hget(:schedules, name) }
+        encoded_schedule = SidekiqScheduler::RedisManager.get_job_schedule(name)
         encoded_schedule.nil? ? nil : JSON.parse(encoded_schedule)
       end
     end
@@ -80,8 +81,8 @@ module SidekiqScheduler
     def get_all_schedules
       schedules = {}
 
-      if Sidekiq.redis { |r| r.exists(:schedules) }
-        Sidekiq.redis { |r| r.hgetall(:schedules) }.tap do |h|
+      if SidekiqScheduler::RedisManager.schedule_exist?
+        SidekiqScheduler::RedisManager.get_all_schedules.tap do |h|
           h.each do |name, config|
             schedules[name] = JSON.parse(config)
           end
@@ -103,16 +104,16 @@ module SidekiqScheduler
     def set_schedule(name, config)
       existing_config = get_schedule(name)
       unless existing_config && existing_config == config
-        Sidekiq.redis { |r| r.hset(:schedules, name, JSON.generate(config)) }
-        Sidekiq.redis { |r| r.zadd(:schedules_changed, Time.now.to_f, name) }
+        SidekiqScheduler::RedisManager.set_job_schedule(name, config)
+        SidekiqScheduler::RedisManager.add_schedule_change(name)
       end
       config
     end
 
     # remove a given schedule by name
     def remove_schedule(name)
-      Sidekiq.redis { |r| r.hdel(:schedules, name) }
-      Sidekiq.redis { |r| r.zadd(:schedules_changed, Time.now.to_f, name) }
+      SidekiqScheduler::RedisManager.remove_job_schedule(name)
+      SidekiqScheduler::RedisManager.add_schedule_change(name)
     end
 
     private

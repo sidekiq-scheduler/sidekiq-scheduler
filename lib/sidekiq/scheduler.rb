@@ -3,13 +3,13 @@ require 'thwait'
 require 'sidekiq/util'
 require 'sidekiq-scheduler/manager'
 require 'sidekiq-scheduler/rufus_utils'
+require_relative '../sidekiq-scheduler/redis_manager'
 require 'json'
 
 module Sidekiq
   class Scheduler
     extend Sidekiq::Util
 
-    REGISTERED_JOBS_THRESHOLD_IN_SECONDS = 24 * 60 * 60
     RUFUS_METADATA_KEYS = %w(description at cron every in interval enabled)
 
     # We expect rufus jobs to have #params
@@ -140,8 +140,10 @@ module Sidekiq
       # @param [String] name The job's name
       # @param [Time] next_time The job's next time execution
       def update_job_next_time(name, next_time)
-        Sidekiq.redis do |r|
-          next_time ? r.hset(next_times_key, name, next_time) : r.hdel(next_times_key, name)
+        if next_time
+          SidekiqScheduler::RedisManager.set_job_next_time(name, next_time)
+        else
+          SidekiqScheduler::RedisManager.remove_job_next_time(name)
         end
       end
 
@@ -150,7 +152,7 @@ module Sidekiq
       # @param [String] name The job's name
       # @param [Time] last_time The job's last execution time
       def update_job_last_time(name, last_time)
-        Sidekiq.redis { |r| r.hset(last_times_key, name, last_time) } if last_time
+        SidekiqScheduler::RedisManager.set_job_last_time(name, last_time) if last_time
       end
 
       # Returns true if the given schedule config hash matches the current
@@ -218,9 +220,7 @@ module Sidekiq
 
       def update_schedule
         last_changed_score, @current_changed_score = @current_changed_score, Time.now.to_f
-        schedule_changes = Sidekiq.redis do |r|
-          r.zrangebyscore :schedules_changed, last_changed_score, "(#{@current_changed_score}"
-        end
+        schedule_changes = SidekiqScheduler::RedisManager.get_schedule_changes(last_changed_score, @current_changed_score)
 
         if schedule_changes.size > 0
           logger.info 'Updating schedule'
@@ -321,52 +321,11 @@ module Sidekiq
       #
       # @return [Boolean] true if the job was registered, false when otherwise
       def register_job_instance(job_name, time)
-        pushed_job_key = pushed_job_key(job_name)
-
-        registered, _ = Sidekiq.redis do |r|
-          r.pipelined do
-            r.zadd(pushed_job_key, time.to_i, time.to_i)
-            r.expire(pushed_job_key, REGISTERED_JOBS_THRESHOLD_IN_SECONDS)
-          end
-        end
-
-        registered
+        SidekiqScheduler::RedisManager.register_job_instance(job_name, time)
       end
 
       def remove_elder_job_instances(job_name)
-        Sidekiq.redis do |r|
-          r.zremrangebyscore(pushed_job_key(job_name), 0, Time.now.to_i - REGISTERED_JOBS_THRESHOLD_IN_SECONDS)
-        end
-      end
-
-      # Returns the key of the Redis sorted set used to store job enqueues
-      #
-      # @param [String] job_name The name of the job
-      #
-      # @return [String]
-      def pushed_job_key(job_name)
-        "sidekiq-scheduler:pushed:#{job_name}"
-      end
-
-      # Returns the key of the Redis hash for job's execution times hash
-      #
-      # @return [String] with the key
-      def next_times_key
-        'sidekiq-scheduler:next_times'
-      end
-
-      # Returns the key of the Redis hash for job's last execution times hash
-      #
-      # @return [String] with the key
-      def last_times_key
-        'sidekiq-scheduler:last_times'
-      end
-
-      # Returns the Redis's key for saving schedule states.
-      #
-      # @return [String] with the key
-      def schedules_state_key
-        'sidekiq-scheduler:states'
+        SidekiqScheduler::RedisManager.remove_elder_job_instances(job_name)
       end
 
       def job_enabled?(name)
@@ -408,7 +367,7 @@ module Sidekiq
       # @param name [String] with the schedule's name
       # @return [Hash] with the schedule's state
       def schedule_state(name)
-        state = Sidekiq.redis { |r| r.hget(schedules_state_key, name) }
+        state = SidekiqScheduler::RedisManager.get_job_state(name)
 
         state ? JSON.parse(state) : {}
       end
@@ -418,7 +377,7 @@ module Sidekiq
       # @param name [String] with the schedule's name
       # @param name [Hash] with the schedule's state
       def set_schedule_state(name, state)
-        Sidekiq.redis { |r| r.hset(schedules_state_key, name, JSON.generate(state)) }
+        SidekiqScheduler::RedisManager.set_job_state(name, state)
       end
 
       # Adds a Hash with schedule metadata as the last argument to call the worker.

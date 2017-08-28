@@ -1,6 +1,10 @@
 module SidekiqScheduler
   module Store
 
+    def self.clean
+      Sidekiq.redis(&:flushall)
+    end
+
     def self.job_from_redis(job_id)
       job = job_from_redis_without_decoding(job_id)
       JSON.parse(job)
@@ -15,11 +19,43 @@ module SidekiqScheduler
     end
 
     def self.job_next_execution_time(job_name)
-      Sidekiq.redis { |r| r.hget(Sidekiq::Scheduler.next_times_key, job_name) }
+      Sidekiq.redis { |r| r.hget(SidekiqScheduler::RedisManager.next_times_key, job_name) }
     end
 
     def self.job_last_execution_time(job_name)
-      Sidekiq.redis { |r| r.hget(Sidekiq::Scheduler.last_times_key, job_name) }
+      Sidekiq.redis { |r| r.hget(SidekiqScheduler::RedisManager.last_times_key, job_name) }
+    end
+
+    def self.hget(hash_key, field_key)
+      Sidekiq.redis { |r| r.hget(hash_key, field_key) }
+    end
+
+    def self.hset(hash_key, field_key, value)
+      Sidekiq.redis { |r| r.hset(hash_key, field_key, value) }
+    end
+
+    def self.hdel(hash_key, field_key)
+      Sidekiq.redis { |r| r.hdel(hash_key, field_key) }
+    end
+
+    def self.sadd(set_key, field_key)
+      Sidekiq.redis { |r| r.sadd(set_key, field_key) }
+    end
+
+    def self.zadd(sorted_set_key, score, field_key)
+      Sidekiq.redis { |r| r.zadd(sorted_set_key, score, field_key) }
+    end
+
+    def self.zrangebyscore(zset_key, from, to)
+      Sidekiq.redis { |r| r.zrangebyscore(zset_key, from, to) }
+    end
+
+    def self.zrange(zset_key, from, to)
+      Sidekiq.redis { |r| r.zrange(zset_key, from, to) }
+    end
+
+    def self.exists(key)
+      Sidekiq.redis { |r| r.exists(key) }
     end
   end
 end
