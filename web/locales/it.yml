@@ -3,7 +3,7 @@ it:
   name: Nome
   description: Descrizione
   interval: Intervallo
-  class: Classs
+  class: Classe
   queue: Coda
   arguments: Argomenti
   enqueue_now: Accoda ora
