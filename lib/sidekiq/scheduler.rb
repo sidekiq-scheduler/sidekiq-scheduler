@@ -74,8 +74,6 @@ module Sidekiq
             end
           end
 
-          Sidekiq.redis { |r| r.del(:schedules_changed) unless r.type(:schedules_changed) == 'zset' }
-
           logger.info 'Schedules Loaded'
         else
           logger.info 'SidekiqScheduler is disabled'

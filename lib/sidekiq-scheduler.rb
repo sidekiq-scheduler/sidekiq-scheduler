@@ -28,6 +28,9 @@ Sidekiq.configure_server do |config|
       listened_queues_only: listened_queues_only
     }
 
+    # schedules_changed's type was changed from SET to ZSET, so we remove old versions at startup
+    Sidekiq.redis { |r| r.del(:schedules_changed) unless r.type(:schedules_changed) == 'zset' }
+
     schedule_manager = SidekiqScheduler::Manager.new(scheduler_options)
     config.options[:schedule_manager] = schedule_manager
     config.options[:schedule_manager].start
