@@ -3,6 +3,7 @@ describe Sidekiq::Scheduler do
   before do
     Sidekiq::Scheduler.enabled = true
     Sidekiq::Scheduler.dynamic = false
+    Sidekiq::Scheduler.dynamic_every = '5s'
     Sidekiq::Scheduler.listened_queues_only = false
     Sidekiq.redis(&:flushall)
     Sidekiq.options[:queues] = Sidekiq::DEFAULTS[:queues]
@@ -449,6 +450,36 @@ describe Sidekiq::Scheduler do
         Timecop.travel(7 * 60)
         sleep 0.5
       }.to change { Sidekiq::Scheduler.scheduled_jobs.include?('other_job') }.to(true)
+    end
+
+    context 'when dynamic_every is set' do
+      context 'to 5m' do
+        before { Sidekiq::Scheduler.dynamic_every = '5m' }
+
+        it 'does not reload the schedule from redis after 2 minutes' do
+          Sidekiq.set_schedule('some_job', ScheduleFaker.cron_schedule({'args' => '/tmp'}))
+
+          Sidekiq::Scheduler.load_schedule!
+
+          expect {
+            Sidekiq.set_schedule('other_job', ScheduleFaker.cron_schedule({'args' => 'sample'}))
+            Timecop.travel(2 * 60)
+            sleep 0.5
+          }.to_not change { Sidekiq::Scheduler.scheduled_jobs.include?('other_job') }
+        end
+
+        it 'reloads the schedule from redis after 10 minutes' do
+          Sidekiq.set_schedule('some_job', ScheduleFaker.cron_schedule({'args' => '/tmp'}))
+
+          Sidekiq::Scheduler.load_schedule!
+
+          expect {
+            Sidekiq.set_schedule('other_job', ScheduleFaker.cron_schedule({'args' => 'sample'}))
+            Timecop.travel(10 * 60)
+            sleep 0.5
+          }.to change { Sidekiq::Scheduler.scheduled_jobs.include?('other_job') }.to(true)
+        end
+      end
     end
   end
 

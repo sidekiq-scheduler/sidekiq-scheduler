@@ -27,6 +27,9 @@ module Sidekiq
       # Set to update the schedule in runtime in a given time period.
       attr_accessor :dynamic
 
+      # Set to update the schedule in runtime dynamically per this period.
+      attr_accessor :dynamic_every
+
       # Set to schedule jobs only when will be pushed to queues listened by sidekiq
       attr_accessor :listened_queues_only
 
@@ -55,7 +58,7 @@ module Sidekiq
           if dynamic
             Sidekiq.reload_schedule!
             @current_changed_score = Time.now.to_f
-            rufus_scheduler.every('5s') do
+            rufus_scheduler.every(dynamic_every) do
               update_schedule
             end
           end

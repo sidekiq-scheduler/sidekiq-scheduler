@@ -10,6 +10,9 @@ Sidekiq.configure_server do |config|
     dynamic = Sidekiq::Scheduler.dynamic
     dynamic = dynamic.nil? ? config.options.fetch(:dynamic, false) : dynamic
 
+    dynamic_every = Sidekiq::Scheduler.dynamic_every
+    dynamic_every = dynamic_every.nil? ? config.options.fetch(:dynamic_every, '5s') : dynamic_every
+
     enabled = Sidekiq::Scheduler.enabled
     enabled = enabled.nil? ? config.options.fetch(:enabled, true) : enabled
 
@@ -22,9 +25,10 @@ Sidekiq.configure_server do |config|
     schedule ||= config.options[:schedule] || {}
 
     scheduler_options = {
-      dynamic:   dynamic,
-      enabled:   enabled,
-      schedule:  schedule,
+      dynamic:       dynamic,
+      dynamic_every: dynamic_every,
+      enabled:       enabled,
+      schedule:      schedule,
       listened_queues_only: listened_queues_only
     }
 

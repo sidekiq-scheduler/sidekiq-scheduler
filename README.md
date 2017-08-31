@@ -94,6 +94,7 @@ Available options are:
 
 ``` yaml
 :dynamic: <if true the schedule can be modified in runtime [false by default]>
+:dynamic_every: <if dynamic is true, the schedule is reloaded every interval [5s by default]>
 :enabled: <enables scheduler if true [true by default]>
 :scheduler:
   :listened_queues_only: <push jobs whose queue is being listened by sidekiq [false by default]>
@@ -244,7 +245,7 @@ Sidekiq.set_schedule('heartbeat', { 'every' => ['1m'], 'class' => 'HeartbeatWork
 
 If the schedule did not exist it will be created, if it existed it will be updated.
 
-When `:dynamic` flag is set to `true`, schedule changes are loaded every 5 seconds.
+When `:dynamic` flag is set to `true`, schedule changes are loaded every 5 seconds. Use the `:dynamic_every` flag for a different interval.
 
 ``` yaml
 # config/sidekiq.yml
