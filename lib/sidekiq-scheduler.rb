@@ -3,6 +3,7 @@ require 'tilt/erb'
 
 require_relative 'sidekiq-scheduler/version'
 require_relative 'sidekiq-scheduler/manager'
+require_relative 'sidekiq-scheduler/redis_manager'
 
 Sidekiq.configure_server do |config|
 
@@ -33,7 +34,7 @@ Sidekiq.configure_server do |config|
     }
 
     # schedules_changed's type was changed from SET to ZSET, so we remove old versions at startup
-    Sidekiq.redis { |r| r.del(:schedules_changed) unless r.type(:schedules_changed) == 'zset' }
+    SidekiqScheduler::RedisManager.clean_schedules_changed
 
     schedule_manager = SidekiqScheduler::Manager.new(scheduler_options)
     config.options[:schedule_manager] = schedule_manager
