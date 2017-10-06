@@ -4,13 +4,13 @@ require 'sidekiq/redis_connection'
 RSpec.configure do |config|
   config.before do
     redis = MockRedis.new
-    client = Object.new
 
-    client.define_singleton_method(:id) do
-      "redis://127.0.0.1:1234/0"
-    end
+    connection = {
+      location: '127.0.0.1:1234',
+      db: '0'
+    }
 
-    allow(redis).to receive(:client).and_return(client)
+    redis.define_singleton_method(:connection) { connection }
 
     allow(Sidekiq::RedisConnection).to receive(:create).and_return(ConnectionPool.new({}) {
       redis
