@@ -10,7 +10,7 @@ Gem::Specification.new do |s|
   s.license     = 'MIT'
   s.homepage    = 'https://moove-it.github.io/sidekiq-scheduler/'
   s.summary     = 'Light weight job scheduling extension for Sidekiq'
-  s.description = 'Light weight job scheduling extension for Sidekiq that adds support for queueinga jobs in a recurring way.'
+  s.description = 'Light weight job scheduling extension for Sidekiq that adds support for queueing jobs in a recurring way.'
 
   s.files       = Dir['{lib,web}/**/*'] + %w[MIT-LICENSE Rakefile README.md]
 
