@@ -1,0 +1,1 @@
+Sidekiq.extend SidekiqScheduler::Schedule

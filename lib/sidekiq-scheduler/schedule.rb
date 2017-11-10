@@ -152,5 +152,3 @@ module SidekiqScheduler
     end
   end
 end
-
-Sidekiq.extend SidekiqScheduler::Schedule
