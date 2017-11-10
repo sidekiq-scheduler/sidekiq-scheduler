@@ -4,6 +4,7 @@ require 'tilt/erb'
 require_relative 'sidekiq-scheduler/version'
 require_relative 'sidekiq-scheduler/manager'
 require_relative 'sidekiq-scheduler/redis_manager'
+require_relative 'sidekiq-scheduler/extensions/schedule'
 
 Sidekiq.configure_server do |config|
 
