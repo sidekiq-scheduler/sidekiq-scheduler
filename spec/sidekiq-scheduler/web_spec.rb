@@ -65,7 +65,7 @@ describe Sidekiq::Web do
     end
 
     context 'when the next execution time is setted' do
-      before { Sidekiq::Scheduler.update_job_next_time(enabled_job_name, '2016-07-11T13:29:47Z') }
+      before { SidekiqScheduler::Scheduler.update_job_next_time(enabled_job_name, '2016-07-11T13:29:47Z') }
 
       it { is_expected.to be_successful }
 
@@ -85,7 +85,7 @@ describe Sidekiq::Web do
 
     it 'toggles job enabled flag' do
       expect { subject }
-        .to change { Sidekiq::Scheduler.job_enabled?(enabled_job_name) }.from(true).to(false)
+        .to change { SidekiqScheduler::Scheduler.job_enabled?(enabled_job_name) }.from(true).to(false)
     end
 
     it 'reloads the schedule' do
@@ -101,7 +101,7 @@ describe Sidekiq::Web do
     let(:job) { jobs[job_name] }
 
     it 'enqueues particular job' do
-      expect(Sidekiq::Scheduler).to receive(:enqueue_job).with(job)
+      expect(SidekiqScheduler::Scheduler).to receive(:enqueue_job).with(job)
       subject
     end
   end

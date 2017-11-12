@@ -2,8 +2,8 @@ require 'redis'
 
 require 'sidekiq/util'
 
-require 'sidekiq/scheduler'
 require 'sidekiq-scheduler/schedule'
+require 'sidekiq-scheduler/scheduler'
 
 module SidekiqScheduler
 
@@ -15,19 +15,19 @@ module SidekiqScheduler
     include Sidekiq::Util
 
     def initialize(options)
-      Sidekiq::Scheduler.enabled = options[:enabled]
-      Sidekiq::Scheduler.dynamic = options[:dynamic]
-      Sidekiq::Scheduler.dynamic_every = options[:dynamic_every]
-      Sidekiq::Scheduler.listened_queues_only = options[:listened_queues_only]
-      Sidekiq.schedule = options[:schedule] if Sidekiq::Scheduler.enabled
+      SidekiqScheduler::Scheduler.enabled = options[:enabled]
+      SidekiqScheduler::Scheduler.dynamic = options[:dynamic]
+      SidekiqScheduler::Scheduler.dynamic_every = options[:dynamic_every]
+      SidekiqScheduler::Scheduler.listened_queues_only = options[:listened_queues_only]
+      Sidekiq.schedule = options[:schedule] if SidekiqScheduler::Scheduler.enabled
     end
 
     def stop
-      Sidekiq::Scheduler.clear_schedule!
+      SidekiqScheduler::Scheduler.clear_schedule!
     end
 
     def start
-      Sidekiq::Scheduler.load_schedule!
+      SidekiqScheduler::Scheduler.load_schedule!
     end
 
     def reset

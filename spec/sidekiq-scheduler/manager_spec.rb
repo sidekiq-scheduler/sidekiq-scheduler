@@ -14,10 +14,10 @@ describe SidekiqScheduler::Manager do
     end
 
     before do
-      Sidekiq::Scheduler.enabled = nil
-      Sidekiq::Scheduler.dynamic = nil
-      Sidekiq::Scheduler.dynamic_every = nil
-      Sidekiq::Scheduler.listened_queues_only = nil
+      SidekiqScheduler::Scheduler.enabled = nil
+      SidekiqScheduler::Scheduler.dynamic = nil
+      SidekiqScheduler::Scheduler.dynamic_every = nil
+      SidekiqScheduler::Scheduler.listened_queues_only = nil
       Sidekiq.schedule = { previous: ScheduleFaker.cron_schedule }
     end
 
@@ -25,15 +25,15 @@ describe SidekiqScheduler::Manager do
       let(:enabled) { true }
 
       it {
-        expect { subject }.to change { Sidekiq::Scheduler.enabled }.to(options[:enabled])
+        expect { subject }.to change { SidekiqScheduler::Scheduler.enabled }.to(options[:enabled])
       }
 
       it {
-        expect { subject }.to change { Sidekiq::Scheduler.dynamic }.to(options[:dynamic])
+        expect { subject }.to change { SidekiqScheduler::Scheduler.dynamic }.to(options[:dynamic])
       }
 
       it {
-        expect { subject }.to change { Sidekiq::Scheduler.listened_queues_only }.to(options[:listened_queues_only])
+        expect { subject }.to change { SidekiqScheduler::Scheduler.listened_queues_only }.to(options[:listened_queues_only])
       }
 
       it {
@@ -45,15 +45,15 @@ describe SidekiqScheduler::Manager do
       let(:enabled) { false }
 
       it {
-        expect { subject }.to change { Sidekiq::Scheduler.enabled }.to(options[:enabled])
+        expect { subject }.to change { SidekiqScheduler::Scheduler.enabled }.to(options[:enabled])
       }
 
       it {
-        expect { subject }.to change { Sidekiq::Scheduler.dynamic }.to(options[:dynamic])
+        expect { subject }.to change { SidekiqScheduler::Scheduler.dynamic }.to(options[:dynamic])
       }
 
       it {
-        expect { subject }.to change { Sidekiq::Scheduler.listened_queues_only }.to(options[:listened_queues_only])
+        expect { subject }.to change { SidekiqScheduler::Scheduler.listened_queues_only }.to(options[:listened_queues_only])
       }
 
       it {
