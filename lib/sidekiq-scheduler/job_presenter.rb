@@ -56,7 +56,7 @@ module SidekiqScheduler
     end
 
     def enabled?
-      Sidekiq::Scheduler.job_enabled?(@name)
+      SidekiqScheduler::Scheduler.job_enabled?(@name)
     end
 
     # Builds the presenter instances for the schedule hash

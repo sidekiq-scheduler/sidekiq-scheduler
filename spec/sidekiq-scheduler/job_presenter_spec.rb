@@ -11,7 +11,7 @@ describe SidekiqScheduler::JobPresenter do
   describe '#next_time' do
     subject { job_presenter.next_time }
 
-    before { Sidekiq::Scheduler.update_job_next_time(job_name, next_time) }
+    before { SidekiqScheduler::Scheduler.update_job_next_time(job_name, next_time) }
 
     context "when the job doesn't have a next time in redis" do
       let(:next_time) { nil }
@@ -29,7 +29,7 @@ describe SidekiqScheduler::JobPresenter do
   describe '#last_time' do
     subject { job_presenter.last_time }
 
-    before { Sidekiq::Scheduler.update_job_last_time(job_name, last_time) }
+    before { SidekiqScheduler::Scheduler.update_job_last_time(job_name, last_time) }
 
     context "when the job doesn't have a next time in redis" do
       let(:last_time) { nil }
@@ -90,7 +90,7 @@ describe SidekiqScheduler::JobPresenter do
     it { is_expected.to be_truthy }
 
     context 'when the job is disabled' do
-      before { Sidekiq::Scheduler.toggle_job_enabled(job_name) }
+      before { SidekiqScheduler::Scheduler.toggle_job_enabled(job_name) }
 
       it { is_expected.to be_falsey }
     end
