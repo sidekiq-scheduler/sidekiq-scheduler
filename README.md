@@ -287,8 +287,12 @@ ActiveSupport::TimeZone.find_tzinfo(Rails.configuration.time_zone).name
 
 ## Notes about running on Multiple Hosts
 
-`cron` and `at` jobs are pushed once regardless of the number of `sidekiq-scheduler` running instances,
+Under normal conditions, `cron` and `at` jobs are pushed once regardless of the number of `sidekiq-scheduler` running instances,
 assumming that time deltas between hosts is less than 24 hours.
+
+Non-normal conditions that could push a specific job multiple times are:
+ - high cpu load + a high number of jobs scheduled at the same time, like 100 jobs
+ - network / redis latency + 28 (see `MAX_WORK_THREADS` https://github.com/jmettraux/rufus-scheduler/blob/master/lib/rufus/scheduler.rb#L41) or more jobs scheduled within the same network latency window
 
 `every`, `interval` and `in` jobs will be pushed once per host.
 
