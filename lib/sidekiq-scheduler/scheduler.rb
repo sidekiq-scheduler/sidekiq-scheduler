@@ -42,7 +42,7 @@ module SidekiqScheduler
         if rufus_scheduler
           logger.info "Scheduling Info\tLast Run"
           scheduler_jobs = rufus_scheduler.all_jobs
-          scheduler_jobs.each do |_, v|
+          scheduler_jobs.each_value do |v|
             logger.info "#{v.t}\t#{v.last}\t"
           end
         end
