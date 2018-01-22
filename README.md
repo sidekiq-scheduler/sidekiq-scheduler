@@ -228,7 +228,7 @@ require 'sidekiq-scheduler'
 Sidekiq.configure_server do |config|
   config.on(:startup) do
     Sidekiq.schedule = YAML.load_file(File.expand_path('../../sidekiq_scheduler.yml', __FILE__))
-    Sidekiq::Scheduler.reload_schedule!
+    SidekiqScheduler::Scheduler.instance.reload_schedule!
   end
 end
 ```
@@ -256,7 +256,7 @@ If `:dynamic` flag is set to `false`, you'll have to reload the schedule manuall
 side:
 
 ``` ruby
-Sidekiq::Scheduler.reload_schedule!
+SidekiqScheduler::Scheduler.instance.reload_schedule!
 ```
 
 Invoke `Sidekiq.get_schedule` to obtain the current schedule:
@@ -367,12 +367,12 @@ if Rails.env == 'production' && (defined?(Rails::Server) || defined?(Unicorn))
 
     config.on(:startup) do
       Sidekiq.schedule = YAML.load_file(File.expand_path('../../scheduler.yml', __FILE__))
-      Sidekiq::Scheduler.reload_schedule!
+      SidekiqScheduler::Scheduler.instance.reload_schedule!
     end
   end
 else
-  Sidekiq::Scheduler.enabled = false
-  puts "Sidekiq::Scheduler.enabled is #{Sidekiq::Scheduler.enabled.inspect}"
+  SidekiqScheduler::Scheduler.instance.enabled = false
+  puts "SidekiqScheduler::Scheduler.instance.enabled is #{SidekiqScheduler::Scheduler.instance.enabled.inspect}"
 end
 ```
 
@@ -382,6 +382,6 @@ MIT License
 
 ## Copyright
 
-Copyright 2013 - 2017 Moove-IT.
+Copyright 2013 - 2018 Moove-IT.
 Copyright 2012 Morton Jonuschat.
 Some parts copyright 2010 Ben VandenBos.

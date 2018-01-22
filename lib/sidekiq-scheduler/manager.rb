@@ -14,26 +14,48 @@ module SidekiqScheduler
   class Manager
     include Sidekiq::Util
 
+    DEFAULT_SCHEDULER_OPTIONS = {
+      enabled: true,
+      dynamic: false,
+      dynamic_every: '5s',
+      schedule: {}
+    }
+
     def initialize(options)
-      SidekiqScheduler::Scheduler.enabled = options[:enabled]
-      SidekiqScheduler::Scheduler.dynamic = options[:dynamic]
-      SidekiqScheduler::Scheduler.dynamic_every = options[:dynamic_every]
-      SidekiqScheduler::Scheduler.listened_queues_only = options[:listened_queues_only]
-      Sidekiq.schedule = options[:schedule] if SidekiqScheduler::Scheduler.enabled
+      scheduler_options = load_scheduler_options(options)
+
+      @scheduler_instance = SidekiqScheduler::Scheduler.new(scheduler_options)
+      SidekiqScheduler::Scheduler.instance = @scheduler_instance
+      Sidekiq.schedule = scheduler_options[:schedule] if @scheduler_instance.enabled
     end
 
     def stop
-      SidekiqScheduler::Scheduler.clear_schedule!
+      @scheduler_instance.clear_schedule!
     end
 
     def start
-      SidekiqScheduler::Scheduler.load_schedule!
+      @scheduler_instance.load_schedule!
     end
 
     def reset
       clear_scheduled_work
     end
 
-  end
+    private
 
+    def load_scheduler_options(options)
+      options[:listened_queues_only] = options.fetch(:scheduler, {})[:listened_queues_only]
+      scheduler_options = DEFAULT_SCHEDULER_OPTIONS.merge(options)
+
+      current_options = {
+        enabled: SidekiqScheduler::Scheduler.enabled,
+        dynamic: SidekiqScheduler::Scheduler.dynamic,
+        dynamic_every: SidekiqScheduler::Scheduler.dynamic_every,
+        schedule: Sidekiq.schedule,
+        listened_queues_only: SidekiqScheduler::Scheduler.listened_queues_only
+      }.delete_if { |_, value| value.nil? }
+
+      scheduler_options.merge(current_options)
+    end
+  end
 end
