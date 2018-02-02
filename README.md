@@ -223,7 +223,7 @@ To load the schedule:
 
 ``` ruby
 require 'sidekiq'
-require 'sidekiq/scheduler'
+require 'sidekiq-scheduler'
 
 Sidekiq.configure_server do |config|
   config.on(:startup) do
@@ -331,7 +331,8 @@ something like this in an initializer:
 
 ``` ruby
 # config/initializers/sidekiq_scheduler.rb
-require 'sidekiq/scheduler'
+require 'sidekiq'
+require 'sidekiq-scheduler'
 
 puts "Sidekiq.server? is #{Sidekiq.server?.inspect}"
 puts "defined?(Rails::Server) is #{defined?(Rails::Server).inspect}"
