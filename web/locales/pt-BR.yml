@@ -1,0 +1,14 @@
+pt-BR:
+  recurring_jobs: Jobs Recorrentes
+  name: Nome
+  description: Descrição
+  interval: Intervalo
+  class: Classe
+  queue: Fila
+  arguments: Argumentos
+  enqueue_now: Enfileirar agora 
+  last_time: Última execução
+  next_time: Próxima execução
+  no_next_time: Não há mais execuçoẽs
+  disable: Desativar
+  enable: Ativar
