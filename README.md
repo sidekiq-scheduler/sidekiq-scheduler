@@ -285,6 +285,18 @@ from the `config.time_zone` value, make sure it's the right format, e.g. with:
 ActiveSupport::TimeZone.find_tzinfo(Rails.configuration.time_zone).name
 ```
 
+## Notes about connection pooling
+
+If you're configuring your own Redis connection pool, you need to make sure the size is adequate to be inclusive of both Sidekiq's own connection pool and Rufus Scheduler's.
+
+That's a minimum of `concurrency` + 5 (per the [Sidekiq wiki](https://github.com/mperham/sidekiq/wiki/Using-Redis#complete-control)) + `Rufus::Scheduler::MAX_WORK_THREADS` (28 as of this writing; per the [Rufus README](https://github.com/jmettraux/rufus-scheduler#max_work_threads)), for a total of 58 with the default `concurrency` of 25.
+
+You can also override the thread pool size in Rufus Scheduler by setting e.g.:
+
+```
+Sidekiq::Scheduler.rufus_scheduler_options = { max_work_threads: 5 }
+```
+
 ## Notes about running on Multiple Hosts
 
 Under normal conditions, `cron` and `at` jobs are pushed once regardless of the number of `sidekiq-scheduler` running instances,
