@@ -131,7 +131,7 @@ module SidekiqScheduler
       job_key = pushed_job_key(job_name)
       registered, _ = Sidekiq.redis do |r|
         r.pipelined do
-          r.zadd(job_key, time.to_i, time.to_i)
+          r.zadd(job_key, time.to_f, time.to_f)
           r.expire(job_key, REGISTERED_JOBS_THRESHOLD_IN_SECONDS)
         end
       end

@@ -291,7 +291,7 @@ describe SidekiqScheduler::RedisManager do
     it 'should store the job instance' do
       subject
 
-      expect(SidekiqScheduler::Store.zrange('sidekiq-scheduler:pushed:some_job', 0, -1)).to eql([time.to_i.to_s])
+      expect(SidekiqScheduler::Store.zrange('sidekiq-scheduler:pushed:some_job', 0, -1)).to eql([time.to_f.to_s])
     end
 
     it 'should add an expiration key' do
