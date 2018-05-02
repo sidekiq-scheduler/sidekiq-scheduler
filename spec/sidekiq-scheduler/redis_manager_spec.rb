@@ -308,7 +308,7 @@ describe SidekiqScheduler::RedisManager do
       it { is_expected.to be_falsey }
 
       context 'when registering the new instance with a different time' do
-        let(:time) { current_time + 1 }
+        let(:time) { current_time + 0.5 }
 
         it { is_expected.to be_truthy }
       end
