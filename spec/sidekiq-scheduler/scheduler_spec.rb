@@ -5,6 +5,7 @@ describe SidekiqScheduler::Scheduler do
     described_class.dynamic = false
     described_class.dynamic_every = '5s'
     described_class.listened_queues_only = false
+    described_class.rufus_scheduler_options = {}
     Sidekiq.redis(&:flushall)
     Sidekiq.options[:queues] = Sidekiq::DEFAULTS[:queues]
     described_class.clear_schedule!
@@ -230,6 +231,28 @@ describe SidekiqScheduler::Scheduler do
         .with(job.tags[0], 'triggered_time')
 
       described_class.rufus_scheduler.on_post_trigger(job, 'triggered_time')
+    end
+  end
+
+  describe 'clear_schedule!' do
+    it 'sets a new rufus-scheduler instance' do
+      expect {
+        described_class.clear_schedule!
+      }.to change { described_class.rufus_scheduler }
+    end
+
+    it 'stops the current rufus-scheduler' do
+      expect(described_class.rufus_scheduler).to receive(:stop).with(:wait)
+
+      described_class.clear_schedule!
+    end
+
+    it 'forwards stop_option to Rufus::Scheduler#stop' do
+      stop_option = :kill
+
+      expect(described_class.rufus_scheduler).to receive(:stop).with(stop_option)
+
+      described_class.clear_schedule!(stop_option)
     end
   end
 

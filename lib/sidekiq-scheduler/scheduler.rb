@@ -201,8 +201,10 @@ module SidekiqScheduler
 
       # Stops old rufus scheduler and creates a new one.  Returns the new
       # rufus scheduler
-      def clear_schedule!
-        rufus_scheduler.stop
+      #
+      # @param [Symbol] stop_option The option to be passed to Rufus::Scheduler#stop
+      def clear_schedule!(stop_option = :wait)
+        rufus_scheduler.stop(stop_option)
         @rufus_scheduler = nil
         @@scheduled_jobs = {}
         rufus_scheduler
@@ -224,6 +226,7 @@ module SidekiqScheduler
 
         if schedule_changes.size > 0
           logger.info 'Updating schedule'
+
           Sidekiq.reload_schedule!
           schedule_changes.each do |schedule_name|
             if Sidekiq.schedule.keys.include?(schedule_name)
