@@ -323,6 +323,18 @@ run Sidekiq::Web
 
 ![Sidekiq Web Integration](https://github.com/moove-it/sidekiq-scheduler/raw/master/images/recurring-jobs-ui-tab.png)
 
+## ActiveJob integration
+
+When using sidekiq-scheduler with ActiveJob your jobs can just extend `ApplicationJob` as usual, without the `require` and `include` boilerplate. Under the hood Rails will load up the scheduler and include the worker module for you.
+
+```rb
+class HelloWorld < ApplicationJob
+  def perform
+    puts 'Hello world'
+  end
+end
+```
+
 ## The Spring preloader and Testing your initializer via Rails console
 
 If you're pulling in your schedule from a YML file via an initializer as shown, be aware that the Spring application preloader included with Rails will interefere with testing via the Rails console.
