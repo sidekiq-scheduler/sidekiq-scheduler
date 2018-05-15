@@ -201,8 +201,8 @@ module SidekiqScheduler
 
       # Stops old rufus scheduler and creates a new one.  Returns the new
       # rufus scheduler
-      def clear_schedule!
-        rufus_scheduler.stop
+      def clear_schedule!(opt: :wait)
+        rufus_scheduler.stop(opt)
         @rufus_scheduler = nil
         @@scheduled_jobs = {}
         rufus_scheduler
