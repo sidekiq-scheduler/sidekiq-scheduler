@@ -716,15 +716,17 @@ describe SidekiqScheduler::Scheduler do
     it 'registers the enqueued job' do
       expect {
         described_class.idempotent_job_enqueue(job_name, time, config)
-      }.to change { enqueued_jobs_registry.last == time.to_i.to_s }.from(false).to(true)
+      }.to change { enqueued_jobs_registry.last == time.to_f.to_s }.from(false).to(true)
     end
 
     context 'when elder enqueued jobs' do
-      let(:some_time_ago) { time - SidekiqScheduler::RedisManager::REGISTERED_JOBS_THRESHOLD_IN_SECONDS }
+      let!(:some_time_ago) { time - (SidekiqScheduler::RedisManager::REGISTERED_JOBS_THRESHOLD_IN_SECONDS + 1) }
 
-      let(:near_time_ago) { time - SidekiqScheduler::RedisManager::REGISTERED_JOBS_THRESHOLD_IN_SECONDS  / 2 }
+      let!(:near_time_ago) { time - (SidekiqScheduler::RedisManager::REGISTERED_JOBS_THRESHOLD_IN_SECONDS + 1) / 2.0 }
 
-      before  do
+      before do
+        time
+
         Timecop.freeze(some_time_ago) do
           described_class.register_job_instance(job_name, some_time_ago)
         end
@@ -737,7 +739,7 @@ describe SidekiqScheduler::Scheduler do
       it 'deregisters elder enqueued jobs' do
         expect {
           described_class.idempotent_job_enqueue(job_name, time, config)
-        }.to change { enqueued_jobs_registry.first == some_time_ago.to_i.to_s }.from(true).to(false)
+        }.to change { enqueued_jobs_registry.first == some_time_ago.to_f.to_s }.from(true).to(false)
       end
     end
 
