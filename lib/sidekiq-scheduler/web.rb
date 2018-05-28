@@ -17,14 +17,14 @@ module SidekiqScheduler
 
       app.get '/recurring-jobs/:name/enqueue' do
         schedule = Sidekiq.get_schedule(params[:name])
-        SidekiqScheduler::Scheduler.enqueue_job(schedule)
+        SidekiqScheduler::Scheduler.instance.enqueue_job(schedule)
         redirect "#{root_path}recurring-jobs"
       end
 
       app.get '/recurring-jobs/:name/toggle' do
         Sidekiq.reload_schedule!
 
-        SidekiqScheduler::Scheduler.toggle_job_enabled(params[:name])
+        SidekiqScheduler::Scheduler.instance.toggle_job_enabled(params[:name])
         redirect "#{root_path}recurring-jobs"
       end
     end

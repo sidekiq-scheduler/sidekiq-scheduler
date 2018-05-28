@@ -34,6 +34,10 @@ module SidekiqScheduler
       Sidekiq.redis { |r| r.hset(hash_key, field_key, value) }
     end
 
+    def self.del(key)
+      Sidekiq.redis { |r| r.del(key) }
+    end
+
     def self.hdel(hash_key, field_key)
       Sidekiq.redis { |r| r.hdel(hash_key, field_key) }
     end
@@ -56,6 +60,10 @@ module SidekiqScheduler
 
     def self.exists(key)
       Sidekiq.redis { |r| r.exists(key) }
+    end
+
+    def self.hexists(hash_key, field_key)
+      Sidekiq.redis { |r| r.hexists(hash_key, field_key) }
     end
   end
 end
