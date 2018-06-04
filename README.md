@@ -30,6 +30,8 @@
 `sidekiq-scheduler` is an extension to [Sidekiq](http://github.com/mperham/sidekiq) that
 pushes jobs in a scheduled way, mimicking cron utility.
 
+__Note:__ If you are looking for version 2.2.*, go to [2.2-stable branch](https://github.com/moove-it/sidekiq-scheduler/tree/2.2-stable).
+
 ## Installation
 
 ``` shell
