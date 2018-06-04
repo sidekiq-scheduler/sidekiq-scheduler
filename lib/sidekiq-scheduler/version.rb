@@ -1,5 +1,5 @@
 module SidekiqScheduler
 
-  VERSION = '2.2.2'
+  VERSION = '3.0.0'
 
 end
