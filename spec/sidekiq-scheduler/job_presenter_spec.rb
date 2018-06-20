@@ -115,10 +115,10 @@ describe SidekiqScheduler::JobPresenter do
     end
 
     context 'when there is a schedule hash' do
-      let(:schedule_hash) { { first_job_name: {}, second_job_name: {} } }
+      let(:schedule_hash) { { c_job: {}, a_job: {}, b_job: {}, d_job: {} } }
 
-      it "initializes an object with the job's data" do
-        expect(subject.map(&:name)).to eq([:first_job_name, :second_job_name])
+      it "initializes an object with the job's data in alphabetical order" do
+        expect(subject.map(&:name)).to eq([:a_job, :b_job, :c_job, :d_job])
       end
     end
   end
