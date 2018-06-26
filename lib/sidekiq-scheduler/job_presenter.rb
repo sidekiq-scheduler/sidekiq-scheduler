@@ -66,7 +66,7 @@ module SidekiqScheduler
     def self.build_collection(schedule_hash)
       schedule_hash ||= {}
 
-      schedule_hash.map do |name, job_spec|
+      schedule_hash.sort.map do |name, job_spec|
         new(name, job_spec)
       end
     end
