@@ -296,7 +296,7 @@ That's a minimum of `concurrency` + 5 (per the [Sidekiq wiki](https://github.com
 You can also override the thread pool size in Rufus Scheduler by setting e.g.:
 
 ```
-Sidekiq::Scheduler.rufus_scheduler_options = { max_work_threads: 5 }
+SidekiqScheduler::Scheduler.instance.rufus_scheduler_options = { max_work_threads: 5 }
 ```
 
 ## Notes about running on Multiple Hosts
