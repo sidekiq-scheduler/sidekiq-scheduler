@@ -13,10 +13,13 @@ describe SidekiqScheduler::Scheduler do
     described_class.instance = instance
     Sidekiq.redis(&:flushall)
     Sidekiq.options[:queues] = Sidekiq::DEFAULTS[:queues]
-    instance.clear_schedule!
     instance.instance_variable_set(:@scheduled_jobs, {})
     Sidekiq::Worker.clear_all
     Sidekiq.schedule = {}
+  end
+
+  after do
+    instance.clear_schedule!
   end
 
   describe '.new' do

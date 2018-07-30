@@ -82,7 +82,6 @@ module SidekiqScheduler
 
         Sidekiq.logger.info 'Schedule empty! Set Sidekiq.schedule' if Sidekiq.schedule.empty?
 
-
         @scheduled_jobs = {}
         queues = sidekiq_queues
 
@@ -187,9 +186,13 @@ module SidekiqScheduler
     #
     # @param [Symbol] stop_option The option to be passed to Rufus::Scheduler#stop
     def clear_schedule!(stop_option = :wait)
-      rufus_scheduler.stop(stop_option)
-      @rufus_scheduler = nil
+      if @rufus_scheduler
+        @rufus_scheduler.stop(stop_option)
+        @rufus_scheduler = nil
+      end
+
       @@scheduled_jobs = {}
+
       rufus_scheduler
     end
 
