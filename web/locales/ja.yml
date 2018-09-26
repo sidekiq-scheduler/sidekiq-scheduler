@@ -1,0 +1,14 @@
+ja:
+  recurring_jobs: 定期ジョブ
+  name: 名前
+  description: 説明
+  interval: インターバル
+  class: クラス
+  queue: キュー
+  arguments: 引数
+  enqueue_now: すぐにエンキュー
+  last_time: 前回
+  next_time: 次回
+  no_next_time: このジョブの次の実行はありません
+  disable: 無効
+  enable: 有効
