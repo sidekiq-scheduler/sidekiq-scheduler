@@ -18,7 +18,7 @@ Sidekiq.configure_server do |config|
     config.options[:schedule_manager].start
   end
 
-  config.on(:shutdown) do
+  config.on(:quiet) do
     config.options[:schedule_manager].stop
   end
 
