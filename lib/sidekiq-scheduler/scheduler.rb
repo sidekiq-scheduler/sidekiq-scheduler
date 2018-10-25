@@ -247,7 +247,7 @@ module SidekiqScheduler
           conf = SidekiqScheduler::Utils.sanitize_job_config(config)
 
           if job.is_a?(Rufus::Scheduler::CronJob)
-            idempotent_job_enqueue(name, calc_cron_run_time(job.cron_line, time), conf)
+            idempotent_job_enqueue(name, calc_cron_run_time(job.cron_line, time.utc), conf)
           else
             idempotent_job_enqueue(name, time, conf)
           end
@@ -364,8 +364,8 @@ module SidekiqScheduler
     end
 
     def calc_cron_run_time(cron, time)
-      next_t = Time.parse(cron.next_time(time).to_s).utc
-      previous_t = Time.parse(cron.previous_time(time).to_s).utc
+      next_t = cron.next_time(time).utc
+      previous_t = cron.previous_time(time).utc
       next_diff = next_t - time
       previous_diff = time - previous_t
 
