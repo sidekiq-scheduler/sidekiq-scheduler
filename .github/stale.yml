@@ -1,0 +1,24 @@
+# Configuration for probot-stale - https://github.com/probot/stale
+
+daysUntilStale: 60
+
+daysUntilClose: 7
+
+# Issues or Pull Requests with these labels will never be considered stale. Set to `[]` to disable
+exemptLabels:
+  - bug
+  - enhancement
+  - question
+  - pinned
+  - task
+
+staleLabel: stale
+
+markComment: >
+  This issue has been automatically marked as stale because it has not had
+  recent activity. It will be closed if no further activity occurs.
+
+# Limit the number of actions per hour, from 1-30. Default is 30
+limitPerRun: 30
+
+only: issues
