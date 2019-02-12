@@ -45,7 +45,7 @@ module SidekiqScheduler
 
     def initialize(options = {})
       self.enabled = options[:enabled]
-      self.dynamic = options[:dynamic]
+      self.dynamic = options[:scheduler_dynamic]
       self.dynamic_every = options[:dynamic_every]
       self.listened_queues_only = options[:listened_queues_only]
     end
