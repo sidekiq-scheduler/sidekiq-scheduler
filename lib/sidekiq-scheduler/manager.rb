@@ -17,8 +17,7 @@ module SidekiqScheduler
     DEFAULT_SCHEDULER_OPTIONS = {
       enabled: true,
       dynamic: false,
-      dynamic_every: '5s',
-      schedule: {}
+      dynamic_every: '5s'
     }
 
     def initialize(options)
@@ -30,7 +29,7 @@ module SidekiqScheduler
     end
 
     def stop
-      @scheduler_instance.clear_schedule!
+      #@scheduler_instance.clear_schedule!
     end
 
     def start
