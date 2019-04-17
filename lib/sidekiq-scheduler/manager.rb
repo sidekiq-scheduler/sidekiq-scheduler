@@ -37,10 +37,6 @@ module SidekiqScheduler
       @scheduler_instance.load_schedule!
     end
 
-    def reset
-      clear_scheduled_work
-    end
-
     private
 
     def load_scheduler_options(options)
