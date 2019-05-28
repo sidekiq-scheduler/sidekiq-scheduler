@@ -140,7 +140,7 @@ module SidekiqScheduler
     def infer_queue(klass)
       klass = try_to_constantize(klass)
 
-      if klass.respond_to?(:sidekiq_options)
+      if klass.respond_to?(:sidekiq_options) && !klass.sidekiq_options.nil?
         klass.sidekiq_options['queue']
       end
     end
