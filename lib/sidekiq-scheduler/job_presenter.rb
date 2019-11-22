@@ -38,7 +38,7 @@ module SidekiqScheduler
     #
     # @return [String] with the job's interval
     def interval
-      @attributes['cron'] || @attributes['interval'] || @attributes['every']
+      @attributes['cron'] || @attributes['interval'] || @attributes['every'] || @attributes['at'] || @attributes['in']
     end
 
     # Returns the queue of the job
