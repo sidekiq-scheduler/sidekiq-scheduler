@@ -312,6 +312,19 @@ Non-normal conditions that could push a specific job multiple times are:
 
 `every`, `interval` and `in` jobs will be pushed once per host.
 
+## Notes on when sidekiq worker is down
+
+For a `cron`/`at` (and all other) job to be successfully enqueued, you need at least one sidekiq worker with scheduler to be up at that moment. Handling this is up to you and depends on your application.
+
+Possible solutions include:
+- Simply ignoring this fact, if you only run frequent periodic jobs, that can tolerate some increased interval
+- Abstaining from deploys/restarts during time when critical jobs are usually scheduled
+- Making your infrequent jobs idempotent (so that they can be enqueued multiple times but still produce result as if was run once) and scheduling them multiple times to reduce likelihood of not being run
+- Zero downtime deploy for sidekiq workers: keep at least one worker up during whole deploy and only restart/shut it down after when new one has started
+- Running scheduler inside your unicorn/rails processes (if you already have zero downtime deploy set up for these)
+
+Each option has it's own pros and cons. 
+
 ## Sidekiq Web Integration
 
 sidekiq-scheduler provides an extension to the Sidekiq web interface that adds a `Recurring Jobs` page.
