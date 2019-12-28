@@ -19,6 +19,11 @@ Gem::Specification.new do |s|
   s.add_dependency 'rufus-scheduler', '~> 3.2'
   s.add_dependency 'tilt',            '>= 1.4.0'
 
+  if RUBY_VERSION >= '2.7.0'
+    s.add_dependency 'thwait'
+    s.add_dependency 'e2mmap'
+  end
+
   s.add_development_dependency 'rake',                    '~> 10.0'
   s.add_development_dependency 'timecop',                 '~> 0'
   s.add_development_dependency 'mocha',                   '~> 0'
