@@ -270,6 +270,8 @@ Sidekiq.get_schedule
 #  => { 'every' => '1m', 'class' => 'HardWorker' }
 ```
 
+Invoke `Sidekiq.remove_schedule(name)` to remove schedules.
+
 ## Time zones
 
 Note that if you use the cron syntax, this will be interpreted as in the server time zone
