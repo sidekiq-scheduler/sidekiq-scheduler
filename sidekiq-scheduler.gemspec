@@ -25,7 +25,7 @@ Gem::Specification.new do |s|
   s.add_development_dependency 'timecop',                 '~> 0'
   s.add_development_dependency 'mocha',                   '~> 0'
   s.add_development_dependency 'rspec'
-  s.add_development_dependency 'mock_redis',              '~> 0.19.0'
+  s.add_development_dependency 'mock_redis',              '~> 0.27.0'
   s.add_development_dependency 'simplecov',               '~> 0'
   s.add_development_dependency 'byebug'
 
