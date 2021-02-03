@@ -11,11 +11,11 @@ module SidekiqScheduler
     end
 
     def self.changed_job?(job_id)
-      Sidekiq.redis { |redis| !!redis.zrank(:schedules_changed, job_id) }
+      Sidekiq.redis { |redis| !!redis.zrank("schedules_changed", job_id) }
     end
 
     def self.job_from_redis_without_decoding(job_id)
-      Sidekiq.redis { |redis| redis.hget(:schedules, job_id) }
+      Sidekiq.redis { |redis| redis.hget("schedules", job_id) }
     end
 
     def self.job_next_execution_time(job_name)
@@ -27,43 +27,43 @@ module SidekiqScheduler
     end
 
     def self.hget(hash_key, field_key)
-      Sidekiq.redis { |r| r.hget(hash_key, field_key) }
+      Sidekiq.redis { |r| r.hget(hash_key.to_s, field_key.to_s) }
     end
 
     def self.hset(hash_key, field_key, value)
-      Sidekiq.redis { |r| r.hset(hash_key, field_key, value) }
+      Sidekiq.redis { |r| r.hset(hash_key.to_s, field_key.to_s, value) }
     end
 
     def self.del(key)
-      Sidekiq.redis { |r| r.del(key) }
+      Sidekiq.redis { |r| r.del(key.to_s) }
     end
 
     def self.hdel(hash_key, field_key)
-      Sidekiq.redis { |r| r.hdel(hash_key, field_key) }
+      Sidekiq.redis { |r| r.hdel(hash_key.to_s, field_key.to_s) }
     end
 
     def self.sadd(set_key, field_key)
-      Sidekiq.redis { |r| r.sadd(set_key, field_key) }
+      Sidekiq.redis { |r| r.sadd(set_key.to_s, field_key.to_s) }
     end
 
     def self.zadd(sorted_set_key, score, field_key)
-      Sidekiq.redis { |r| r.zadd(sorted_set_key, score, field_key) }
+      Sidekiq.redis { |r| r.zadd(sorted_set_key.to_s, score, field_key.to_s) }
     end
 
     def self.zrangebyscore(zset_key, from, to)
-      Sidekiq.redis { |r| r.zrangebyscore(zset_key, from, to) }
+      Sidekiq.redis { |r| r.zrangebyscore(zset_key.to_s, from, to) }
     end
 
     def self.zrange(zset_key, from, to)
-      Sidekiq.redis { |r| r.zrange(zset_key, from, to) }
+      Sidekiq.redis { |r| r.zrange(zset_key.to_s, from, to) }
     end
 
     def self.exists(key)
-      Sidekiq.redis { |r| r.exists?(key) }
+      Sidekiq.redis { |r| r.exists?(key.to_s) }
     end
 
     def self.hexists(hash_key, field_key)
-      Sidekiq.redis { |r| r.hexists(hash_key, field_key) }
+      Sidekiq.redis { |r| r.hexists(hash_key.to_s, field_key.to_s) }
     end
   end
 end

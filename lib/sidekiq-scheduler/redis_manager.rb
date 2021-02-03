@@ -9,7 +9,7 @@ module SidekiqScheduler
     #
     # @return [String] schedule in JSON format
     def self.get_job_schedule(name)
-      hget(:schedules, name)
+      hget("schedules", name)
     end
 
     # Returns the state of a given job
@@ -44,7 +44,7 @@ module SidekiqScheduler
     # @param [String] name The name of the job
     # @param [Hash] config The new schedule for the job
     def self.set_job_schedule(name, config)
-      hset(:schedules, name, JSON.generate(config))
+      hset("schedules", name, JSON.generate(config))
     end
 
     # Sets the state for a given job
@@ -75,7 +75,7 @@ module SidekiqScheduler
     #
     # @param [String] name The name of the job
     def self.remove_job_schedule(name)
-      hdel(:schedules, name)
+      hdel("schedules", name)
     end
 
     # Removes the next execution time for a given job
@@ -89,14 +89,14 @@ module SidekiqScheduler
     #
     # @return [Hash] hash with all the job schedules
     def self.get_all_schedules
-      Sidekiq.redis { |r| r.hgetall(:schedules) }
+      Sidekiq.redis { |r| r.hgetall("schedules") }
     end
 
     # Returns boolean value that indicates if the schedules value exists
     #
     # @return [Boolean] true if the schedules key is set, false otherwise
     def self.schedule_exist?
-      Sidekiq.redis { |r| r.exists?(:schedules) }
+      Sidekiq.redis { |r| r.exists?("schedules") }
     end
 
     # Returns all the schedule changes for a given time range.
@@ -106,19 +106,19 @@ module SidekiqScheduler
     #
     # @return [Array] array with all the changed job names
     def self.get_schedule_changes(from, to)
-      Sidekiq.redis { |r| r.zrangebyscore(:schedules_changed, from, "(#{to}") }
+      Sidekiq.redis { |r| r.zrangebyscore("schedules_changed", from, "(#{to}") }
     end
 
     # Register a schedule change for a given job
     #
     # @param [String] name The name of the job
     def self.add_schedule_change(name)
-      Sidekiq.redis { |r| r.zadd(:schedules_changed, Time.now.to_f, name) }
+      Sidekiq.redis { |r| r.zadd("schedules_changed", Time.now.to_f, name) }
     end
 
     # Remove all the schedule changes records
     def self.clean_schedules_changed
-      Sidekiq.redis { |r| r.del(:schedules_changed) unless r.type(:schedules_changed) == 'zset' }
+      Sidekiq.redis { |r| r.del("schedules_changed") unless r.type("schedules_changed") == 'zset' }
     end
 
     # Removes a queued job instance
