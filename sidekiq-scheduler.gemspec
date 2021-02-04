@@ -29,11 +29,7 @@ Gem::Specification.new do |s|
   s.add_development_dependency 'simplecov',               '~> 0'
   s.add_development_dependency 'byebug'
 
-  if RUBY_VERSION >= '2.2.2'
-    s.add_development_dependency 'activejob'
-  else
-    s.add_development_dependency 'activejob', '< 5'
-  end
+  s.add_development_dependency 'activejob'
 
   s.add_development_dependency 'coveralls'
   s.add_development_dependency 'rack-test'
