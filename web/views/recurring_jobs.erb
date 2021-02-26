@@ -34,10 +34,10 @@
             </span>
           </td>
           <td class="text-center">
-            <a class="btn btn-warn btn-xs" href="<%= root_path %>recurring-jobs/<%= URI.escape(job.name) %>/enqueue">
+            <a class="btn btn-warn btn-xs" href="<%= root_path %>recurring-jobs/<%= CGI.escape(job.name) %>/enqueue">
               <%= t('enqueue_now') %>
             </a>
-            <a class="btn <%= job.enabled? ? "btn-primary" : "btn-warn"%> btn-xs" href="<%= root_path %>recurring-jobs/<%= URI.escape(job.name) %>/toggle">
+            <a class="btn <%= job.enabled? ? "btn-primary" : "btn-warn"%> btn-xs" href="<%= root_path %>recurring-jobs/<%= CGI.escape(job.name) %>/toggle">
               <%= job.enabled? ? t('disable') : t('enable') %>
             </a>
           </td>

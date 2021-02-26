@@ -91,7 +91,7 @@ describe Sidekiq::Web do
   end
 
   describe '/recurring-jobs/:name/toggle' do
-    subject { get "/recurring-jobs/#{URI.escape(enabled_job_name)}/toggle" }
+    subject { get "/recurring-jobs/#{CGI.escape(enabled_job_name)}/toggle" }
 
     it 'toggles job enabled flag' do
       expect { subject }
@@ -106,7 +106,7 @@ describe Sidekiq::Web do
   end
 
   describe 'GET /recurring-jobs/:name/enqueue' do
-    subject { get "/recurring-jobs/#{URI.escape(job_name)}/enqueue" }
+    subject { get "/recurring-jobs/#{CGI.escape(job_name)}/enqueue" }
 
     let(:job_name) { enabled_job_name }
     let(:job) { jobs[job_name] }
