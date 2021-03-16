@@ -182,6 +182,8 @@ Cron, every, and interval types push jobs into sidekiq in a recurrent manner.
 `interval` is similar to `every`, the difference between them is that `interval` type schedules the
 next execution after the interval has elapsed counting from its last job enqueue.
 
+Note that `every` and `interval` count from when the Sidekiq process (re)starts. So `every: '48h'` will never run if the Sidekiq process is restarted daily, for example. You can do `every: ['48h', first_in: '0s']` to make the job run immediately after a restart, and then have the worker check when it was last run.
+
 At, and in types push jobs only once. `at` schedules in a point in time:
 ``` yaml
     at: '3001/01/01'

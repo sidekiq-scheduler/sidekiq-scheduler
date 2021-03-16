@@ -18,12 +18,14 @@ Gem::Specification.new do |s|
   s.add_dependency 'redis',           '>= 3', '< 5'
   s.add_dependency 'rufus-scheduler', '~> 3.2'
   s.add_dependency 'tilt',            '>= 1.4.0'
+  s.add_dependency 'thwait'
+  s.add_dependency 'e2mmap'
 
   s.add_development_dependency 'rake',                    '~> 10.0'
   s.add_development_dependency 'timecop',                 '~> 0'
   s.add_development_dependency 'mocha',                   '~> 0'
   s.add_development_dependency 'rspec'
-  s.add_development_dependency 'mock_redis',              '~> 0'
+  s.add_development_dependency 'mock_redis',              '~> 0.19.0'
   s.add_development_dependency 'simplecov',               '~> 0'
   s.add_development_dependency 'byebug'
 
