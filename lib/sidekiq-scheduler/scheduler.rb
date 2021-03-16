@@ -364,6 +364,7 @@ module SidekiqScheduler
     end
 
     def calc_cron_run_time(cron, time)
+      time = time.round # remove sub seconds to prevent rounding errors.
       next_t = cron.next_time(time).utc
       previous_t = cron.previous_time(time).utc
       next_diff = next_t - time
