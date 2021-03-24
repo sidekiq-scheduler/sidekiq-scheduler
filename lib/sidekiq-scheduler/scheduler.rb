@@ -2,7 +2,6 @@ require 'rufus/scheduler'
 require 'thwait'
 require 'sidekiq/util'
 require 'json'
-require 'sidekiq-scheduler/manager'
 require 'sidekiq-scheduler/rufus_utils'
 require 'sidekiq-scheduler/redis_manager'
 
@@ -265,8 +264,8 @@ module SidekiqScheduler
 
     # Retrieves a schedule state
     #
-    # @param name [String] with the schedule's name
-    # @return [Hash] with the schedule's state
+    # @param [String] name The schedule's name
+    # @return [Hash] The schedule's state
     def schedule_state(name)
       state = SidekiqScheduler::RedisManager.get_job_state(name)
 
@@ -275,19 +274,19 @@ module SidekiqScheduler
 
     # Saves a schedule state
     #
-    # @param name [String] with the schedule's name
-    # @param name [Hash] with the schedule's state
+    # @param [String] name The schedule's name
+    # @param [Hash] state The schedule's state
     def set_schedule_state(name, state)
       SidekiqScheduler::RedisManager.set_job_state(name, state)
     end
 
     # Adds a Hash with schedule metadata as the last argument to call the worker.
-    # It currently returns the schedule time as a Float number representing the milisencods
+    # It currently returns the schedule time as a Float number representing the milliseconds
     # since epoch.
     #
     # @example with hash argument
     #   arguments_with_metadata({value: 1}, scheduled_at: Time.now)
-    #   #=> [{value: 1}, {scheduled_at: <miliseconds since epoch>}]
+    #   #=> [{value: 1}, {scheduled_at: <milliseconds since epoch>}]
     #
     # @param args [Array|Hash]
     # @param metadata [Hash]
