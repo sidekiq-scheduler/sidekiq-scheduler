@@ -17,7 +17,7 @@
     </thead>
 
     <tbody>
-      <% @presented_jobs.each do |job| %>
+      <% @presented_jobs.sort_by(&:name).each do |job| %>
         <tr>
           <td><%= job.name %></td>
           <td><%= job['description'] %></td>
