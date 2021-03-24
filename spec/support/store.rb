@@ -59,7 +59,7 @@ module SidekiqScheduler
     end
 
     def self.exists(key)
-      Sidekiq.redis { |r| r.exists(key) }
+      Sidekiq.redis { |r| !!(r.respond_to?(:exists?) ? r.exists?(key) : r.exists(key)) }
     end
 
     def self.hexists(hash_key, field_key)

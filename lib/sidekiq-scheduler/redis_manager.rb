@@ -9,7 +9,7 @@ module SidekiqScheduler
     #
     # @return [String] schedule in JSON format
     def self.get_job_schedule(name)
-      hget(:schedules, name)
+      hget('schedules', name)
     end
 
     # Returns the state of a given job
@@ -44,7 +44,7 @@ module SidekiqScheduler
     # @param [String] name The name of the job
     # @param [Hash] config The new schedule for the job
     def self.set_job_schedule(name, config)
-      hset(:schedules, name, JSON.generate(config))
+      hset('schedules', name, JSON.generate(config))
     end
 
     # Sets the state for a given job
@@ -75,7 +75,7 @@ module SidekiqScheduler
     #
     # @param [String] name The name of the job
     def self.remove_job_schedule(name)
-      hdel(:schedules, name)
+      hdel('schedules', name)
     end
 
     # Removes the next execution time for a given job
@@ -89,14 +89,16 @@ module SidekiqScheduler
     #
     # @return [Hash] hash with all the job schedules
     def self.get_all_schedules
-      Sidekiq.redis { |r| r.hgetall(:schedules) }
+      Sidekiq.redis { |r| r.hgetall('schedules') }
     end
 
     # Returns boolean value that indicates if the schedules value exists
     #
     # @return [Boolean] true if the schedules key is set, false otherwise
     def self.schedule_exist?
-      Sidekiq.redis { |r| r.exists(:schedules) }
+      Sidekiq.redis do |r|
+        !!(r.respond_to?(:exists?) ? r.exists?('schedules') : r.exists('schedules'))
+      end
     end
 
     # Returns all the schedule changes for a given time range.
@@ -104,21 +106,21 @@ module SidekiqScheduler
     # @param [Float] from The minimum value in the range
     # @param [Float] to The maximum value in the range
     #
-    # @return [Array] array with all the changed job names
+    # @return [Array] All the changed job names
     def self.get_schedule_changes(from, to)
-      Sidekiq.redis { |r| r.zrangebyscore(:schedules_changed, from, "(#{to}") }
+      Sidekiq.redis { |r| r.zrangebyscore('schedules_changed', from, "(#{to}") }
     end
 
     # Register a schedule change for a given job
     #
     # @param [String] name The name of the job
     def self.add_schedule_change(name)
-      Sidekiq.redis { |r| r.zadd(:schedules_changed, Time.now.to_f, name) }
+      Sidekiq.redis { |r| r.zadd('schedules_changed', Time.now.to_f, name) }
     end
 
     # Remove all the schedule changes records
     def self.clean_schedules_changed
-      Sidekiq.redis { |r| r.del(:schedules_changed) unless r.type(:schedules_changed) == 'zset' }
+      Sidekiq.redis { |r| r.del('schedules_changed') unless r.type('schedules_changed') == 'zset' }
     end
 
     # Removes a queued job instance
@@ -142,6 +144,8 @@ module SidekiqScheduler
     # Removes instances of the job older than 24 hours
     #
     # @param [String] job_name The name of the job
+    #
+    # @return [Integer] Number of members that were removed
     def self.remove_elder_job_instances(job_name)
       seconds_ago = Time.now.to_i - REGISTERED_JOBS_THRESHOLD_IN_SECONDS
 
@@ -154,28 +158,28 @@ module SidekiqScheduler
     #
     # @param [String] job_name The name of the job
     #
-    # @return [String] the pushed job key
+    # @return [String] The pushed job key
     def self.pushed_job_key(job_name)
       "sidekiq-scheduler:pushed:#{job_name}"
     end
 
     # Returns the key of the Redis hash for job's execution times hash
     #
-    # @return [String] with the key
+    # @return [String]
     def self.next_times_key
       'sidekiq-scheduler:next_times'
     end
 
     # Returns the key of the Redis hash for job's last execution times hash
     #
-    # @return [String] with the key
+    # @return [String]
     def self.last_times_key
       'sidekiq-scheduler:last_times'
     end
 
     # Returns the Redis's key for saving schedule states.
     #
-    # @return [String] with the key
+    # @return [String]
     def self.schedules_state_key
       'sidekiq-scheduler:states'
     end
@@ -197,6 +201,8 @@ module SidekiqScheduler
     # @param [String] hash_key The key name of the hash
     # @param [String] field_key The key name of the field
     # @param [String] value The new value name for the field
+    #
+    # @return [Boolean]
     def self.hset(hash_key, field_key, value)
       Sidekiq.redis { |r| r.hset(hash_key, field_key, value) }
     end
@@ -205,6 +211,8 @@ module SidekiqScheduler
     #
     # @param [String] hash_key The key name of the hash
     # @param [String] field_key The key name of the field
+    #
+    # @return [Integer] The number of fields that were removed from the hash
     def self.hdel(hash_key, field_key)
       Sidekiq.redis { |r| r.hdel(hash_key, field_key) }
     end
