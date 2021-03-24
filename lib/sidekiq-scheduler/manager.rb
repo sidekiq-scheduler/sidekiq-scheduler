@@ -1,7 +1,5 @@
 require 'redis'
-
 require 'sidekiq/util'
-
 require 'sidekiq-scheduler/schedule'
 require 'sidekiq-scheduler/scheduler'
 
@@ -35,10 +33,6 @@ module SidekiqScheduler
 
     def start
       @scheduler_instance.load_schedule!
-    end
-
-    def reset
-      clear_scheduled_work
     end
 
     private
