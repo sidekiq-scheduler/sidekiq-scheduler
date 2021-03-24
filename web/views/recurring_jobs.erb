@@ -1,4 +1,8 @@
-<h3><%= t('recurring_jobs') %></h3>
+<header class="row">
+  <div class="col-sm-5">
+    <h3><%= t('recurring_jobs') %></h3>
+  </div>
+</header>
 
 <style type="text/css">
     .recurring-jobs .title {
@@ -9,8 +13,7 @@
         font-weight: bold;
     }
 
-    .recurring-jobs .info,
-    .recurring-jobs .description {
+    .recurring-jobs .info, .recurring-jobs .description {
         margin-bottom: 5px;
     }
 
@@ -18,9 +21,23 @@
         margin-bottom: 5px;
     }
 
-    .recurring-jobs .status,
-    .recurring-jobs .description {
+    .recurring-jobs .status, .recurring-jobs .description {
         font-size: 12px;
+    }
+
+    @media (prefers-color-scheme: dark) {
+        .recurring-jobs .list-group li {
+            background-color: #282828;
+            border: 1px solid #555;
+        }
+
+        .recurring-jobs .list-group > li:nth-of-type(odd) {
+            background-color: #333;
+        }
+
+        .recurring-jobs .list-group > li:hover {
+            background-color: #444;
+        }
     }
 </style>
 
