@@ -1,48 +1,70 @@
 <h3><%= t('recurring_jobs') %></h3>
 
-<div class="table_container">
-  <table class="table table-hover table-bordered table-striped table-white">
-    <thead>
-      <tr>
-        <th><%= t('name') %></th>
-        <th><%= t('description') %></th>
-        <th><%= t('interval') %></th>
-        <th><%= t('class') %></th>
-        <th><%= t('queue') %></th>
-        <th><%= t('arguments') %></th>
-        <th><%= t('last_time') %></th>
-        <th><%= t('next_time') %></th>
-        <th></th>
-      </tr>
-    </thead>
+<style type="text/css">
+    .recurring-jobs .title {
+        margin-bottom: 5px;
+    }
 
-    <tbody>
-      <% @presented_jobs.sort_by(&:name).each do |job| %>
-        <tr>
-          <td><%= job.name %></td>
-          <td><%= job['description'] %></td>
-          <td><%= job.interval %></td>
-          <td><%= job['class'] %></td>
-          <td>
-            <a href="<%= root_path %>queues/<%= job.queue %>"><%= job.queue %></a>
-          </td>
-          <td><%= job['args'] %></td>
-          <td><%= job.last_time %></td>
-          <td>
-            <span style="<%= 'text-decoration:line-through' unless job.enabled? %>">
-              <%= job.next_time || t('no_next_time') %>
-            </span>
-          </td>
-          <td class="text-center">
+    .recurring-jobs .title .name {
+        font-weight: bold;
+    }
+
+    .recurring-jobs .info,
+    .recurring-jobs .description {
+        margin-bottom: 5px;
+    }
+
+    .recurring-jobs .actions {
+        margin-bottom: 5px;
+    }
+
+    .recurring-jobs .status,
+    .recurring-jobs .description {
+        font-size: 12px;
+    }
+</style>
+
+<div class="recurring-jobs">
+  <ul class="list-group">
+    <% @presented_jobs.sort_by(&:name).each do |job| %>
+      <li class="list-group-item">
+        <div class="title">
+          <div class="row">
+            <div class="col-xs-6">
+              <span class="name"><%= job.name %></span>
+            </div>
+            <div class="col-xs-6 text-right">
+              <a href="<%= root_path %>queues/<%= job.queue %>"><%= job.queue %></a>
+            </div>
+          </div>
+        </div>
+        <div class="description"><%= job['description'] %></div>
+        <div class="info text-muted">
+          <div class="row">
+            <div class="col-md-4 class"><%= job['class'] %></div>
+            <div class="col-md-4 interval text-left"><%= t('interval') %>: <%= job.interval %></div>
+            <div class="col-md-4 args"><%= t('arguments') %>: <%= job['args'] %></div>
+          </div>
+        </div>
+        <div class="status row text-muted">
+          <div class="col-md-4 actions">
             <a class="btn btn-warn btn-xs" href="<%= root_path %>recurring-jobs/<%= CGI.escape(job.name) %>/enqueue">
               <%= t('enqueue_now') %>
             </a>
-            <a class="btn <%= job.enabled? ? "btn-primary" : "btn-warn"%> btn-xs" href="<%= root_path %>recurring-jobs/<%= CGI.escape(job.name) %>/toggle">
+            <a class="btn <%= job.enabled? ? "btn-primary" : "btn-warn" %> btn-xs" href="<%= root_path %>recurring-jobs/<%= CGI.escape(job.name) %>/toggle">
               <%= job.enabled? ? t('disable') : t('enable') %>
             </a>
-          </td>
-        </tr>
-      <% end %>
-    </tbody>
-  </table>
+          </div>
+          <div class="col-md-4">
+            <span class="last_time"><%= t('last_time') %>: <%= job.last_time %></span>
+          </div>
+          <div class="col-md-4">
+            <span class="next_time text-right" style="<%= 'text-decoration:line-through' unless job.enabled? %>">
+              <%= t('next_time') %>: <%= job.next_time || t('no_next_time') %>
+            </span>
+          </div>
+        </div>
+      </li>
+    <% end %>
+  </ul>
 </div>
