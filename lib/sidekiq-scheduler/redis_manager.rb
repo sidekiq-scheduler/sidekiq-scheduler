@@ -96,7 +96,7 @@ module SidekiqScheduler
     #
     # @return [Boolean] true if the schedules key is set, false otherwise
     def self.schedule_exist?
-      Sidekiq.redis { |r| r.exists(:schedules) }
+      Sidekiq.redis { |r| r.exists?(:schedules) }
     end
 
     # Returns all the schedule changes for a given time range.
