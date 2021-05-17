@@ -2,7 +2,6 @@ require 'rufus/scheduler'
 require 'thwait'
 require 'sidekiq/util'
 require 'json'
-require 'sidekiq-scheduler/manager'
 require 'sidekiq-scheduler/rufus_utils'
 require 'sidekiq-scheduler/redis_manager'
 
