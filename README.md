@@ -272,8 +272,9 @@ Sidekiq.get_schedule
 
 ## Time zones
 
-Note that if you use the cron syntax, this will be interpreted as in the server time zone
-rather than the `config.time_zone` specified in Rails.
+Note that if you use the cron syntax and are not running a Rails app, this will be interpreted in the server time zone.
+
+In a Rails app, [rufus-scheduler](https://github.com/jmettraux/rufus-scheduler) (>= 3.3.3) will use the `config.time_zone` specified in Rails.
 
 You can explicitly specify the time zone that rufus-scheduler will use:
 
