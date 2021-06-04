@@ -179,6 +179,14 @@ Cron, every, and interval types push jobs into sidekiq in a recurrent manner.
     every: '45m'    # Runs every 45 minutes
 ```
 
+The value is parsed by `Fugit::Duration#parse`. It understands quite a number of formats, including human-readable ones:
+
+``` yaml
+    every: 45 minutes
+    every: 2 hours and 30 minutes
+    every: 1.5 hours
+```
+
 `interval` is similar to `every`, the difference between them is that `interval` type schedules the
 next execution after the interval has elapsed counting from its last job enqueue.
 
