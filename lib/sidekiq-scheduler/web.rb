@@ -15,13 +15,13 @@ module SidekiqScheduler
         erb File.read(File.join(VIEW_PATH, 'recurring_jobs.erb'))
       end
 
-      app.get '/recurring-jobs/:name/enqueue' do
+      app.post '/recurring-jobs/:name/enqueue' do
         schedule = Sidekiq.get_schedule(params[:name])
         SidekiqScheduler::Scheduler.instance.enqueue_job(schedule)
         redirect "#{root_path}recurring-jobs"
       end
 
-      app.get '/recurring-jobs/:name/toggle' do
+      app.post '/recurring-jobs/:name/toggle' do
         Sidekiq.reload_schedule!
 
         SidekiqScheduler::Scheduler.instance.toggle_job_enabled(params[:name])

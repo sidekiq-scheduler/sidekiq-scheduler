@@ -93,11 +93,11 @@ describe Sidekiq::Web do
   end
 
   describe '/recurring-jobs/:name/toggle' do
-    subject { get "/recurring-jobs/#{ERB::Util.url_encode(enabled_job_name)}/toggle" }
+    subject { post "/recurring-jobs/#{ERB::Util.url_encode(enabled_job_name)}/toggle" }
 
     it 'toggles job enabled flag' do
       expect { subject }
-        .to change { SidekiqScheduler::Scheduler.job_enabled?(enabled_job_name) }.from(true).to(false)
+      .to change { SidekiqScheduler::Scheduler.job_enabled?(enabled_job_name) }.from(true).to(false)
     end
 
     it 'reloads the schedule' do
@@ -108,7 +108,7 @@ describe Sidekiq::Web do
   end
 
   describe 'GET /recurring-jobs/:name/enqueue' do
-    subject { get "/recurring-jobs/#{ERB::Util.url_encode(job_name)}/enqueue" }
+    subject { post "/recurring-jobs/#{ERB::Util.url_encode(job_name)}/enqueue" }
 
     let(:job_name) { enabled_job_name }
     let(:job) { jobs[job_name] }
