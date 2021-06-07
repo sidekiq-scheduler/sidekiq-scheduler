@@ -179,7 +179,7 @@ Cron, every, and interval types push jobs into sidekiq in a recurrent manner.
     every: '45m'    # Runs every 45 minutes
 ```
 
-The value is parsed by `Fugit::Duration#parse`. It understands quite a number of formats, including human-readable ones:
+The value is parsed by [`Fugit::Duration.parse`](https://github.com/floraison/fugit#fugitduration). It understands quite a number of formats, including human-readable ones:
 
 ``` yaml
     every: 45 minutes
