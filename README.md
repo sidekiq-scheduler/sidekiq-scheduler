@@ -179,6 +179,14 @@ Cron, every, and interval types push jobs into sidekiq in a recurrent manner.
     every: '45m'    # Runs every 45 minutes
 ```
 
+The value is parsed by [`Fugit::Duration.parse`](https://github.com/floraison/fugit#fugitduration). It understands quite a number of formats, including human-readable ones:
+
+``` yaml
+    every: 45 minutes
+    every: 2 hours and 30 minutes
+    every: 1.5 hours
+```
+
 `interval` is similar to `every`, the difference between them is that `interval` type schedules the
 next execution after the interval has elapsed counting from its last job enqueue.
 
@@ -272,8 +280,9 @@ Sidekiq.get_schedule
 
 ## Time zones
 
-Note that if you use the cron syntax, this will be interpreted as in the server time zone
-rather than the `config.time_zone` specified in Rails.
+Note that if you use the cron syntax and are not running a Rails app, this will be interpreted in the server time zone.
+
+In a Rails app, [rufus-scheduler](https://github.com/jmettraux/rufus-scheduler) (>= 3.3.3) will use the `config.time_zone` specified in Rails.
 
 You can explicitly specify the time zone that rufus-scheduler will use:
 
@@ -311,6 +320,19 @@ Non-normal conditions that could push a specific job multiple times are:
  - network / redis latency + 28 (see `MAX_WORK_THREADS` https://github.com/jmettraux/rufus-scheduler/blob/master/lib/rufus/scheduler.rb#L41) or more jobs scheduled within the same network latency window
 
 `every`, `interval` and `in` jobs will be pushed once per host.
+
+## Notes on when sidekiq worker is down
+
+For a `cron`/`at` (and all other) job to be successfully enqueued, you need at least one sidekiq worker with scheduler to be up at that moment. Handling this is up to you and depends on your application.
+
+Possible solutions include:
+- Simply ignoring this fact, if you only run frequent periodic jobs, that can tolerate some increased interval
+- Abstaining from deploys/restarts during time when critical jobs are usually scheduled
+- Making your infrequent jobs idempotent (so that they can be enqueued multiple times but still produce result as if was run once) and scheduling them multiple times to reduce likelihood of not being run
+- Zero downtime deploy for sidekiq workers: keep at least one worker up during whole deploy and only restart/shut it down after when new one has started
+- Running scheduler inside your unicorn/rails processes (if you already have zero downtime deploy set up for these)
+
+Each option has it's own pros and cons. 
 
 ## Sidekiq Web Integration
 

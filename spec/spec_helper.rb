@@ -13,6 +13,8 @@ require 'timecop'
 # Load all support files
 Dir["#{File.dirname(__FILE__)}/support/**/*.rb"].each { |f| require f }
 
+$TESTING = true
+
 RSpec.configure do |config|
 
   config.after(:each) do
