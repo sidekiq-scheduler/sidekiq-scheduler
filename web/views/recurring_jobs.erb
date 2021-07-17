@@ -1,30 +1,6 @@
+<link href="<%= root_path %>stylesheets/recurring_jobs.css" media="screen" rel="stylesheet" type="text/css" />
+
 <h3><%= t('recurring_jobs') %></h3>
-
-<style type="text/css">
-  .recurring-jobs { border-top-left-radius: 4px; border-top-right-radius: 4px; }
-  .recurring-jobs .title { margin-bottom: 5px; }
-  .recurring-jobs .title .name { font-weight: bold;}
-  .recurring-jobs .info,
-  .recurring-jobs .description { margin-bottom: 5px; }
-  .recurring-jobs .actions { margin-bottom: 5px; }
-  .recurring-jobs .status,
-  .recurring-jobs .description { font-size: 12px; }
-  .recurring-jobs .enqueue { margin-bottom: 0.5rem }
-
-  .list-group-item {
-    background-color: #222;
-    color: white;
-    border: 1px solid #555;
-  }
-
-  @media (prefers-color-scheme: dark) {
-    .list-group-item {
-      background-color: #222;
-      color: white;
-      border: 1px solid #555;
-    }
-  }
-</style>
 
 <div class="recurring-jobs">
   <ul class="list-group">
