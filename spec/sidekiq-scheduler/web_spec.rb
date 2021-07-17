@@ -4,7 +4,7 @@ require 'rack/test'
 describe Sidekiq::Web do
   include Rack::Test::Methods
 
-  Sidekiq::Web.use Rack::Session::Cookie, secret: File.read("spec/support/.session.key"), same_site: true, max_age: 86400
+  Sidekiq::Web.use Rack::Session::Cookie, secret: File.read('spec/support/.session.key'), same_site: true, max_age: 86400
 
   let(:app) { Sidekiq::Web }
 

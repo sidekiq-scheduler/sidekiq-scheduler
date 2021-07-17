@@ -1,8 +1,8 @@
 require 'simplecov'
-require 'coveralls'
 
-SimpleCov.start
-Coveralls.wear!
+SimpleCov.start do
+  minimum_coverage 97.91
+end
 
 require 'sidekiq'
 require 'sidekiq/testing'
@@ -11,12 +11,11 @@ require 'json'
 require 'timecop'
 
 # Load all support files
-Dir["#{File.dirname(__FILE__)}/support/**/*.rb"].each { |f| require f }
+Dir["#{File.dirname(__FILE__)}/support/**/*.rb"].sort.each { |f| require f }
 
 $TESTING = true
 
 RSpec.configure do |config|
-
   config.after(:each) do
     Timecop.return
   end
