@@ -14,6 +14,8 @@ Gem::Specification.new do |s|
 
   s.files       = Dir['{lib,web}/**/*'] + %w[MIT-LICENSE Rakefile README.md]
 
+  s.required_ruby_version = '>= 2.5'
+
   s.add_dependency 'sidekiq',         '>= 3'
   s.add_dependency 'redis',           '>= 3', '< 5'
   s.add_dependency 'rufus-scheduler', '~> 3.2'
