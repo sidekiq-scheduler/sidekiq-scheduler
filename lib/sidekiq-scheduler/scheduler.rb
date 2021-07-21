@@ -242,7 +242,15 @@ module SidekiqScheduler
       options = options.merge({ :job => true, :tags => [name] })
 
       rufus_scheduler.send(interval_type, schedule, options) do |job, time|
-        idempotent_job_enqueue(name, time, SidekiqScheduler::Utils.sanitize_job_config(config)) if job_enabled?(name)
+        if job_enabled?(name)
+          conf = SidekiqScheduler::Utils.sanitize_job_config(config)
+
+          if job.is_a?(Rufus::Scheduler::CronJob)
+            idempotent_job_enqueue(name, calc_cron_run_time(job.cron_line, time.utc), conf)
+          else
+            idempotent_job_enqueue(name, time, conf)
+          end
+        end
       end
     end
 
@@ -256,8 +264,8 @@ module SidekiqScheduler
 
     # Retrieves a schedule state
     #
-    # @param name [String] with the schedule's name
-    # @return [Hash] with the schedule's state
+    # @param [String] name The schedule's name
+    # @return [Hash] The schedule's state
     def schedule_state(name)
       state = SidekiqScheduler::RedisManager.get_job_state(name)
 
@@ -266,19 +274,19 @@ module SidekiqScheduler
 
     # Saves a schedule state
     #
-    # @param name [String] with the schedule's name
-    # @param name [Hash] with the schedule's state
+    # @param [String] name The schedule's name
+    # @param [Hash] state The schedule's state
     def set_schedule_state(name, state)
       SidekiqScheduler::RedisManager.set_job_state(name, state)
     end
 
     # Adds a Hash with schedule metadata as the last argument to call the worker.
-    # It currently returns the schedule time as a Float number representing the milisencods
+    # It currently returns the schedule time as a Float number representing the milliseconds
     # since epoch.
     #
     # @example with hash argument
     #   arguments_with_metadata({value: 1}, scheduled_at: Time.now)
-    #   #=> [{value: 1}, {scheduled_at: <miliseconds since epoch>}]
+    #   #=> [{value: 1}, {scheduled_at: <milliseconds since epoch>}]
     #
     # @param args [Array|Hash]
     # @param metadata [Hash]
@@ -351,6 +359,22 @@ module SidekiqScheduler
         yield
       rescue StandardError => e
         Sidekiq.logger.info "#{e.class.name}: #{e.message}"
+      end
+    end
+
+    def calc_cron_run_time(cron, time)
+      time = time.round # remove sub seconds to prevent rounding errors.
+      next_t = cron.next_time(time).utc
+      previous_t = cron.previous_time(time).utc
+      next_diff = next_t - time
+      previous_diff = time - previous_t
+
+      if next_diff == previous_diff
+        time
+      elsif next_diff > previous_diff
+        time - previous_diff
+      else
+        time + next_diff
       end
     end
   end
