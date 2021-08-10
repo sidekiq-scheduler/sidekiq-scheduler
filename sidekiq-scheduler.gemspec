@@ -24,19 +24,13 @@ Gem::Specification.new do |s|
   s.add_dependency 'e2mmap'
 
   s.add_development_dependency 'rake',                    '~> 10.0'
-  s.add_development_dependency 'timecop',                 '~> 0'
-  s.add_development_dependency 'mocha',                   '~> 0'
+  s.add_development_dependency 'timecop'
+  s.add_development_dependency 'mocha'
   s.add_development_dependency 'rspec'
   s.add_development_dependency 'mock_redis',              '~> 0.28.0'
-  s.add_development_dependency 'simplecov',               '~> 0'
+  s.add_development_dependency 'simplecov'
   s.add_development_dependency 'byebug'
-  
-  if RUBY_VERSION >= '2.2.2'
-    s.add_development_dependency 'activejob'
-  else
-    s.add_development_dependency 'activejob', '< 5'
-  end
-
+  s.add_development_dependency 'activejob'
   s.add_development_dependency 'rack-test'
   s.add_development_dependency 'sinatra'
 end
