@@ -1,6 +1,6 @@
 require 'sidekiq/web' unless defined?(Sidekiq::Web)
 
-ASSETS_PATH = File.expand_path('../../../../web/assets', __dir__)
+ASSETS_PATH = File.expand_path('../../../web/assets', __dir__)
 
 Sidekiq::Web.register(SidekiqScheduler::Web)
 Sidekiq::Web.tabs['recurring_jobs'] = 'recurring-jobs'
