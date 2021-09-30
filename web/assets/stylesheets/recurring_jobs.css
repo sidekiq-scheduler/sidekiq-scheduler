@@ -9,9 +9,9 @@
 .recurring-jobs .enqueue { margin-bottom: 0.5rem }
 
 .list-group-item {
-  background-color: #222;
-  color: white;
-  border: 1px solid #555;
+  background-color: #f3f3f3;
+  color: #585454;
+  border: 1px solid rgba(0, 0, 0, 0.1);
 }
 
 @media (prefers-color-scheme: dark) {
