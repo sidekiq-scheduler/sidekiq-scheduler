@@ -5,8 +5,8 @@ require 'sidekiq-scheduler/version'
 Gem::Specification.new do |s|
   s.name        = 'sidekiq-scheduler'
   s.version     = SidekiqScheduler::VERSION
-  s.authors     = ['Morton Jonuschat', 'Moove-it']
-  s.email       = ['sidekiq-scheduler@moove-it.com']
+  s.authors     = ['Morton Jonuschat', 'Moove-it', 'Marcelo Lauxen']
+  s.email       = ['sidekiq-scheduler@moove-it.com', 'marcelolauxen16@gmail.com']
   s.license     = 'MIT'
   s.homepage    = 'https://moove-it.github.io/sidekiq-scheduler/'
   s.summary     = 'Light weight job scheduling extension for Sidekiq'

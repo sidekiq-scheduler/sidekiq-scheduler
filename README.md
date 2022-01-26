@@ -408,6 +408,7 @@ MIT License
 
 ## Copyright
 
-Copyright 2013 - 2018 Moove-IT.
-Copyright 2012 Morton Jonuschat.
-Some parts copyright 2010 Ben VandenBos.
+- Copyright 2021 - 2022 Marcelo Lauxen.
+- Copyright 2013 - 2022 Moove-IT.
+- Copyright 2012 Morton Jonuschat.
+- Some parts copyright 2010 Ben VandenBos.
