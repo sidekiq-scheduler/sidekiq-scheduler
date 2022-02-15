@@ -321,7 +321,7 @@ Non-normal conditions that could push a specific job multiple times are:
 
 `every`, `interval` and `in` jobs will be pushed once per host.
 
-## Notes on when sidekiq worker is down
+## Notes on when Sidekiq worker is down
 
 For a `cron`/`at` (and all other) job to be successfully enqueued, you need at least one sidekiq worker with scheduler to be up at that moment. Handling this is up to you and depends on your application.
 
@@ -333,6 +333,52 @@ Possible solutions include:
 - Running scheduler inside your unicorn/rails processes (if you already have zero downtime deploy set up for these)
 
 Each option has it's own pros and cons. 
+
+## Notes on when running multiple Sidekiq processors on the same Redis
+
+This gem stores the configured schedule in Redis on boot. It's used, primarily,
+to display in the Web Integration, and allow you to interact with that schedule
+via that integration.
+
+If you're running multiple Sidekiq processes on the same Redis namespace with
+different configurations, **you'll want to explicitly _disable_ Sidekiq
+Scheduler** for the other processes not responsible for the schedule. If you
+don't, schedule that gets stored in Redis will be determined by the last booted
+sidekiq process.
+
+To illustrate what we mean:
+
+Say you have one process with the schedule:
+```yaml
+# e.g., config/sidekiq.yml
+
+:queues:
+  - default
+:schedule:
+  do_something_every_minute:
+    class: DoSomethingJob
+    args: matey
+    queue: :scheduler
+    cron: '0 * * * * * America/Los_Angeles'
+```
+
+And a separate separate configured process without one:
+
+```yaml
+# e.g., config/sidekiq_other.yml
+:queues:
+  - scheduler
+
+## NOTE Disable the Scheduler
+:enabled: false
+```
+
+Be **sure** to include the `:enabled: false` top-level key to avoid any
+possibility of the `schedules` definition being wiped by the second Sidekiq
+process.
+
+See https://github.com/moove-it/sidekiq-scheduler/issues/361 for a more detailed
+explanation.
 
 ## Sidekiq Web Integration
 
