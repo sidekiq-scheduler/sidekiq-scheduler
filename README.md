@@ -334,17 +334,13 @@ Possible solutions include:
 
 Each option has it's own pros and cons. 
 
-## Notes on when running multiple Sidekiq processors on the same Redis
+## Notes when running multiple Sidekiq processors on the same Redis
 
-This gem stores the configured schedule in Redis on boot. It's used, primarily,
-to display in the Web Integration, and allow you to interact with that schedule
-via that integration.
+### TL;DR
 
-If you're running multiple Sidekiq processes on the same Redis namespace with
-different configurations, **you'll want to explicitly _disable_ Sidekiq
-Scheduler** for the other processes not responsible for the schedule. If you
-don't, schedule that gets stored in Redis will be determined by the last booted
-sidekiq process.
+Be **sure** to include the `:enabled: false` top-level key on any additional
+configurations to avoid any possibility of the `schedules` definition being
+wiped by the second Sidekiq process.
 
 To illustrate what we mean:
 
@@ -363,7 +359,6 @@ Say you have one process with the schedule:
 ```
 
 And a separate separate configured process without one:
-
 ```yaml
 # e.g., config/sidekiq_other.yml
 :queues:
@@ -373,12 +368,19 @@ And a separate separate configured process without one:
 :enabled: false
 ```
 
-Be **sure** to include the `:enabled: false` top-level key to avoid any
-possibility of the `schedules` definition being wiped by the second Sidekiq
-process.
+### Details
 
-See https://github.com/moove-it/sidekiq-scheduler/issues/361 for a more detailed
-explanation.
+This gem stores the configured schedule in Redis on boot. It's used, primarily,
+to display in the Web Integration, and allow you to interact with that schedule
+via that integration.
+
+If you're running multiple Sidekiq processes on the same Redis namespace with
+different configurations, **you'll want to explicitly _disable_ Sidekiq
+Scheduler** for the other processes not responsible for the schedule. If you
+don't, the last booted Sidekiq processes' schedule will be what is stored in
+Redis.
+
+See https://github.com/moove-it/sidekiq-scheduler/issues/361 for a more details.
 
 ## Sidekiq Web Integration
 
