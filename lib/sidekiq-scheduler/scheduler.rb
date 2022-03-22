@@ -161,7 +161,7 @@ module SidekiqScheduler
         config['args'] = arguments_with_metadata(config['args'], scheduled_at: time.to_f)
       end
 
-      if active_job_enqueue?(config['class'])
+      if SidekiqScheduler::Utils.active_job_enqueue?(config['class'])
         SidekiqScheduler::Utils.enqueue_with_active_job(config)
       else
         SidekiqScheduler::Utils.enqueue_with_sidekiq(config)
@@ -305,17 +305,6 @@ module SidekiqScheduler
     # @return [Boolean]
     def enabled_queue?(job_queue, queues)
       queues.empty? || queues.include?(job_queue)
-    end
-
-    # Returns true if the enqueuing needs to be done for an ActiveJob
-    #  class false otherwise.
-    #
-    # @param [Class] klass the class to check is decendant from ActiveJob
-    #
-    # @return [Boolean]
-    def active_job_enqueue?(klass)
-      klass.is_a?(Class) && defined?(ActiveJob::Enqueuing) &&
-        klass.included_modules.include?(ActiveJob::Enqueuing)
     end
 
     # Convert the given arguments in the format expected to be enqueued.
