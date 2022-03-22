@@ -140,7 +140,9 @@ module SidekiqScheduler
     def infer_queue(klass)
       klass = try_to_constantize(klass)
 
-      if klass.respond_to?(:sidekiq_options)
+      # ActiveJob uses queue_as when the job is created
+      # to determine the queue
+      if klass.respond_to?(:sidekiq_options) && !SidekiqScheduler::Utils.active_job_enqueue?(klass)
         klass.sidekiq_options['queue']
       end
     end

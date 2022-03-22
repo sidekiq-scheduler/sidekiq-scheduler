@@ -68,6 +68,17 @@ module SidekiqScheduler
       end
     end
 
+    # Returns true if the enqueuing needs to be done for an ActiveJob
+    #  class false otherwise.
+    #
+    # @param [Class] klass the class to check is decendant from ActiveJob
+    #
+    # @return [Boolean]
+    def self.active_job_enqueue?(klass)
+      klass.is_a?(Class) && defined?(ActiveJob::Enqueuing) &&
+        klass.included_modules.include?(ActiveJob::Enqueuing)
+    end
+
     # Enqueues the job using the Sidekiq client.
     #
     # @param [Hash] config The job configuration
