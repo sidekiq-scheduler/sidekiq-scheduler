@@ -67,6 +67,17 @@ describe SidekiqScheduler::Schedule do
         expect(SidekiqScheduler::Store.job_from_redis(job_id)['queue']).to eq('system')
       end
     end
+
+    context 'when job is an ActiveJob job' do
+      let(:job_id) { 'email_sender' }
+      let(:schedule) { { 'class' => 'EmailSender' } }
+
+      it 'does not set the queue name' do
+        subject
+
+        expect(SidekiqScheduler::Store.job_from_redis(job_id)['queue']).to eq(nil)
+      end
+    end
   end
 
   describe '.set_schedule' do

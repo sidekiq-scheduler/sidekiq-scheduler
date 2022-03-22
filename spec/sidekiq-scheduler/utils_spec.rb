@@ -237,23 +237,42 @@ describe SidekiqScheduler::Utils do
   end
 
   describe '.enqueue_with_active_job' do
-    subject { described_class.enqueue_with_active_job(job) }
+    subject { described_class.enqueue_with_active_job(config) }
 
-    let(:job) { { 'class' => EmailSender, 'args'  => [] } }
+    let(:config) { { 'class' => job, 'args' => args, 'queue' => queue } }
+    let(:job) { EmailSender }
+    let(:args) { [] }
+    let(:queue) { nil }
 
     it 'with no args' do
       expect(EmailSender).to receive(:new).with(no_args).twice.and_call_original
+
       subject
+
+      expect(subject).to have_attributes(arguments: args, queue_name: 'email')
     end
 
     context 'with args' do
-      let(:job) { { 'class' => AddressUpdater, 'args'  => [100] } }
+      let(:job) { AddressUpdater }
+      let(:args) { [100] }
 
       it 'should be correctly enqueued' do
         expect(AddressUpdater).to receive(:new).with(100).and_call_original
         expect(AddressUpdater).to receive(:new).with(no_args).and_call_original
 
+        expect(subject).to have_attributes(arguments: args, queue_name: 'default')
+      end
+    end
+
+    context 'with queue name set by config' do
+      let(:queue) { 'critical' }
+
+      it 'should be correctly enqueued' do
+        expect(EmailSender).to receive(:new).with(no_args).twice.and_call_original
+
         subject
+
+        expect(subject).to have_attributes(arguments: args, queue_name: queue)
       end
     end
   end
