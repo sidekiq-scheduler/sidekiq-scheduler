@@ -16,18 +16,18 @@ Gem::Specification.new do |s|
 
   s.required_ruby_version = '>= 2.5'
 
-  s.add_dependency 'sidekiq',         '>= 3'
-  s.add_dependency 'redis',           '>= 3', '< 5'
+  s.add_dependency 'sidekiq', '>= 3'
+  s.add_dependency 'redis', '>= 4.2.0'
   s.add_dependency 'rufus-scheduler', '~> 3.2'
-  s.add_dependency 'tilt',            '>= 1.4.0'
+  s.add_dependency 'tilt', '>= 1.4.0'
   s.add_dependency 'thwait'
   s.add_dependency 'e2mmap'
 
-  s.add_development_dependency 'rake',                    '~> 10.0'
+  s.add_development_dependency 'rake', '~> 10.0'
   s.add_development_dependency 'timecop'
   s.add_development_dependency 'mocha'
   s.add_development_dependency 'rspec'
-  s.add_development_dependency 'mock_redis',              '~> 0.28.0'
+  s.add_development_dependency 'mock_redis', '~> 0.28.0'
   s.add_development_dependency 'simplecov'
   s.add_development_dependency 'byebug'
   s.add_development_dependency 'activejob'

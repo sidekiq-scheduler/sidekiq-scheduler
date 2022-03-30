@@ -1,6 +1,5 @@
 module SidekiqScheduler
   module Store
-
     def self.clean
       Sidekiq.redis(&:flushall)
     end
@@ -58,15 +57,8 @@ module SidekiqScheduler
       Sidekiq.redis { |r| r.zrange(zset_key, from, to) }
     end
 
-    def self.exists(key)
-      Sidekiq.redis do |r|
-        case r.exists(key)
-        when true, 1
-          true
-        else
-          false
-        end
-      end
+    def self.exists?(key)
+      Sidekiq.redis { |r| r.exists?(key) }
     end
 
     def self.hexists(hash_key, field_key)

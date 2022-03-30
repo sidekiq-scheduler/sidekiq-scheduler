@@ -262,7 +262,7 @@ describe SidekiqScheduler::RedisManager do
     it "shouldn't remove the schedules_changed if it's sorted set" do
       subject
 
-      expect(SidekiqScheduler::Store.exists('schedules_changed')).to be_truthy
+      expect(SidekiqScheduler::Store.exists?('schedules_changed')).to be true
     end
 
     context 'when schedules_changed is not a sorted set' do
@@ -274,7 +274,7 @@ describe SidekiqScheduler::RedisManager do
       it 'should remove the schedules_changed set' do
         subject
 
-        expect(SidekiqScheduler::Store.exists('schedules_changed')).to be_falsey
+        expect(SidekiqScheduler::Store.exists?('schedules_changed')).to be false
       end
     end
   end
@@ -298,7 +298,7 @@ describe SidekiqScheduler::RedisManager do
       subject
 
       Timecop.travel(SidekiqScheduler::RedisManager::REGISTERED_JOBS_THRESHOLD_IN_SECONDS) do
-        expect(SidekiqScheduler::Store.exists('sidekiq-scheduler:pushed:some_job')).to be_falsey
+        expect(SidekiqScheduler::Store.exists?('sidekiq-scheduler:pushed:some_job')).to be false
       end
     end
 
