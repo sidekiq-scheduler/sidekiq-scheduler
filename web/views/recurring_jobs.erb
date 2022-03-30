@@ -5,7 +5,7 @@
 <div class="recurring-jobs">
   <ul class="list-group">
     <% @presented_jobs.each do |job| %>
-      <li class="list-group-item">
+      <li class="list-group-item <%= !job.enabled? && "list-group-item-disabled" %>">
         <div class="title">
           <div class="row">
             <div class="col-xs-6">
