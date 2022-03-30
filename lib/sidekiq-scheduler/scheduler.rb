@@ -1,5 +1,4 @@
 require 'rufus/scheduler'
-require 'thwait'
 require 'sidekiq/util'
 require 'json'
 require 'sidekiq-scheduler/rufus_utils'
