@@ -4,7 +4,8 @@ describe SidekiqScheduler::Scheduler do
       enabled: true,
       dynamic: false,
       dynamic_every: '5s',
-      listened_queues_only: false
+      listened_queues_only: false,
+      rufus_scheduler_options: { max_work_threads: 5 }
     }
   end
   let(:instance) { described_class.new(scheduler_options) }
@@ -30,7 +31,8 @@ describe SidekiqScheduler::Scheduler do
         enabled: true,
         dynamic: false,
         dynamic_every: '5s',
-        listened_queues_only: false
+        listened_queues_only: false,
+        rufus_scheduler_options: { max_work_threads: 5 }
       }
     end
 
@@ -42,6 +44,12 @@ describe SidekiqScheduler::Scheduler do
 
     it { expect(subject.listened_queues_only).to be_falsey }
 
+    it { expect(subject.rufus_scheduler_options).to eql({ max_work_threads: 5 }) }
+    
+    context 'when passing rufus_scheduler_options' do
+      it { expect(instance.rufus_scheduler.max_work_threads).to eql(5) }
+    end
+
     context 'when passing no options' do
       subject { described_class.new }
 
@@ -52,6 +60,8 @@ describe SidekiqScheduler::Scheduler do
       it { expect(subject.dynamic_every).to be_nil }
 
       it { expect(subject.listened_queues_only).to be_nil }
+
+      it { expect(subject.rufus_scheduler_options).to be_empty }
     end
   end
 

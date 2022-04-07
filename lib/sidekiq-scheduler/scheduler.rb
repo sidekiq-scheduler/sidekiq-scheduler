@@ -25,6 +25,9 @@ module SidekiqScheduler
     # Set to schedule jobs only when will be pushed to queues listened by sidekiq
     attr_accessor :listened_queues_only
 
+    # Set custom options for rufus scheduler, like max_work_threads.
+    attr_accessor :rufus_scheduler_options
+
     class << self
 
       def instance
@@ -46,6 +49,7 @@ module SidekiqScheduler
       self.dynamic = options[:dynamic]
       self.dynamic_every = options[:dynamic_every]
       self.listened_queues_only = options[:listened_queues_only]
+      self.rufus_scheduler_options = options[:rufus_scheduler_options] || {}
     end
 
     # the Rufus::Scheduler jobs that are scheduled
@@ -165,14 +169,6 @@ module SidekiqScheduler
       else
         SidekiqScheduler::Utils.enqueue_with_sidekiq(config)
       end
-    end
-
-    def rufus_scheduler_options
-      @rufus_scheduler_options ||= {}
-    end
-
-    def rufus_scheduler_options=(options)
-      @rufus_scheduler_options = options
     end
 
     def rufus_scheduler
