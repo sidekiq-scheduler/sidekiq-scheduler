@@ -100,6 +100,7 @@ Available options are:
 :enabled: <enables scheduler if true [true by default]>
 :scheduler:
   :listened_queues_only: <push jobs whose queue is being listened by sidekiq [false by default]>
+:rufus_scheduler_options: <Set custom options for rufus scheduler, like max_work_threads [{} by default]>
 ```
 
 ## Schedule configuration
@@ -304,10 +305,16 @@ If you're configuring your own Redis connection pool, you need to make sure the 
 
 That's a minimum of `concurrency` + 5 (per the [Sidekiq wiki](https://github.com/mperham/sidekiq/wiki/Using-Redis#complete-control)) + `Rufus::Scheduler::MAX_WORK_THREADS` (28 as of this writing; per the [Rufus README](https://github.com/jmettraux/rufus-scheduler#max_work_threads)), for a total of 58 with the default `concurrency` of 25.
 
-You can also override the thread pool size in Rufus Scheduler by setting e.g.:
+You can also override the thread pool size in Rufus Scheduler by setting the following in your `sidekiq.yml` config:
 
-```
-SidekiqScheduler::Scheduler.instance.rufus_scheduler_options = { max_work_threads: 5 }
+```yaml
+---
+...
+
+rufus_scheduler_options:
+  max_work_threads: 5
+
+...
 ```
 
 ## Notes about running on Multiple Hosts
