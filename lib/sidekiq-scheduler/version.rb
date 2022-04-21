@@ -1,5 +1,3 @@
 module SidekiqScheduler
-
-  VERSION = '3.1.1'
-
+  VERSION = "4.0.0.alpha1"
 end
