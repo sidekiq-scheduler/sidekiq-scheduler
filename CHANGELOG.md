@@ -1,8 +1,11 @@
-# Unreleased
+# 4.0.0.alpha1
 
-- Fix deprecated uses of Redis#pipelined #357
-- Add docs for running multi-sidekiq configurations #362
-- Prevent sidekiq_options from overriding ActiveJob queue settings #367
-- Highlight disabled jobs #369
-- Require redis 4.2.0 #370
-- Fixes redis deprecation warning regarding `exists` #370
+- [**FIX**] Fix deprecated uses of Redis#pipelined [#357](https://github.com/moove-it/sidekiq-scheduler/pull/357)
+- [**DOCS**] Add docs for running multi-sidekiq configurations [#362](https://github.com/moove-it/sidekiq-scheduler/pull/362)
+- [**FIX**] Prevent sidekiq_options from overriding ActiveJob queue settings [#367](https://github.com/moove-it/sidekiq-scheduler/pull/367)
+- [**ENHANCEMENT**] Highlight disabled jobs [#369](https://github.com/moove-it/sidekiq-scheduler/pull/369)
+- [**BREAKING CHANGE**] Require redis 4.2.0 [#370](https://github.com/moove-it/sidekiq-scheduler/pull/370)
+- [**FIX**] Fixes redis deprecation warning regarding `exists` [#370](https://github.com/moove-it/sidekiq-scheduler/pull/370)
+- [**BREAKING CHANGE**] Remove dependecy on thwait and e2mmap [#371](https://github.com/moove-it/sidekiq-scheduler/pull/371)
+- Support Ruby 3.1 [#373](https://github.com/moove-it/sidekiq-scheduler/pull/373)
+- [**BREAKING CHANGE**] Set rufus_scheduler_options via sidekiq.yml file as configuration option [#375](https://github.com/moove-it/sidekiq-scheduler/pull/375)
