@@ -1,4 +1,28 @@
-<link href="<%= root_path %>stylesheets/recurring_jobs.css" media="screen" rel="stylesheet" type="text/css" />
+<% if Sidekiq::VERSION >= '6.0.0' %>
+  <link href="<%= root_path %>stylesheets/recurring_jobs.css" media="screen" rel="stylesheet" type="text/css" />
+<% else %>
+  <style>
+    .recurring-jobs { border-top-left-radius: 4px; border-top-right-radius: 4px; }
+    .recurring-jobs .title { margin-bottom: 5px; }
+    .recurring-jobs .title .name { font-weight: bold;}
+    .recurring-jobs .info,
+    .recurring-jobs .description { margin-bottom: 5px; }
+    .recurring-jobs .actions { margin-bottom: 5px; }
+    .recurring-jobs .status,
+    .recurring-jobs .description { font-size: 12px; }
+    .recurring-jobs .enqueue { margin-bottom: 0.5rem }
+
+    .list-group-item {
+      background-color: #f3f3f3;
+      color: #585454;
+      border: 1px solid rgba(0, 0, 0, 0.1);
+    }
+
+    .list-group-item-disabled {
+      background-color: #f3d3d3;
+    }
+  </style>
+<% end %>
 
 <h3><%= t('recurring_jobs') %></h3>
 
