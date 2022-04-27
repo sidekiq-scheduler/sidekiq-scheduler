@@ -1,3 +1,5 @@
+# 3.2.1
+  - Fix CSS not loading on Rails app when Sidekiq < 6 https://github.com/moove-it/sidekiq-scheduler/pull/377
 # 3.2.0
 
 - Fix deprecated uses of Redis#pipelined https://github.com/moove-it/sidekiq-scheduler/pull/357
