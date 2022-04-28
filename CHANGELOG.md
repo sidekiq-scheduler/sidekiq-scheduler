@@ -1,4 +1,4 @@
-# Unreleased
+# 4.0.0
 
 - [**FIX**] Fix CSS not loading on Rails app when Sidekiq < 6 [#377](https://github.com/moove-it/sidekiq-scheduler/pull/377)
 - [**BREAKING CHANGE**] Drop support for Sidekiq 3 [f15e7ca1a5f3ab5b6fd3d7664d67723dba1fa1f1](https://github.com/moove-it/sidekiq-scheduler/commit/f15e7ca1a5f3ab5b6fd3d7664d67723dba1fa1f1)
