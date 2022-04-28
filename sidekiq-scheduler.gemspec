@@ -12,11 +12,11 @@ Gem::Specification.new do |s|
   s.summary     = 'Light weight job scheduling extension for Sidekiq'
   s.description = 'Light weight job scheduling extension for Sidekiq that adds support for queueing jobs in a recurring way.'
 
-  s.files       = Dir['{lib,web}/**/*'] + %w[MIT-LICENSE Rakefile README.md]
+  s.files       = Dir['{lib,web}/**/*'] + %w[MIT-LICENSE Rakefile README.md CHANGELOG.md]
 
   s.required_ruby_version = '>= 2.5'
 
-  s.add_dependency 'sidekiq', '>= 3'
+  s.add_dependency 'sidekiq', '>= 4'
   s.add_dependency 'redis', '>= 4.2.0'
   s.add_dependency 'rufus-scheduler', '~> 3.2'
   s.add_dependency 'tilt', '>= 1.4.0'
