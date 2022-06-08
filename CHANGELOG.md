@@ -1,3 +1,7 @@
+# 4.0.1
+
+- [**FIX**] Add support for sidekiq 6.5 [#382](https://github.com/moove-it/sidekiq-scheduler/pull/382)
+
 # 4.0.0
 
 - [**FIX**] Fix CSS not loading on Rails app when Sidekiq < 6 [#377](https://github.com/moove-it/sidekiq-scheduler/pull/377)
