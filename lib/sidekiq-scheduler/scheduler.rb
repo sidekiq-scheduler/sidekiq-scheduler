@@ -1,10 +1,13 @@
 require 'rufus/scheduler'
+require 'sidekiq/component'
 require 'json'
 require 'sidekiq-scheduler/rufus_utils'
 require 'sidekiq-scheduler/redis_manager'
 
 module SidekiqScheduler
   class Scheduler
+    extend Sidekiq::Component
+
     # We expect rufus jobs to have #params
     Rufus::Scheduler::Job.module_eval do
       alias_method :params, :opts

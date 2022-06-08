@@ -1,5 +1,7 @@
 require 'redis'
 
+require 'sidekiq/component'
+
 require 'sidekiq-scheduler/schedule'
 require 'sidekiq-scheduler/scheduler'
 
@@ -10,6 +12,8 @@ module SidekiqScheduler
   # from Redis onto the work queues
   #
   class Manager
+    include Sidekiq::Component
+    
     DEFAULT_SCHEDULER_OPTIONS = {
       enabled: true,
       dynamic: false,
