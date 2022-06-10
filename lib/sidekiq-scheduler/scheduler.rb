@@ -284,7 +284,11 @@ module SidekiqScheduler
     end
 
     def sidekiq_queues
-      Sidekiq.options[:queues].map(&:to_s)
+      if SIDEKIQ_GTE_6_5_0
+        Sidekiq[:queues].map(&:to_s)
+      else
+        Sidekiq.options[:queues].map(&:to_s)
+      end
     end
 
     # Returns true if a job's queue is included in the array of queues
