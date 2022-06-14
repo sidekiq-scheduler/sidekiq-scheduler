@@ -15,7 +15,7 @@ Sidekiq.configure_server do |config|
     # schedules_changed's type was changed from SET to ZSET, so we remove old versions at startup
     SidekiqScheduler::RedisManager.clean_schedules_changed
 
-    # Accessing the raw @config hash through .options is depriated in 6.5 and to be removed in 7.0
+    # Accessing the raw @config hash through .options is deprecated in 6.5 and to be removed in 7.0
     config_options = SIDEKIQ_GTE_6_5_0 ? Sidekiq.instance_variable_get(:@config) : config.options
 
     schedule_manager = SidekiqScheduler::Manager.new(config_options)
