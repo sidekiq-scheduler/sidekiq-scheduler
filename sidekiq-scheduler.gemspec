@@ -8,7 +8,7 @@ Gem::Specification.new do |s|
   s.authors     = ['Morton Jonuschat', 'Moove-it', 'Marcelo Lauxen']
   s.email       = ['sidekiq-scheduler@moove-it.com', 'marcelolauxen16@gmail.com']
   s.license     = 'MIT'
-  s.homepage    = 'https://moove-it.github.io/sidekiq-scheduler/'
+  s.homepage    = 'https://sidekiq-scheduler.github.io/sidekiq-scheduler/'
   s.summary     = 'Light weight job scheduling extension for Sidekiq'
   s.description = 'Light weight job scheduling extension for Sidekiq that adds support for queueing jobs in a recurring way.'
 
