@@ -1,8 +1,8 @@
 # sidekiq-scheduler
 
 <p align="center">
-  <a href="http://moove-it.github.io/sidekiq-scheduler/">
-    <img src="https://moove-it.github.io/sidekiq-scheduler/images/small-logo.svg" width="468px" height="200px" alt="Sidekiq Scheduler" />
+  <a href="http://sidekiq-scheduler.github.io/sidekiq-scheduler/">
+    <img src="https://sidekiq-scheduler.github.io/sidekiq-scheduler/images/small-logo.svg" width="468px" height="200px" alt="Sidekiq Scheduler" />
   </a>
 </p>
 
@@ -10,19 +10,7 @@
   <a href="https://badge.fury.io/rb/sidekiq-scheduler">
     <img src="https://badge.fury.io/rb/sidekiq-scheduler.svg" alt="Gem Version">
   </a>
-  <a href="https://codeclimate.com/github/moove-it/sidekiq-scheduler">
-    <img src="https://codeclimate.com/github/moove-it/sidekiq-scheduler/badges/gpa.svg" alt="Code Climate">
-  </a>
-  <a href="https://travis-ci.org/moove-it/sidekiq-scheduler">
-    <img src="https://api.travis-ci.org/moove-it/sidekiq-scheduler.svg?branch=master" alt="Build Status">
-  </a>
-  <a href="https://coveralls.io/github/moove-it/sidekiq-scheduler?branch=master">
-    <img src="https://coveralls.io/repos/moove-it/sidekiq-scheduler/badge.svg?branch=master&service=github" alt="Coverage Status">
-  </a>
-  <a href="https://inch-ci.org/github/moove-it/sidekiq-scheduler">
-    <img src="https://inch-ci.org/github/moove-it/sidekiq-scheduler.svg?branch=master" alt="Documentation Coverage">
-  </a>
-  <a href="http://www.rubydoc.info/github/moove-it/sidekiq-scheduler">
+  <a href="http://www.rubydoc.info/github/sidekiq-scheduler/sidekiq-scheduler">
     <img src="https://img.shields.io/badge/yard-docs-blue.svg" alt="Documentation">
   </a>
 </p>
@@ -30,7 +18,7 @@
 `sidekiq-scheduler` is an extension to [Sidekiq](http://github.com/mperham/sidekiq) that
 pushes jobs in a scheduled way, mimicking cron utility.
 
-__Note:__ Current branch contains work of the V4 release, if you are looking for version 2.2.* or 3.*, go to [2.2-stable branch](https://github.com/moove-it/sidekiq-scheduler/tree/2.2-stable) / [v3-stable](https://github.com/moove-it/sidekiq-scheduler/tree/v3-stable).
+__Note:__ Current branch contains work of the v4 release, if you are looking for version 2.2.* or 3.*, go to [2.2-stable branch](https://github.com/sidekiq-scheduler/sidekiq-scheduler/tree/2.2-stable) / [v3-stable](https://github.com/sidekiq-scheduler/sidekiq-scheduler/tree/v3-stable).
 
 ## Installation
 
@@ -387,7 +375,7 @@ Scheduler** for the other processes not responsible for the schedule. If you
 don't, the last booted Sidekiq processes' schedule will be what is stored in
 Redis.
 
-See https://github.com/moove-it/sidekiq-scheduler/issues/361 for a more details.
+See https://github.com/sidekiq-scheduler/sidekiq-scheduler/issues/361 for a more details.
 
 ## Sidekiq Web Integration
 
@@ -402,7 +390,7 @@ require 'sidekiq-scheduler/web'
 run Sidekiq::Web
 ```
 
-![Sidekiq Web Integration](https://github.com/moove-it/sidekiq-scheduler/raw/master/images/recurring-jobs-ui-tab.png)
+![Sidekiq Web Integration](https://github.com/sidekiq-scheduler/sidekiq-scheduler/raw/master/images/recurring-jobs-ui-tab.png)
 
 ## ActiveJob integration
 
@@ -426,7 +414,7 @@ To see your updated schedule, be sure to reload Spring by stopping it prior to b
 
 Run `spring stop` to stop Spring.
 
-For more information, see [this issue](https://github.com/Moove-it/sidekiq-scheduler/issues/35#issuecomment-48067183) and [Spring's README](https://github.com/rails/spring/blob/master/README.md).
+For more information, see [this issue](https://github.com/sidekiq-scheduler/sidekiq-scheduler/issues/35#issuecomment-48067183) and [Spring's README](https://github.com/rails/spring/blob/master/README.md).
 
 
 ## Manage tasks from Unicorn/Rails server
