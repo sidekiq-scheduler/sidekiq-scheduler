@@ -23,7 +23,7 @@ The following guide set some guidelines to contribute with Sidekiq-Scheduler, pl
 
 - Before creating a PR, create an issue related to what you are fixing / improving
 - Add a brief description and a link to the related issue
-- Follow our [Commit Message Style Guide](https://github.com/moove-it/guides/tree/master/style/commit-message#commit-message-style-guide)
+- Follow our [Commit Message Style Guide](https://github.com/sidekiq-scheduler/guides/tree/master/style/commit-message#commit-message-style-guide)
 - Use a correct branch-naming:
   - For features use: ```feature/add-support-for...```
   - For bug fixes use: ```fix/handle-corner-case-...```
