@@ -1,6 +1,6 @@
 # Github page for sidekiq-scheduler
 
-Visit http://moove-it.github.io/sidekiq-scheduler/
+Visit https://sidekiq-scheduler.github.io/sidekiq-scheduler/
 
 ## Install dependencies
 
@@ -32,4 +32,4 @@ cd app
 ./build.sh
 ```
 
-Then check by going to http://moove-it.github.io/sidekiq-scheduler/
+Then check by going to https://sidekiq-scheduler.github.io/sidekiq-scheduler/
