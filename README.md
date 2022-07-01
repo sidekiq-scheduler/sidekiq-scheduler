@@ -316,6 +316,47 @@ Non-normal conditions that could push a specific job multiple times are:
 
 `every`, `interval` and `in` jobs will be pushed once per host.
 
+### Suggested setup for Multiple Hosts using Heroku and Rails
+
+Configuration options `every`, `interval` and `in` will push once per host. This may be undesirable. One way to achieve single jobs per the schedule would be to manually designate a host as the scheduler. The goal is to have a single scheduler process running across all your hosts. 
+
+This can be achieved by using an environment variable and controlling the number of dynos. In Rails, you can read this variable during initialization and then conditionally load your config file.
+
+Suppose we are using Rails and have the following schedule:
+
+```yaml
+# config/scheduler.yml
+MyRegularJob:
+  description: "We want this job to run very often, but we do not want to run more of them as we scale"
+  interval: ["1m"]
+  queue: default
+```
+
+Then we can conditionally load it via an initializer:
+
+```ruby
+# config/initializer/sidekiq.rb
+if ENV.fetch("IS_SCHEDULER", false)
+  Sidekiq.configure_server do |config|
+    config.on(:startup) do
+      Sidekiq.schedule = YAML.load_file(File.expand_path("../scheduler.yml", File.dirname(__FILE__)))
+      Sidekiq::Scheduler.reload_schedule!
+    end
+  end
+end
+```
+
+Then you would just need to flag the scheduler process when you start it. If you are using a Procfile, it would look like this:
+
+```yaml
+# Procfile
+web: bin/rails server
+worker: bundle exec sidekiq -q default
+scheduler: IS_SCHEDULER=true bundle exec sidekiq -q default
+```
+
+When running via Heroku, you set your `scheduler` process to have 1 dyno. This will ensure you have at most 1 worker loading the schedule. 
+
 ## Notes on when Sidekiq worker is down
 
 For a `cron`/`at` (and all other) job to be successfully enqueued, you need at least one sidekiq worker with scheduler to be up at that moment. Handling this is up to you and depends on your application.
