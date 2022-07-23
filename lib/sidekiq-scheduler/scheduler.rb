@@ -234,7 +234,17 @@ module SidekiqScheduler
       options = options.merge({ :job => true, :tags => [name] })
 
       rufus_scheduler.send(interval_type, schedule, options) do |job, time|
-        idempotent_job_enqueue(name, time, SidekiqScheduler::Utils.sanitize_job_config(config)) if job_enabled?(name)
+        if job_enabled?(name)
+          conf = SidekiqScheduler::Utils.sanitize_job_config(config)
+
+          if job.is_a?(Rufus::Scheduler::CronJob)
+            # TODO: Tests
+            # TODO: Better commit message with an complete explanation, links to rufus-scheduler
+            idempotent_job_enqueue(name, calc_cron_run_time(job.cron_line, time.utc), conf)
+          else
+            idempotent_job_enqueue(name, time, conf)
+          end
+        end
       end
     end
 
@@ -336,6 +346,22 @@ module SidekiqScheduler
         yield
       rescue StandardError => e
         Sidekiq.logger.info "#{e.class.name}: #{e.message}"
+      end
+    end
+
+    def calc_cron_run_time(cron, time)
+      time = time.round # remove sub seconds to prevent rounding errors.
+      next_t = cron.next_time(time).utc
+      previous_t = cron.previous_time(time).utc
+      next_diff = next_t - time
+      previous_diff = time - previous_t
+
+      if next_diff == previous_diff
+        time
+      elsif next_diff > previous_diff
+        time - previous_diff
+      else
+        time + next_diff
       end
     end
   end
