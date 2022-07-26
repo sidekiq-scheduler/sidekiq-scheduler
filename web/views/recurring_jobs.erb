@@ -21,10 +21,36 @@
     .list-group-item-disabled {
       background-color: #f3d3d3;
     }
+
+    .toggle-all-buttons {
+      margin-top: 20px;
+      margin-bottom: 10px;
+      line-height: 45px;
+      text-align: right;
+    }
+
+    @media (max-width: 768px) {
+      .toggle-all-buttons {
+        margin-top: 0;
+        text-align: left;
+        line-height: inherit;
+      }
+    }
   </style>
 <% end %>
 
-<h3><%= t('recurring_jobs') %></h3>
+<div class="row">
+  <div class="col-sm-6">
+    <h3><%= t('recurring_jobs') %></h3>
+  </div>
+  <div class="col-sm-6 toggle-all-buttons">
+    <form action="<%= root_path %>recurring-jobs/toggle-all" method="post">
+      <%= csrf_tag %>
+      <button type="submit" class="btn btn-warn btn-xs" name="action" value="enable"><%= t('enable_all') %></button>
+      <button type="submit" class="btn btn-warn btn-xs" name="action" value="disable"><%= t('disable_all') %></button>
+    </form>
+  </div>
+</div>
 
 <div class="recurring-jobs">
   <ul class="list-group">

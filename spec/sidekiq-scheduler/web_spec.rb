@@ -109,4 +109,28 @@ describe Sidekiq::Web do
       subject
     end
   end
+
+  describe '/recurring-jobs/toggle-all' do
+    context 'with «disable all» button' do
+      subject { post '/recurring-jobs/toggle-all', action: 'disable' }
+
+      it 'toggles jobs enabled flag to false' do
+        subject
+
+        expect(SidekiqScheduler::Scheduler.job_enabled?(enabled_job_name)).to be(false)
+        expect(SidekiqScheduler::Scheduler.job_enabled?(disabled_job_name)).to be(false)
+      end
+    end
+
+    context 'with «enable all» button' do
+      subject { post '/recurring-jobs/toggle-all', action: 'enable' }
+
+      it 'toggles jobs enabled flag to true' do
+        subject
+
+        expect(SidekiqScheduler::Scheduler.job_enabled?(enabled_job_name)).to be(true)
+        expect(SidekiqScheduler::Scheduler.job_enabled?(disabled_job_name)).to be(true)
+      end
+    end
+  end
 end

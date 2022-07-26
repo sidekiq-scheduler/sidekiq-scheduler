@@ -27,6 +27,11 @@ module SidekiqScheduler
         SidekiqScheduler::Scheduler.instance.toggle_job_enabled(params[:name])
         redirect "#{root_path}recurring-jobs"
       end
+
+      app.post '/recurring-jobs/toggle-all' do
+        SidekiqScheduler::Scheduler.instance.toggle_all_jobs(params[:action] == 'enable')
+        redirect "#{root_path}recurring-jobs"
+      end
     end
   end
 end
