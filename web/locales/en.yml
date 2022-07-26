@@ -12,3 +12,5 @@ en:
   no_next_time: no next execution for this job
   disable: Disable
   enable: Enable
+  disable_all: Disable all
+  enable_all: Enable all

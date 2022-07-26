@@ -12,3 +12,5 @@ de:
   no_next_time: Keine zukünftige Ausführung für diesen Job
   disable: Deaktivieren
   enable: Aktivieren
+  disable_all: Alle deaktivieren
+  enable_all: Alle aktivieren

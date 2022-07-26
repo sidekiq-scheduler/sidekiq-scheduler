@@ -12,3 +12,5 @@ ru:
   no_next_time: выполнение задачи не запланировано
   disable: Выключить
   enable: Включить
+  disable_all: Выключить все
+  enable_all: Включить все

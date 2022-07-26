@@ -228,6 +228,14 @@ module SidekiqScheduler
       set_schedule_state(name, state)
     end
 
+    def toggle_all_jobs(new_state)
+      Sidekiq.schedule!.keys.each do |name|
+        state = schedule_state(name)
+        state['enabled'] = new_state
+        set_schedule_state(name, state)
+      end
+    end
+
     private
 
     def new_job(name, interval_type, config, schedule, options)
