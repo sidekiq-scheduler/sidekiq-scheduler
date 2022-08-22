@@ -205,9 +205,9 @@ describe SidekiqScheduler::RedisManager do
     let(:job_three_changed_time) { current_time - (2 * 60) }
 
     before do
-      SidekiqScheduler::Store.zadd(:schedules_changed, job_one_changed_time.to_f, job_one)
-      SidekiqScheduler::Store.zadd(:schedules_changed, job_two_changed_time.to_f, job_two)
-      SidekiqScheduler::Store.zadd(:schedules_changed, job_three_changed_time.to_f, job_three)
+      SidekiqScheduler::Store.zadd(SidekiqScheduler::RedisManager.schedules_changed_key, job_one_changed_time.to_f, job_one)
+      SidekiqScheduler::Store.zadd(SidekiqScheduler::RedisManager.schedules_changed_key, job_two_changed_time.to_f, job_two)
+      SidekiqScheduler::Store.zadd(SidekiqScheduler::RedisManager.schedules_changed_key, job_three_changed_time.to_f, job_three)
     end
 
     it 'should return all changed jobs names in the range' do
@@ -248,7 +248,7 @@ describe SidekiqScheduler::RedisManager do
       Timecop.freeze(Time.now) do
         subject
 
-        stored_schedules_changes = SidekiqScheduler::Store.zrangebyscore('schedules_changed', Time.now.to_f, Time.now.to_f)
+        stored_schedules_changes = SidekiqScheduler::Store.zrangebyscore(SidekiqScheduler::RedisManager.schedules_changed_key, Time.now.to_f, Time.now.to_f)
         expect(stored_schedules_changes).to match_array(%w[some_job])
       end
     end
@@ -257,24 +257,24 @@ describe SidekiqScheduler::RedisManager do
   describe '.clean_schedules_changed' do
     subject { described_class.clean_schedules_changed }
 
-    before { SidekiqScheduler::Store.zadd('schedules_changed', Time.now.to_f, 'some_job') }
+    before { SidekiqScheduler::Store.zadd(SidekiqScheduler::RedisManager.schedules_changed_key, Time.now.to_f, 'some_job') }
 
     it "shouldn't remove the schedules_changed if it's sorted set" do
       subject
 
-      expect(SidekiqScheduler::Store.exists?('schedules_changed')).to be true
+      expect(SidekiqScheduler::Store.exists?(SidekiqScheduler::RedisManager.schedules_changed_key)).to be true
     end
 
     context 'when schedules_changed is not a sorted set' do
       before do
         SidekiqScheduler::Store.clean
-        SidekiqScheduler::Store.sadd('schedules_changed', 'some_job')
+        SidekiqScheduler::Store.sadd(SidekiqScheduler::RedisManager.schedules_changed_key, 'some_job')
       end
 
       it 'should remove the schedules_changed set' do
         subject
 
-        expect(SidekiqScheduler::Store.exists?('schedules_changed')).to be false
+        expect(SidekiqScheduler::Store.exists?(SidekiqScheduler::RedisManager.schedules_changed_key)).to be false
       end
     end
   end
@@ -367,5 +367,11 @@ describe SidekiqScheduler::RedisManager do
     subject { described_class.schedules_key }
 
     it { is_expected.to eq('schedules') }
+  end
+
+  describe ".schedules_changed_key" do
+    subject { described_class.schedules_changed_key }
+
+    it { is_expected.to eq('schedules_changed') }
   end
 end

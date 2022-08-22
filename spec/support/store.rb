@@ -10,7 +10,7 @@ module SidekiqScheduler
     end
 
     def self.changed_job?(job_id)
-      Sidekiq.redis { |redis| !!redis.zrank('schedules_changed', job_id) }
+      Sidekiq.redis { |redis| !!redis.zrank(SidekiqScheduler::RedisManager.schedules_changed_key, job_id) }
     end
 
     def self.job_from_redis_without_decoding(job_id)
