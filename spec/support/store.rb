@@ -14,7 +14,7 @@ module SidekiqScheduler
     end
 
     def self.job_from_redis_without_decoding(job_id)
-      Sidekiq.redis { |redis| redis.hget('schedules', job_id) }
+      Sidekiq.redis { |redis| redis.hget(SidekiqScheduler::RedisManager.schedules_key, job_id) }
     end
 
     def self.job_next_execution_time(job_name)

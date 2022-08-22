@@ -10,7 +10,7 @@ describe SidekiqScheduler::RedisManager do
     let(:job_name) { 'some_job' }
     let(:schedule) { JSON.generate(ScheduleFaker.default_options) }
 
-    before { SidekiqScheduler::Store.hset(:schedules, job_name, schedule) }
+    before { SidekiqScheduler::Store.hset(SidekiqScheduler::RedisManager.schedules_key, job_name, schedule) }
 
     it { is_expected.to eq(schedule) }
   end
@@ -57,7 +57,7 @@ describe SidekiqScheduler::RedisManager do
     it 'should store the job schedule' do
       subject
 
-      stored_schedule = SidekiqScheduler::Store.hget(:schedules, job_name)
+      stored_schedule = SidekiqScheduler::Store.hget(SidekiqScheduler::RedisManager.schedules_key, job_name)
       expect(JSON.parse(stored_schedule)).to eq(config)
     end
   end
@@ -110,12 +110,12 @@ describe SidekiqScheduler::RedisManager do
     let(:job_name) { 'some_job' }
     let(:schedule) { JSON.generate(ScheduleFaker.default_options) }
 
-    before { SidekiqScheduler::Store.hset(:schedules, job_name, schedule) }
+    before { SidekiqScheduler::Store.hset(SidekiqScheduler::RedisManager.schedules_key, job_name, schedule) }
 
     it 'should remove the job schedule' do
       subject
 
-      stored_schedule = SidekiqScheduler::Store.hget(:schedules, job_name)
+      stored_schedule = SidekiqScheduler::Store.hget(SidekiqScheduler::RedisManager.schedules_key, job_name)
       expect(stored_schedule).to be_nil
     end
 
@@ -125,7 +125,7 @@ describe SidekiqScheduler::RedisManager do
       it 'should maintain inexisting' do
         subject
 
-        stored_schedule = SidekiqScheduler::Store.hget(:schedules, job_name)
+        stored_schedule = SidekiqScheduler::Store.hget(SidekiqScheduler::RedisManager.schedules_key, job_name)
         expect(stored_schedule).to be_nil
       end
     end
@@ -167,8 +167,8 @@ describe SidekiqScheduler::RedisManager do
     let(:other_job_schedule) { JSON.generate(ScheduleFaker.every_schedule) }
 
     before do
-      SidekiqScheduler::Store.hset(:schedules, some_job, some_job_schedule)
-      SidekiqScheduler::Store.hset(:schedules, other_job, other_job_schedule)
+      SidekiqScheduler::Store.hset(SidekiqScheduler::RedisManager.schedules_key, some_job, some_job_schedule)
+      SidekiqScheduler::Store.hset(SidekiqScheduler::RedisManager.schedules_key, other_job, other_job_schedule)
     end
 
     it { is_expected.to include('some_job' => some_job_schedule, 'other_job' => other_job_schedule) }
@@ -183,7 +183,7 @@ describe SidekiqScheduler::RedisManager do
     context 'when some job schedule exists' do
       let(:schedule) { JSON.generate(ScheduleFaker.default_options) }
 
-      before { SidekiqScheduler::Store.hset(:schedules, 'some_job', schedule) }
+      before { SidekiqScheduler::Store.hset(SidekiqScheduler::RedisManager.schedules_key, 'some_job', schedule) }
 
       it { is_expected.to be_truthy }
     end
@@ -361,5 +361,11 @@ describe SidekiqScheduler::RedisManager do
     subject { described_class.schedules_state_key }
 
     it { is_expected.to eq('sidekiq-scheduler:states') }
+  end
+
+  describe ".schedules_key" do
+    subject { described_class.schedules_key }
+
+    it { is_expected.to eq('schedules') }
   end
 end

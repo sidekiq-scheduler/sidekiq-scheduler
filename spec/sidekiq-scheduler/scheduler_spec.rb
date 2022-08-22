@@ -468,9 +468,9 @@ describe SidekiqScheduler::Scheduler do
     context 'when setting new values' do
       before do
         instance.load_schedule!
-        SidekiqScheduler::Store.del(:schedules)
+        SidekiqScheduler::Store.del(SidekiqScheduler::RedisManager.schedules_key)
         SidekiqScheduler::Store.hset(
-          :schedules,
+          SidekiqScheduler::RedisManager.schedules_key,
           'some_ivar_job2',
           JSON.generate(
             cron: '* * * * *',
@@ -495,7 +495,7 @@ describe SidekiqScheduler::Scheduler do
           }
         }
         instance.load_schedule!
-        SidekiqScheduler::Store.del(:schedules)
+        SidekiqScheduler::Store.del(SidekiqScheduler::RedisManager.schedules_key)
       end
 
       it 'should remove them' do
