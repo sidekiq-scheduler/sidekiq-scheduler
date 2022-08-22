@@ -156,42 +156,57 @@ module SidekiqScheduler
     #
     # @return [String] the pushed job key
     def self.pushed_job_key(job_name)
-      "sidekiq-scheduler:pushed:#{job_name}"
+      "#{key_prefix}sidekiq-scheduler:pushed:#{job_name}"
     end
 
     # Returns the key of the Redis hash for job's execution times hash
     #
     # @return [String] with the key
     def self.next_times_key
-      'sidekiq-scheduler:next_times'
+      "#{key_prefix}sidekiq-scheduler:next_times"
     end
 
     # Returns the key of the Redis hash for job's last execution times hash
     #
     # @return [String] with the key
     def self.last_times_key
-      'sidekiq-scheduler:last_times'
+      "#{key_prefix}sidekiq-scheduler:last_times"
     end
 
     # Returns the Redis's key for saving schedule states.
     #
     # @return [String] with the key
     def self.schedules_state_key
-      'sidekiq-scheduler:states'
+      "#{key_prefix}sidekiq-scheduler:states"
     end
 
     # Returns the Redis's key for saving schedules.
     #
     # @return [String] with the key
     def self.schedules_key
-      'schedules'
+      "#{key_prefix}schedules"
     end
 
     # Returns the Redis's key for saving schedule changes.
     #
     # @return [String] with the key
     def self.schedules_changed_key
-      'schedules_changed'
+      "#{key_prefix}schedules_changed"
+    end
+
+    # Returns the key prefix used to generate all scheduler keys
+    #
+    # @return [String] with the key prefix
+    def self.key_prefix
+      @key_prefix
+    end
+
+    # Sets the key prefix used to scope all scheduler keys
+    #
+    # @param [String] value The string to use as the prefix. A ":" will be appended as a delimiter if needed.
+    def self.key_prefix=(value)
+      value = "#{value}:" if value && !%w[. :].include?(value[-1])
+      @key_prefix = value
     end
 
     private

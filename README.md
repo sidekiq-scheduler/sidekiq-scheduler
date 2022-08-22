@@ -418,6 +418,20 @@ Redis.
 
 See https://github.com/sidekiq-scheduler/sidekiq-scheduler/issues/361 for a more details.
 
+## Notes when running multiple applications in the same Redis database
+
+If you need to run multiple applications with differing schedules, the easiest way is to use a different Redis database per application. Doing that will ensure that each application will have its own schedule, web interface and statistics.
+
+However, you may want to have a set of related applications share the same Redis database in order to aggregate statistics and manage them all in a single web interface. To do this while maintaining a different schedule for each application, you can configure each application to use a different `key_prefix` in Redis. This prevents the applications overwriting each others' schedules and schedule data.
+
+```ruby
+Rails.application.reloader.to_prepare do
+  SidekiqScheduler::RedisManager.key_prefix = "my-app"
+end
+```
+
+Note that this must be set before the schedule is loaded (or it will go into the wrong key). If you are using the web integration, make sure that the prefix is set in the web process so that you see the correct schedule.
+
 ## Sidekiq Web Integration
 
 sidekiq-scheduler provides an extension to the Sidekiq web interface that adds a `Recurring Jobs` page.
