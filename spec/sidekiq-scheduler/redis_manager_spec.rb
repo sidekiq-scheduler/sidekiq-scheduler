@@ -2,6 +2,7 @@ require 'sidekiq-scheduler/redis_manager'
 
 describe SidekiqScheduler::RedisManager do
 
+  before { SidekiqScheduler::RedisManager.key_prefix = nil }
   before { SidekiqScheduler::Store.clean }
 
   describe '.get_job_schedule' do
@@ -21,7 +22,7 @@ describe SidekiqScheduler::RedisManager do
     let(:job_name) { 'some_job' }
     let(:state) { JSON.generate('enabled' => true) }
 
-    before { SidekiqScheduler::Store.hset('sidekiq-scheduler:states', job_name, state) }
+    before { SidekiqScheduler::Store.hset(SidekiqScheduler::RedisManager.schedules_state_key, job_name, state) }
 
     it { is_expected.to eq(state) }
   end
@@ -32,7 +33,7 @@ describe SidekiqScheduler::RedisManager do
     let(:job_name) { 'some_job' }
     let(:next_time) { 'some_time' }
 
-    before { SidekiqScheduler::Store.hset('sidekiq-scheduler:next_times', job_name, next_time) }
+    before { SidekiqScheduler::Store.hset(SidekiqScheduler::RedisManager.next_times_key, job_name, next_time) }
 
     it { is_expected.to eq(next_time) }
   end
@@ -43,7 +44,7 @@ describe SidekiqScheduler::RedisManager do
     let(:job_name) { 'some_job' }
     let(:last_time) { 'some_time' }
 
-    before { SidekiqScheduler::Store.hset('sidekiq-scheduler:last_times', job_name, last_time) }
+    before { SidekiqScheduler::Store.hset(SidekiqScheduler::RedisManager.last_times_key, job_name, last_time) }
 
     it { is_expected.to eq(last_time) }
   end
@@ -71,7 +72,7 @@ describe SidekiqScheduler::RedisManager do
     it 'should store the job state' do
       subject
 
-      stored_state = SidekiqScheduler::Store.hget('sidekiq-scheduler:states', job_name)
+      stored_state = SidekiqScheduler::Store.hget(SidekiqScheduler::RedisManager.schedules_state_key, job_name)
       expect(JSON.parse(stored_state)).to eq(state)
     end
   end
@@ -85,7 +86,7 @@ describe SidekiqScheduler::RedisManager do
     it 'should store the job next_time' do
       subject
 
-      stored_next_time = SidekiqScheduler::Store.hget('sidekiq-scheduler:next_times', job_name)
+      stored_next_time = SidekiqScheduler::Store.hget(SidekiqScheduler::RedisManager.next_times_key, job_name)
       expect(stored_next_time).to eq(next_time)
     end
   end
@@ -99,7 +100,7 @@ describe SidekiqScheduler::RedisManager do
     it 'should store the job last_time' do
       subject
 
-      stored_last_time = SidekiqScheduler::Store.hget('sidekiq-scheduler:last_times', job_name)
+      stored_last_time = SidekiqScheduler::Store.hget(SidekiqScheduler::RedisManager.last_times_key, job_name)
       expect(stored_last_time).to eq(last_time)
     end
   end
@@ -137,12 +138,12 @@ describe SidekiqScheduler::RedisManager do
     let(:job_name) { 'some_job' }
     let(:next_time) { 'some_time' }
 
-    before { SidekiqScheduler::Store.hset('sidekiq-scheduler:next_times', job_name, next_time) }
+    before { SidekiqScheduler::Store.hset(SidekiqScheduler::RedisManager.next_times_key, job_name, next_time) }
 
     it 'should remove the job next_time' do
       subject
 
-      stored_next_time = SidekiqScheduler::Store.hget('sidekiq-scheduler:next_times', job_name)
+      stored_next_time = SidekiqScheduler::Store.hget(SidekiqScheduler::RedisManager.next_times_key, job_name)
       expect(stored_next_time).to be_nil
     end
 
@@ -152,7 +153,7 @@ describe SidekiqScheduler::RedisManager do
       it 'should maintain inexisting' do
         subject
 
-        stored_next_time = SidekiqScheduler::Store.hget('sidekiq-scheduler:next_times', job_name)
+        stored_next_time = SidekiqScheduler::Store.hget(SidekiqScheduler::RedisManager.next_times_key, job_name)
         expect(stored_next_time).to be_nil
       end
     end
@@ -284,6 +285,7 @@ describe SidekiqScheduler::RedisManager do
 
     let(:current_time) { Time.now }
     let(:job_name) { 'some_job' }
+    let(:job_key) { SidekiqScheduler::RedisManager.pushed_job_key('some_job') }
     let(:time) { current_time }
 
     it { expect(subject).to be_truthy }
@@ -291,13 +293,13 @@ describe SidekiqScheduler::RedisManager do
     it 'should store the job instance' do
       subject
 
-      expect(SidekiqScheduler::Store.zrange('sidekiq-scheduler:pushed:some_job', 0, -1)).to eql([time.to_i.to_s])
+      expect(SidekiqScheduler::Store.zrange(job_key, 0, -1)).to eql([time.to_i.to_s])
     end
 
     it 'should add an expiration key' do
       subject
 
-      ttl = Sidekiq.redis { |r| r.ttl('sidekiq-scheduler:pushed:some_job') }
+      ttl = Sidekiq.redis { |r| r.ttl(job_key) }
       expect(ttl).to eql(SidekiqScheduler::RedisManager::REGISTERED_JOBS_THRESHOLD_IN_SECONDS)
     end
 
@@ -319,7 +321,7 @@ describe SidekiqScheduler::RedisManager do
 
     let(:current_time) { Time.now }
     let(:job_name) { 'some_job' }
-    let(:job_key) { 'sidekiq-scheduler:pushed:some_job' }
+    let(:job_key) { SidekiqScheduler::RedisManager.pushed_job_key('some_job') }
     let(:job_instance) { current_time.to_i }
     let(:other_job_instance) { (current_time - (20 * 60)).to_i }
     let(:old_job_instance) { (current_time - SidekiqScheduler::RedisManager::REGISTERED_JOBS_THRESHOLD_IN_SECONDS).to_i }
@@ -343,35 +345,65 @@ describe SidekiqScheduler::RedisManager do
     let(:job_name) { 'some_job' }
 
     it { is_expected.to eq('sidekiq-scheduler:pushed:some_job') }
+
+    context 'when a key prefix is set' do
+      before { described_class.key_prefix = 'some-prefix' }
+      it { is_expected.to eq('some-prefix:sidekiq-scheduler:pushed:some_job') }
+    end
   end
 
   describe '.next_times_key' do
     subject { described_class.next_times_key }
 
     it { is_expected.to eq('sidekiq-scheduler:next_times') }
+
+    context 'when a key prefix is set' do
+      before { described_class.key_prefix = 'some-prefix' }
+      it { is_expected.to eq('some-prefix:sidekiq-scheduler:next_times') }
+    end
   end
 
   describe '.last_times_key' do
     subject { described_class.last_times_key }
 
     it { is_expected.to eq('sidekiq-scheduler:last_times') }
+
+    context 'when a key prefix is set' do
+      before { described_class.key_prefix = 'some-prefix' }
+      it { is_expected.to eq('some-prefix:sidekiq-scheduler:last_times') }
+    end
   end
 
   describe '.schedules_state_key' do
     subject { described_class.schedules_state_key }
 
     it { is_expected.to eq('sidekiq-scheduler:states') }
+
+    context 'when a key prefix is set' do
+      before { described_class.key_prefix = 'some-prefix' }
+      it { is_expected.to eq('some-prefix:sidekiq-scheduler:states') }
+    end
   end
 
   describe ".schedules_key" do
     subject { described_class.schedules_key }
 
     it { is_expected.to eq('schedules') }
+
+    context 'when a key prefix is set' do
+      before { described_class.key_prefix = 'some-prefix' }
+      it { is_expected.to eq('some-prefix:schedules') }
+    end
   end
 
   describe ".schedules_changed_key" do
     subject { described_class.schedules_changed_key }
 
     it { is_expected.to eq('schedules_changed') }
+
+    context 'when a key prefix is set' do
+      before { described_class.key_prefix = 'some-prefix' }
+      it { is_expected.to eq('some-prefix:schedules_changed') }
+    end
   end
 end
