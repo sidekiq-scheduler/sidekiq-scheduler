@@ -189,7 +189,7 @@ describe SidekiqScheduler::Scheduler do
             expect(Sidekiq::Client).to receive(:push).with(
               'class' => SomeWorker,
               'queue' => 'high',
-              'args' => ['/tmp', { scheduled_at: schedule_time.to_f }]
+              'args' => ['/tmp', { 'scheduled_at' => schedule_time.to_f }]
             )
 
             subject
@@ -203,7 +203,7 @@ describe SidekiqScheduler::Scheduler do
             expect(Sidekiq::Client).to receive(:push).with(
               'class' => SomeWorker,
               'queue' => 'high',
-              'args' => ['/tmp', { scheduled_at: schedule_time.to_f }]
+              'args' => ['/tmp', { 'scheduled_at' => schedule_time.to_f }]
             )
 
             subject
@@ -217,7 +217,7 @@ describe SidekiqScheduler::Scheduler do
         it 'enqueues the job as active job' do
           expect(EmailSender).to receive(:new).with(
             '/tmp',
-            { scheduled_at: schedule_time.to_f }
+            { 'scheduled_at' => schedule_time.to_f }
           ).and_return(double(:job).as_null_object)
 
           subject
@@ -237,7 +237,7 @@ describe SidekiqScheduler::Scheduler do
             expect(Sidekiq::Client).to receive(:push).with(
               'class' => SomeWorker,
               'queue' => 'high',
-              'args' => [{ dir: '/tmp' }, { scheduled_at: schedule_time.to_f }]
+              'args' => [{ dir: '/tmp' }, { 'scheduled_at' => schedule_time.to_f }]
             )
 
             subject
@@ -253,7 +253,7 @@ describe SidekiqScheduler::Scheduler do
             expect(Sidekiq::Client).to receive(:push).with(
               'class' => SomeWorker,
               'queue' => 'high',
-              'args' => [{ scheduled_at: schedule_time.to_f }]
+              'args' => [{ 'scheduled_at' => schedule_time.to_f }]
             )
 
             subject

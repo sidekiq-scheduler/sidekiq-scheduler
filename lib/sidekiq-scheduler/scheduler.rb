@@ -158,7 +158,7 @@ module SidekiqScheduler
       config = prepare_arguments(job_config.dup)
 
       if config.delete('include_metadata')
-        config['args'] = arguments_with_metadata(config['args'], scheduled_at: time.to_f)
+        config['args'] = arguments_with_metadata(config['args'], "scheduled_at" => time.to_f)
       end
 
       if SidekiqScheduler::Utils.active_job_enqueue?(config['class'])
