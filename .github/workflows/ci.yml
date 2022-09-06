@@ -9,7 +9,17 @@ jobs:
     runs-on: ubuntu-latest
     strategy: 
       matrix: 
+        redis-version: ">= 5"
         ruby-version: ['2.5', '2.6', '2.7', '3.0', '3.1']
+      include:
+        - redis-version: "< 5"
+          ruby-version: "2.5"
+    services:
+      redis:
+        image: redis
+    env:
+      REDIS_URL: redis://redis
+      REDIS_VERSION: "${{ matrix.redis-version }}"
     steps:
       - uses: actions/checkout@v3
       - name: Setup Ruby

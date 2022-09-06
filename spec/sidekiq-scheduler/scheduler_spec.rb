@@ -676,10 +676,10 @@ describe SidekiqScheduler::Scheduler do
     end
 
     context 'at schedule' do
-      let(:config) { ScheduleFaker.at_schedule }
+      let(:config) { ScheduleFaker.at_schedule(at: Time.now + 60) }
 
       it 'adds the job to rufus scheduler' do
-        expect(instance.rufus_scheduler.jobs.size).to be(1)
+        expect(instance.rufus_scheduler.jobs.size).to eq(1)
       end
 
       it 'puts the job inside the scheduled hash' do
