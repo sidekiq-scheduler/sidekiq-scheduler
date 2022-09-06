@@ -60,7 +60,7 @@ module SidekiqScheduler
     # @param [String] name The name of the job
     # @param [String] next_time The next time the job has to be executed
     def self.set_job_next_time(name, next_time)
-      hset(next_times_key, name, next_time)
+      hset(next_times_key, name, String(next_time))
     end
 
     # Sets the last execution time for a given job
@@ -68,7 +68,7 @@ module SidekiqScheduler
     # @param [String] name The name of the job
     # @param [String] last_time The last time the job was executed
     def self.set_job_last_time(name, last_time)
-      hset(last_times_key, name, last_time)
+      hset(last_times_key, name, String(last_time))
     end
 
     # Removes the schedule for a given job

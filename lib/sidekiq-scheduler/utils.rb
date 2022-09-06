@@ -112,8 +112,10 @@ module SidekiqScheduler
     def self.new_rufus_scheduler(options = {})
       Rufus::Scheduler.new(options).tap do |scheduler|
         scheduler.define_singleton_method(:on_post_trigger) do |job, triggered_time|
-          SidekiqScheduler::Utils.update_job_last_time(job.tags[0], triggered_time)
-          SidekiqScheduler::Utils.update_job_next_time(job.tags[0], job.next_time)
+          if (job_name = job.tags[0])
+            SidekiqScheduler::Utils.update_job_last_time(job_name, triggered_time)
+            SidekiqScheduler::Utils.update_job_next_time(job_name, job.next_time)
+          end
         end
       end
     end

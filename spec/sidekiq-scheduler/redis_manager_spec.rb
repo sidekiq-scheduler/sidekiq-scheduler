@@ -297,9 +297,8 @@ describe SidekiqScheduler::RedisManager do
     it 'should add an expiration key' do
       subject
 
-      Timecop.travel(SidekiqScheduler::RedisManager::REGISTERED_JOBS_THRESHOLD_IN_SECONDS) do
-        expect(SidekiqScheduler::Store.exists?('sidekiq-scheduler:pushed:some_job')).to be false
-      end
+      ttl = Sidekiq.redis { |r| r.ttl('sidekiq-scheduler:pushed:some_job') }
+      expect(ttl).to eql(SidekiqScheduler::RedisManager::REGISTERED_JOBS_THRESHOLD_IN_SECONDS)
     end
 
     context 'when job instance is already registered' do
