@@ -49,7 +49,7 @@ module SidekiqScheduler
     #
     # @return [Class] the class corresponding to the klass param
     def self.try_to_constantize(klass)
-      klass.is_a?(String) ? klass.constantize : klass
+      klass.is_a?(String) ? Object.const_get(klass) : klass
     rescue NameError
       klass
     end

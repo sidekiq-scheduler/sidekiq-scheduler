@@ -148,9 +148,7 @@ module SidekiqScheduler
     end
 
     def try_to_constantize(klass)
-      klass.is_a?(String) ? klass.constantize : klass
-    rescue NameError
-      klass
+      SidekiqScheduler::Utils.try_to_constantize(klass)
     end
   end
 end
