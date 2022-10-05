@@ -7,18 +7,17 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
-    strategy: 
+    strategy:
+      fail-fast: false
       matrix: 
-        redis-version: ">= 5"
+        redis-version: ["~> 4.2", "~> 5"]
         ruby-version: ['2.5', '2.6', '2.7', '3.0', '3.1']
-      include:
-        - redis-version: "< 5"
-          ruby-version: "2.5"
     services:
       redis:
         image: redis
+        ports:
+          - 6379:6379
     env:
-      REDIS_URL: redis://redis
       REDIS_VERSION: "${{ matrix.redis-version }}"
     steps:
       - uses: actions/checkout@v3
