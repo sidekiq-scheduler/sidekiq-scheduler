@@ -420,6 +420,8 @@ See https://github.com/sidekiq-scheduler/sidekiq-scheduler/issues/361 for a more
 
 ## Notes when running multiple applications in the same Redis database
 
+_NOTE_: **Although we support this option, we recommend having separate redis databases for each application. Choosing this option is at your own risk.**
+
 If you need to run multiple applications with differing schedules, the easiest way is to use a different Redis database per application. Doing that will ensure that each application will have its own schedule, web interface and statistics.
 
 However, you may want to have a set of related applications share the same Redis database in order to aggregate statistics and manage them all in a single web interface. To do this while maintaining a different schedule for each application, you can configure each application to use a different `key_prefix` in Redis. This prevents the applications overwriting each others' schedules and schedule data.
