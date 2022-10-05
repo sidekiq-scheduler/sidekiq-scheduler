@@ -12,6 +12,7 @@ The following guide set some guidelines to contribute with Sidekiq-Scheduler, pl
 
 - Create an issue and use the `bug` label along with a brief description of the bug
 - Add a step-by-step guide to reproduce it along with the crash stacktrace
+  - A sample app that allows us to just checkout it and simulate the error locally helps much.
 
 ### Suggesting Features
 
@@ -23,9 +24,6 @@ The following guide set some guidelines to contribute with Sidekiq-Scheduler, pl
 
 - Before creating a PR, create an issue related to what you are fixing / improving
 - Add a brief description and a link to the related issue
-- Follow our [Commit Message Style Guide](https://github.com/sidekiq-scheduler/guides/tree/master/style/commit-message#commit-message-style-guide)
-- Use a correct branch-naming:
-  - For features use: ```feature/add-support-for...```
-  - For bug fixes use: ```fix/handle-corner-case-...```
+- Write commit messages explaining what the change is and why
 - Make sure tests pass
 
