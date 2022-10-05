@@ -1,3 +1,12 @@
+# 4.0.3
+
+- [**GH Actions**] Add dependabot for GitHub Actions [#390](https://github.com/sidekiq-scheduler/sidekiq-scheduler/pull/390)
+- [**ENHANCEMENT**] Add «Enable all» and «Disable all» buttons [#398](https://github.com/sidekiq-scheduler/sidekiq-scheduler/pull/398)
+- [**ENHANCEMENT**] Allow for multiple applications to share a Redis DB [#401](https://github.com/sidekiq-scheduler/sidekiq-scheduler/pull/401)
+- [**FIX**] Fix metadata for Sidekiq strict_args! [#403](https://github.com/sidekiq-scheduler/sidekiq-scheduler/pull/403)
+- [**FIX**] Redis 5.0 compatibility [#404](https://github.com/sidekiq-scheduler/sidekiq-scheduler/pull/404)
+- [**FIX**] Fix the constantize method [#408](https://github.com/sidekiq-scheduler/sidekiq-scheduler/pull/408)
+
 # 4.0.2
 
 - [**FIX**] Fix sidekiq deprecation warning when Sidekiq 6.5+ [#385](https://github.com/sidekiq-scheduler/sidekiq-scheduler/pull/385)
