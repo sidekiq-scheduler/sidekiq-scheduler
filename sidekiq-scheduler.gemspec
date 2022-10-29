@@ -16,14 +16,14 @@ Gem::Specification.new do |s|
 
   s.required_ruby_version = '>= 2.7'
 
-  s.add_dependency 'sidekiq', '>= 6', '< 7'
-  s.add_dependency 'redis', '>= 4.2.0'
+  s.add_dependency 'sidekiq', '>= 4', '< 8'
   s.add_dependency 'rufus-scheduler', '~> 3.2'
   s.add_dependency 'tilt', '>= 1.4.0'
 
   s.add_development_dependency 'rake', '~> 12.0'
   s.add_development_dependency 'timecop'
   s.add_development_dependency 'mocha'
+  s.add_development_dependency 'redis', '>= 4.2.0'
   s.add_development_dependency 'rspec'
   s.add_development_dependency 'simplecov'
   s.add_development_dependency 'byebug'
