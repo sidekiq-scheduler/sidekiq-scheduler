@@ -292,7 +292,9 @@ module SidekiqScheduler
     end
 
     def sidekiq_queues
-      if SIDEKIQ_GTE_6_5_0
+      if SIDEKIQ_GTE_7_0_0
+        Sidekiq.instance_variable_get(:@config).queues.map(&:to_s)
+      elsif SIDEKIQ_GTE_6_5_0
         Sidekiq[:queues].map(&:to_s)
       else
         Sidekiq.options[:queues].map(&:to_s)

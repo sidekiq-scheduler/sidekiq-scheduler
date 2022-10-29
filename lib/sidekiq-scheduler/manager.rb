@@ -36,8 +36,9 @@ module SidekiqScheduler
     private
 
     def load_scheduler_options(options)
-      options[:listened_queues_only] = options.fetch(:scheduler, {})[:listened_queues_only]
-      scheduler_options = DEFAULT_SCHEDULER_OPTIONS.merge(options)
+      hash_options = SIDEKIQ_GTE_7_0_0 ? options.instance_variable_get(:@options) : options
+      hash_options[:listened_queues_only] = hash_options.fetch(:scheduler, {})[:listened_queues_only]
+      scheduler_options = DEFAULT_SCHEDULER_OPTIONS.merge(hash_options)
 
       current_options = {
         enabled: SidekiqScheduler::Scheduler.enabled,
