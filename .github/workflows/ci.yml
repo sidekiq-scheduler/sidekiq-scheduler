@@ -12,6 +12,7 @@ jobs:
       matrix: 
         redis-version: ["~> 4.2", "~> 5"]
         ruby-version: ['2.7', '3.0', '3.1']
+        sidekiq-version: ['~> 6']
     services:
       redis:
         image: redis
@@ -19,6 +20,7 @@ jobs:
           - 6379:6379
     env:
       REDIS_VERSION: "${{ matrix.redis-version }}"
+      SIDEKIQ_VERSION: "${{ matrix.sidekiq-version }}"
     steps:
       - uses: actions/checkout@v3
       - name: Setup Ruby
