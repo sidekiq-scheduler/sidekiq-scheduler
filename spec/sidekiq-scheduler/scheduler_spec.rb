@@ -132,13 +132,11 @@ describe SidekiqScheduler::Scheduler do
 
     context 'when it is a sidekiq worker' do
       it 'prepares the parameters' do
-        expect(Sidekiq::Client).to receive(:push).with(
-          {
-            'class' => SomeWorker,
-            'queue' => 'high',
-            'args' => ['/tmp']
-          }
-        )
+        expect(Sidekiq::Client).to receive(:push).with({
+          'class' => SomeWorker,
+          'queue' => 'high',
+          'args' => ['/tmp']
+        })
 
         subject
       end
