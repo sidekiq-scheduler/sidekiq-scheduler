@@ -133,9 +133,11 @@ describe SidekiqScheduler::Scheduler do
     context 'when it is a sidekiq worker' do
       it 'prepares the parameters' do
         expect(Sidekiq::Client).to receive(:push).with(
-          'class' => SomeWorker,
-          'queue' => 'high',
-          'args' => ['/tmp']
+          {
+            'class' => SomeWorker,
+            'queue' => 'high',
+            'args' => ['/tmp']
+          }
         )
 
         subject
@@ -170,11 +172,11 @@ describe SidekiqScheduler::Scheduler do
       before { scheduler_config['class'] = 'NonExistentWorker' }
 
       it 'prepares the parameters' do
-        expect(Sidekiq::Client).to receive(:push).with(
+        expect(Sidekiq::Client).to receive(:push).with({
           'class' => 'NonExistentWorker',
           'queue' => 'high',
           'args' => ['/tmp']
-        )
+        })
 
         subject
       end
@@ -186,11 +188,11 @@ describe SidekiqScheduler::Scheduler do
       context 'when called without a time argument' do
         it 'uses the current time' do
           Timecop.freeze(schedule_time) do
-            expect(Sidekiq::Client).to receive(:push).with(
+            expect(Sidekiq::Client).to receive(:push).with({
               'class' => SomeWorker,
               'queue' => 'high',
               'args' => ['/tmp', { 'scheduled_at' => schedule_time.to_f }]
-            )
+            })
 
             subject
           end
@@ -200,11 +202,11 @@ describe SidekiqScheduler::Scheduler do
       context 'when arguments are already expanded' do
         it 'pushes the job with the metadata as the last argument' do
           Timecop.freeze(schedule_time) do
-            expect(Sidekiq::Client).to receive(:push).with(
+            expect(Sidekiq::Client).to receive(:push).with({
               'class' => SomeWorker,
               'queue' => 'high',
               'args' => ['/tmp', { 'scheduled_at' => schedule_time.to_f }]
-            )
+            })
 
             subject
           end
@@ -234,11 +236,11 @@ describe SidekiqScheduler::Scheduler do
 
         it 'pushes the job with the metadata as the last argument' do
           Timecop.freeze(schedule_time) do
-            expect(Sidekiq::Client).to receive(:push).with(
+            expect(Sidekiq::Client).to receive(:push).with({
               'class' => SomeWorker,
               'queue' => 'high',
               'args' => [{ dir: '/tmp' }, { 'scheduled_at' => schedule_time.to_f }]
-            )
+            })
 
             subject
           end
@@ -250,11 +252,11 @@ describe SidekiqScheduler::Scheduler do
 
         it 'pushes the job with the metadata as the only argument' do
           Timecop.freeze(schedule_time) do
-            expect(Sidekiq::Client).to receive(:push).with(
+            expect(Sidekiq::Client).to receive(:push).with({
               'class' => SomeWorker,
               'queue' => 'high',
               'args' => [{ 'scheduled_at' => schedule_time.to_f }]
-            )
+            })
 
             subject
           end
