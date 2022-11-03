@@ -1,4 +1,6 @@
-require 'sidekiq/capsule'
+if Gem::Version.new(Sidekiq::VERSION) >= Gem::Version.new('7.0.0')
+  require 'sidekiq/capsule'
+end
 
 def reset_sidekiq_config!
   cfg = Sidekiq::Config.new
