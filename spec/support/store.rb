@@ -58,7 +58,7 @@ module SidekiqScheduler
     end
 
     def self.exists?(key)
-      Sidekiq.redis { |r| r.exists?(key) }
+      Sidekiq.redis { |r| SIDEKIQ_GTE_7_0_0 ? (r.exists(key) > 0) : r.exists?(key) }
     end
 
     def self.hexists(hash_key, field_key)
