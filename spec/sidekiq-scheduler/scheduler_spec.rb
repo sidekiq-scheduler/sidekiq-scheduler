@@ -13,7 +13,13 @@ describe SidekiqScheduler::Scheduler do
   before do
     described_class.instance = instance
     Sidekiq.redis(&:flushall)
-    Sidekiq.options[:queues] = Sidekiq::DEFAULTS[:queues]
+    if SIDEKIQ_GTE_7_0_0
+      @sconfig = reset_sidekiq_config!
+      @sconfig.queues = []
+    else
+      # Sidekiq 6 the default queues was an empty array https://github.com/mperham/sidekiq/blob/6-x/lib/sidekiq.rb#L21
+      Sidekiq.options[:queues] = Sidekiq::DEFAULTS[:queues]
+    end
     instance.instance_variable_set(:@scheduled_jobs, {})
     Sidekiq::Worker.clear_all
     Sidekiq.schedule = {}
@@ -317,7 +323,7 @@ describe SidekiqScheduler::Scheduler do
         before { instance.listened_queues_only = true }
 
         context 'when default sidekiq queues' do
-          before { Sidekiq.options[:queues] = Sidekiq::DEFAULTS[:queues] }
+          before { @sconfig.queues = [] }
 
           it 'loads the job into the scheduler' do
             subject
@@ -326,7 +332,7 @@ describe SidekiqScheduler::Scheduler do
         end
 
         context "when sidekiq queues match job's one" do
-          before { Sidekiq.options[:queues] = ['reporting'] }
+          before { @sconfig.queues = ['reporting'] }
 
           it 'loads the job into the scheduler' do
             subject
@@ -337,7 +343,7 @@ describe SidekiqScheduler::Scheduler do
         context "when stringified sidekiq queues match symbolized job's one" do
           let(:queue) { :reporting }
 
-          before { Sidekiq.options[:queues] = ['reporting'] }
+          before { @sconfig.queues = ['reporting'] }
 
           it 'loads the job into the scheduler' do
             subject
@@ -348,7 +354,7 @@ describe SidekiqScheduler::Scheduler do
         context "when symbolized sidekiq queues match stringified job's one" do
           let(:queue) { 'reporting' }
 
-          before { Sidekiq.options[:queues] = [:reporting] }
+          before { @sconfig.queues = [:reporting] }
 
           it 'loads the job into the scheduler' do
             subject
@@ -357,7 +363,7 @@ describe SidekiqScheduler::Scheduler do
         end
 
         context "when sidekiq queues does not match job's one" do
-          before { Sidekiq.options[:queues] = ['mailing'] }
+          before { @sconfig.queues = ['mailing'] }
 
           it 'does not load the job into the scheduler' do
             subject
@@ -370,7 +376,7 @@ describe SidekiqScheduler::Scheduler do
         before { instance.listened_queues_only = false }
 
         context "when sidekiq queues does not match job's one" do
-          before { Sidekiq.options[:queues] = ['mailing'] }
+          before { @sconfig.queues = ['mailing'] }
 
           it 'loads the job into the scheduler' do
             subject
@@ -387,7 +393,7 @@ describe SidekiqScheduler::Scheduler do
         before { instance.listened_queues_only = true }
 
         context 'when configured sidekiq queues' do
-          before { Sidekiq.options[:queues] = ['mailing'] }
+          before { @sconfig.queues = ['mailing'] }
 
           it 'does not load the job into the scheduler' do
             subject
@@ -396,7 +402,7 @@ describe SidekiqScheduler::Scheduler do
         end
 
         context 'when default sidekiq queues' do
-          before { Sidekiq.options[:queues] = Sidekiq::DEFAULTS[:queues] }
+          before { @sconfig.queues = Sidekiq::DEFAULTS[:queues] }
 
           it 'loads the job into the scheduler' do
             subject
@@ -409,7 +415,7 @@ describe SidekiqScheduler::Scheduler do
         before { instance.listened_queues_only = false }
 
         context 'when configured sidekiq queues' do
-          before { Sidekiq.options[:queues] = ['mailing'] }
+          before { @sconfig.queues = ['mailing'] }
 
           it 'loads the job into the scheduler' do
             subject

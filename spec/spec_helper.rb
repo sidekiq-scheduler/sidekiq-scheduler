@@ -9,6 +9,7 @@ require 'sidekiq/testing'
 require 'sidekiq-scheduler'
 require 'json'
 require 'timecop'
+require 'byebug'
 
 # Load all support files
 Dir["#{File.dirname(__FILE__)}/support/**/*.rb"].sort.each { |f| require f }

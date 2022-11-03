@@ -17,7 +17,7 @@ Sidekiq.configure_server do |config|
     SidekiqScheduler::RedisManager.clean_schedules_changed
 
     # Accessing the raw @config hash through .options is deprecated in 6.5 and to be removed in 7.0
-    config_options = SIDEKIQ_GTE_6_5_0 ? Sidekiq.instance_variable_get(:@config) : config.options
+    config_options = SIDEKIQ_GTE_7_0_0 ? options.instance_variable_get(:@options) : (SIDEKIQ_GTE_6_5_0 ? Sidekiq.instance_variable_get(:@config) : config.options)    
 
     schedule_manager = SidekiqScheduler::Manager.new(config_options)
     if SIDEKIQ_GTE_6_5_0
