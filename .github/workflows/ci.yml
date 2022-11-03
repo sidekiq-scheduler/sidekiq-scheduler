@@ -12,7 +12,7 @@ jobs:
       matrix: 
         redis-version: ["~> 4.2", "~> 5"]
         ruby-version: ['2.7', '3.0', '3.1']
-        sidekiq-version: ['~> 6']
+        sidekiq-version: ['~> 6', '~> 7']
     services:
       redis:
         image: redis
