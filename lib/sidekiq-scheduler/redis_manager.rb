@@ -142,7 +142,7 @@ module SidekiqScheduler
         end
       end
 
-      registered
+      registered.instance_of?(Integer) ? registered == 1 : registered
     end
 
     # Removes instances of the job older than 24 hours
