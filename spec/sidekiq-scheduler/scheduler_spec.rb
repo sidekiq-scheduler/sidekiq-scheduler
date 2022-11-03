@@ -574,7 +574,7 @@ describe SidekiqScheduler::Scheduler do
       end
 
       it 'does not store the next time execution correctly' do
-        expect(next_time_execution).to eq 0
+        expect(next_time_execution).not_to be
       end
     end
 
@@ -632,7 +632,7 @@ describe SidekiqScheduler::Scheduler do
           end
 
           it 'does not store the next time execution correctly' do
-            expect(next_time_execution).to eq 0
+            expect(next_time_execution).not_to be
           end
         end
       end
