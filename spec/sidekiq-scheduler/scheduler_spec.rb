@@ -13,13 +13,8 @@ describe SidekiqScheduler::Scheduler do
   before do
     described_class.instance = instance
     Sidekiq.redis(&:flushall)
-    if SIDEKIQ_GTE_7_0_0
-      @sconfig = reset_sidekiq_config!
-      @sconfig.queues = []
-    else
-      # Sidekiq 6 the default queues was an empty array https://github.com/mperham/sidekiq/blob/6-x/lib/sidekiq.rb#L21
-      Sidekiq.options[:queues] = Sidekiq::DEFAULTS[:queues]
-    end
+    @sconfig = SConfigWrapper.new
+    @sconfig.reset!
     instance.instance_variable_set(:@scheduled_jobs, {})
     Sidekiq::Worker.clear_all
     Sidekiq.schedule = {}
@@ -402,7 +397,7 @@ describe SidekiqScheduler::Scheduler do
         end
 
         context 'when default sidekiq queues' do
-          before { @sconfig.queues = Sidekiq::DEFAULTS[:queues] }
+          before { @sconfig.queues = [] }
 
           it 'loads the job into the scheduler' do
             subject
@@ -637,7 +632,7 @@ describe SidekiqScheduler::Scheduler do
           end
 
           it 'does not store the next time execution correctly' do
-            expect(next_time_execution).not_to be
+            expect(next_time_execution).to eq 0
           end
         end
       end
@@ -772,9 +767,9 @@ describe SidekiqScheduler::Scheduler do
     end
 
     context 'when the job has been previously enqueued' do
-      before { instance.idempotent_job_enqueue(job_name, time, config) }
-
       it 'is not enqueued again' do
+        instance.idempotent_job_enqueue(job_name, time, config)
+
         expect { subject }.to_not change { Sidekiq::Queues[config['queue']].size }
       end
     end
