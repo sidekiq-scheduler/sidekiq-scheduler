@@ -1,20 +1,23 @@
 describe SidekiqScheduler::Scheduler do
   let(:scheduler_options) do
     {
-      enabled: true,
-      dynamic: false,
-      dynamic_every: '5s',
-      listened_queues_only: false,
-      rufus_scheduler_options: { max_work_threads: 5 }
+      scheduler:
+      {
+        enabled: true,
+        dynamic: false,
+        dynamic_every: '5s',
+        listened_queues_only: false,
+        rufus_scheduler_options: { max_work_threads: 5 }
+      }
     }
   end
-  let(:instance) { described_class.new(scheduler_options) }
+  let(:scheduler_config) { SidekiqScheduler::Config.new(@sconfig.reset!(scheduler_options)) }
+  let(:instance) { described_class.new(scheduler_config) }
 
   before do
+    @sconfig = SConfigWrapper.new
     described_class.instance = instance
     Sidekiq.redis(&:flushall)
-    @sconfig = SConfigWrapper.new
-    @sconfig.reset!
     instance.instance_variable_set(:@scheduled_jobs, {})
     Sidekiq::Worker.clear_all
     Sidekiq.schedule = {}
@@ -25,15 +28,17 @@ describe SidekiqScheduler::Scheduler do
   end
 
   describe '.new' do
-    subject { described_class.new(options) }
+    subject { described_class.new(scheduler_config) }
 
-    let(:options) do
+    let(:scheduler_options) do
       {
-        enabled: true,
-        dynamic: false,
-        dynamic_every: '5s',
-        listened_queues_only: false,
-        rufus_scheduler_options: { max_work_threads: 5 }
+        scheduler: {
+          enabled: true,
+          dynamic: false,
+          dynamic_every: '5s',
+          listened_queues_only: false,
+          rufus_scheduler_options: { max_work_threads: 5 }
+        }
       }
     end
 
@@ -46,7 +51,7 @@ describe SidekiqScheduler::Scheduler do
     it { expect(subject.listened_queues_only).to be_falsey }
 
     it { expect(subject.rufus_scheduler_options).to eql({ max_work_threads: 5 }) }
-    
+
     context 'when passing rufus_scheduler_options' do
       it { expect(instance.rufus_scheduler.max_work_threads).to eql(5) }
     end
@@ -54,15 +59,15 @@ describe SidekiqScheduler::Scheduler do
     context 'when passing no options' do
       subject { described_class.new }
 
-      it { expect(subject.enabled).to be_nil }
+      it { expect(subject.enabled).to eq(SidekiqScheduler::Config::DEFAULT_OPTIONS[:enabled]) }
 
-      it { expect(subject.dynamic).to be_nil }
+      it { expect(subject.dynamic).to eq(SidekiqScheduler::Config::DEFAULT_OPTIONS[:dynamic]) }
 
-      it { expect(subject.dynamic_every).to be_nil }
+      it { expect(subject.dynamic_every).to eq(SidekiqScheduler::Config::DEFAULT_OPTIONS[:dynamic_every]) }
 
-      it { expect(subject.listened_queues_only).to be_nil }
+      it { expect(subject.listened_queues_only).to eq(SidekiqScheduler::Config::DEFAULT_OPTIONS[:listened_queues_only]) }
 
-      it { expect(subject.rufus_scheduler_options).to be_empty }
+      it { expect(subject.rufus_scheduler_options).to eq(SidekiqScheduler::Config::DEFAULT_OPTIONS[:rufus_scheduler_options]) }
     end
   end
 
@@ -80,11 +85,11 @@ describe SidekiqScheduler::Scheduler do
       describe 'scheduler instance' do
         it { is_expected.to be_a(SidekiqScheduler::Scheduler) }
 
-        it { expect(subject.enabled).to be_nil }
+        it { expect(subject.enabled).to eq(SidekiqScheduler::Config::DEFAULT_OPTIONS[:enabled]) }
 
-        it { expect(subject.dynamic).to be_nil }
+        it { expect(subject.dynamic).to eq(SidekiqScheduler::Config::DEFAULT_OPTIONS[:dynamic]) }
 
-        it { expect(subject.dynamic_every).to be_nil }
+        it { expect(subject.dynamic_every).to eq(SidekiqScheduler::Config::DEFAULT_OPTIONS[:dynamic_every]) }
 
         it { expect(subject.listened_queues_only).to be_nil }
       end
@@ -96,8 +101,14 @@ describe SidekiqScheduler::Scheduler do
 
     let(:value) do
       described_class.new(
-        enabled: true,
-        dynamic: false
+          SidekiqScheduler::Config.new(
+          {
+            scheduler: {
+              enabled: true,
+              dynamic: false
+            }
+          }
+        )
       )
     end
 
@@ -113,19 +124,19 @@ describe SidekiqScheduler::Scheduler do
 
       it { expect(subject.dynamic).to be_falsey }
 
-      it { expect(subject.dynamic_every).to be_nil }
+      it { expect(subject.dynamic_every).to eq(SidekiqScheduler::Config::DEFAULT_OPTIONS[:dynamic_every]) }
 
       it { expect(subject.listened_queues_only).to be_nil }
     end
   end
 
   describe '#enqueue_job' do
-    subject { instance.enqueue_job(scheduler_config, schedule_time) }
+    subject { instance.enqueue_job(scheduled_job_config, schedule_time) }
 
     let(:schedule_time) { Time.now }
     let(:args) { '/tmp' }
-    let(:scheduler_config) do
-      { 'class' => 'SomeWorker', 'queue' => 'high', 'args'  => args, 'cron' => '* * * * *' }
+    let(:scheduled_job_config) do
+      { 'class' => 'SomeWorker', 'queue' => 'high', 'args' => args, 'cron' => '* * * * *' }
     end
 
     # The job should be loaded, since a missing rails_env means ALL envs.
@@ -134,21 +145,21 @@ describe SidekiqScheduler::Scheduler do
     context 'when it is a sidekiq worker' do
       it 'prepares the parameters' do
         expect(Sidekiq::Client).to receive(:push).with({
-          'class' => SomeWorker,
-          'queue' => 'high',
-          'args' => ['/tmp']
-        })
+                                                         'class' => SomeWorker,
+                                                         'queue' => 'high',
+                                                         'args' => ['/tmp']
+                                                       })
 
         subject
       end
     end
 
     context 'when it is an activejob worker' do
-      before { scheduler_config['class'] = EmailSender }
+      before { scheduled_job_config['class'] = EmailSender }
 
       it 'enqueues the job as active job' do
         expect(EmailSender).to receive(:new).with('/tmp')
-          .and_return(double(:job).as_null_object)
+                                            .and_return(double(:job).as_null_object)
         subject
       end
 
@@ -158,7 +169,7 @@ describe SidekiqScheduler::Scheduler do
       end
 
       context 'when queue is not configured' do
-        before { scheduler_config.delete('queue') }
+        before { scheduled_job_config.delete('queue') }
 
         it 'does not include :queue option' do
           expect_any_instance_of(EmailSender).to receive(:enqueue).with({})
@@ -168,30 +179,31 @@ describe SidekiqScheduler::Scheduler do
     end
 
     context 'when worker class does not exist' do
-      before { scheduler_config['class'] = 'NonExistentWorker' }
+      before { scheduled_job_config['class'] = 'NonExistentWorker' }
 
       it 'prepares the parameters' do
         expect(Sidekiq::Client).to receive(:push).with({
-          'class' => 'NonExistentWorker',
-          'queue' => 'high',
-          'args' => ['/tmp']
-        })
+                                                         'class' => 'NonExistentWorker',
+                                                         'queue' => 'high',
+                                                         'args' => ['/tmp']
+                                                       })
 
         subject
       end
     end
 
     context 'when job is configured to receive metadata' do
-      before { scheduler_config['include_metadata'] = true }
+      before { scheduled_job_config['include_metadata'] = true }
 
       context 'when called without a time argument' do
         it 'uses the current time' do
           Timecop.freeze(schedule_time) do
             expect(Sidekiq::Client).to receive(:push).with({
-              'class' => SomeWorker,
-              'queue' => 'high',
-              'args' => ['/tmp', { 'scheduled_at' => schedule_time.to_f }]
-            })
+                                                             'class' => SomeWorker,
+                                                             'queue' => 'high',
+                                                             'args' => ['/tmp',
+                                                                        { 'scheduled_at' => schedule_time.to_f }]
+                                                           })
 
             subject
           end
@@ -202,10 +214,11 @@ describe SidekiqScheduler::Scheduler do
         it 'pushes the job with the metadata as the last argument' do
           Timecop.freeze(schedule_time) do
             expect(Sidekiq::Client).to receive(:push).with({
-              'class' => SomeWorker,
-              'queue' => 'high',
-              'args' => ['/tmp', { 'scheduled_at' => schedule_time.to_f }]
-            })
+                                                             'class' => SomeWorker,
+                                                             'queue' => 'high',
+                                                             'args' => ['/tmp',
+                                                                        { 'scheduled_at' => schedule_time.to_f }]
+                                                           })
 
             subject
           end
@@ -213,7 +226,7 @@ describe SidekiqScheduler::Scheduler do
       end
 
       context 'when it is an active job worker' do
-        before { scheduler_config['class'] = EmailSender }
+        before { scheduled_job_config['class'] = EmailSender }
 
         it 'enqueues the job as active job' do
           expect(EmailSender).to receive(:new).with(
@@ -236,10 +249,11 @@ describe SidekiqScheduler::Scheduler do
         it 'pushes the job with the metadata as the last argument' do
           Timecop.freeze(schedule_time) do
             expect(Sidekiq::Client).to receive(:push).with({
-              'class' => SomeWorker,
-              'queue' => 'high',
-              'args' => [{ dir: '/tmp' }, { 'scheduled_at' => schedule_time.to_f }]
-            })
+                                                             'class' => SomeWorker,
+                                                             'queue' => 'high',
+                                                             'args' => [{ dir: '/tmp' },
+                                                                        { 'scheduled_at' => schedule_time.to_f }]
+                                                           })
 
             subject
           end
@@ -247,15 +261,15 @@ describe SidekiqScheduler::Scheduler do
       end
 
       context 'when arguments are empty' do
-        before { scheduler_config.delete('args') }
+        before { scheduled_job_config.delete('args') }
 
         it 'pushes the job with the metadata as the only argument' do
           Timecop.freeze(schedule_time) do
             expect(Sidekiq::Client).to receive(:push).with({
-              'class' => SomeWorker,
-              'queue' => 'high',
-              'args' => [{ 'scheduled_at' => schedule_time.to_f }]
-            })
+                                                             'class' => SomeWorker,
+                                                             'queue' => 'high',
+                                                             'args' => [{ 'scheduled_at' => schedule_time.to_f }]
+                                                           })
 
             subject
           end
@@ -266,9 +280,9 @@ describe SidekiqScheduler::Scheduler do
 
   describe 'clear_schedule!' do
     it 'sets a new rufus-scheduler instance' do
-      expect {
+      expect do
         instance.clear_schedule!
-      }.to change { instance.rufus_scheduler }
+      end.to change { instance.rufus_scheduler }
     end
 
     it 'stops the current rufus-scheduler' do
@@ -292,9 +306,9 @@ describe SidekiqScheduler::Scheduler do
     let(:schedule) do
       {
         'some_ivar_job' => {
-          'cron'  => '* * * * *',
+          'cron' => '* * * * *',
           'class' => class_name,
-          'args'  => args,
+          'args' => args,
           'queue' => queue
         }
       }
@@ -423,10 +437,12 @@ describe SidekiqScheduler::Scheduler do
     context 'when the enabled option is false' do
       let(:scheduler_options) do
         {
-          enabled: false,
-          dynamic: false,
-          dynamic_every: '5s',
-          listened_queues_only: false
+          scheduler: {
+            enabled: false,
+            dynamic: false,
+            dynamic_every: '5s',
+            listened_queues_only: false
+          }
         }
       end
 
@@ -459,10 +475,12 @@ describe SidekiqScheduler::Scheduler do
 
     let(:scheduler_options) do
       {
-        enabled: true,
-        dynamic: true,
-        dynamic_every: '5s',
-        listened_queues_only: false
+        scheduler: {
+          enabled: true,
+          dynamic: true,
+          dynamic_every: '5s',
+          listened_queues_only: false
+        }
       }
     end
 
@@ -513,20 +531,22 @@ describe SidekiqScheduler::Scheduler do
         end
 
         it 'reloads the schedule from redis after 5 seconds' do
-          expect {
+          expect do
             Timecop.travel(7 * 60)
             sleep 0.5
-          }.to change { instance.scheduled_jobs.include?('other_job') }.to(true)
+          end.to change { instance.scheduled_jobs.include?('other_job') }.to(true)
         end
       end
 
       context 'when dynamic_every is set to 5m' do
         let(:scheduler_options) do
           {
-            enabled: true,
-            dynamic: true,
-            dynamic_every: '5m',
-            listened_queues_only: false
+            scheduler: {
+              enabled: true,
+              dynamic: true,
+              dynamic_every: '5m',
+              listened_queues_only: false
+            }
           }
         end
 
@@ -537,17 +557,17 @@ describe SidekiqScheduler::Scheduler do
         end
 
         it 'does not reload the schedule from redis after 2 minutes' do
-          expect {
+          expect do
             Timecop.travel(2 * 60)
             sleep 0.5
-          }.to_not change { instance.scheduled_jobs.include?('other_job') }
+          end.to_not change { instance.scheduled_jobs.include?('other_job') }
         end
 
         it 'reloads the schedule from redis after 10 minutes' do
-          expect {
+          expect do
             Timecop.travel(10 * 60)
             sleep 0.5
-          }.to change { instance.scheduled_jobs.include?('other_job') }.to(true)
+          end.to change { instance.scheduled_jobs.include?('other_job') }.to(true)
         end
       end
     end
@@ -749,7 +769,7 @@ describe SidekiqScheduler::Scheduler do
       let(:some_time_ago) { time - SidekiqScheduler::RedisManager::REGISTERED_JOBS_THRESHOLD_IN_SECONDS }
       let(:near_time_ago) { time - SidekiqScheduler::RedisManager::REGISTERED_JOBS_THRESHOLD_IN_SECONDS / 2 }
 
-      before  do
+      before do
         Timecop.freeze(some_time_ago) do
           SidekiqScheduler::RedisManager.register_job_instance(job_name, some_time_ago)
         end
@@ -788,10 +808,12 @@ describe SidekiqScheduler::Scheduler do
 
     let(:scheduler_options) do
       {
-        enabled: false,
-        dynamic: true,
-        dynamic_every: '5s',
-        listened_queues_only: false
+        scheduler: {
+          enabled: false,
+          dynamic: true,
+          dynamic_every: '5s',
+          listened_queues_only: false
+        }
       }
     end
     let(:job_name) { 'job_name' }
@@ -874,10 +896,12 @@ describe SidekiqScheduler::Scheduler do
 
     let(:scheduler_options) do
       {
-        enabled: false,
-        dynamic: true,
-        dynamic_every: '5s',
-        listened_queues_only: false
+        scheduler: {
+          enabled: false,
+          dynamic: true,
+          dynamic_every: '5s',
+          listened_queues_only: false
+        }
       }
     end
     let(:job_name) { 'job_name' }
@@ -928,10 +952,12 @@ describe SidekiqScheduler::Scheduler do
 
     let(:scheduler_options) do
       {
-        enabled: true,
-        dynamic: true,
-        dynamic_every: '5s',
-        listened_queues_only: false
+        scheduler: {
+          enabled: true,
+          dynamic: true,
+          dynamic_every: '5s',
+          listened_queues_only: false
+        }
       }
     end
 
@@ -979,9 +1005,9 @@ describe SidekiqScheduler::Scheduler do
     context 'when a job is updated' do
       let(:new_args) do
         {
-          'cron'  => '1 * * * *',
+          'cron' => '1 * * * *',
           'class' => 'SystemNotifierWorker',
-          'args'  => '',
+          'args' => '',
           'queue' => 'some_queue'
         }
       end
