@@ -1,3 +1,10 @@
+# Unreleased
+
+- [**BREAKING CHANGE**] Drop support for EOL Ruby & Sidekiq versions (Ruby: `2.5.x` & `2.6.x`; Sidekiq: `4.x` & `5.x`) [#411](https://github.com/sidekiq-scheduler/sidekiq-scheduler/pull/411)
+
+- [**FIX**] Add support for Sidekiq 7 [#410](https://github.com/sidekiq-scheduler/sidekiq-scheduler/pull/410)
+
+
 # 4.0.3
 
 - [**GH Actions**] Add dependabot for GitHub Actions [#390](https://github.com/sidekiq-scheduler/sidekiq-scheduler/pull/390)
