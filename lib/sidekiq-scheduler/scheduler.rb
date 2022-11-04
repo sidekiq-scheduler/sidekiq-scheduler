@@ -2,6 +2,7 @@ require 'rufus/scheduler'
 require 'json'
 require 'sidekiq-scheduler/rufus_utils'
 require 'sidekiq-scheduler/redis_manager'
+require 'sidekiq-scheduler/config'
 
 module SidekiqScheduler
   class Scheduler
@@ -9,6 +10,11 @@ module SidekiqScheduler
     Rufus::Scheduler::Job.module_eval do
       alias_method :params, :opts
     end
+
+    # TODO: Can we remove those attr_accessor's? If we need to keep them, we should
+    # update those values on the config object instead of just here in the scheduler.
+    # That's why we need to do what we do in the set_current_scheduler_options (not 
+    # saying we will have to do it somehow still)
 
     # Set to enable or disable the scheduler.
     attr_accessor :enabled
@@ -41,12 +47,14 @@ module SidekiqScheduler
       end
     end
 
-    def initialize(options = {})
-      self.enabled = options[:enabled]
-      self.dynamic = options[:dynamic]
-      self.dynamic_every = options[:dynamic_every]
-      self.listened_queues_only = options[:listened_queues_only]
-      self.rufus_scheduler_options = options[:rufus_scheduler_options] || {}
+    def initialize(config = SidekiqScheduler::Config.new)
+      @scheduler_config = config
+
+      self.enabled = config.enabled?
+      self.dynamic = config.dynamic?
+      self.dynamic_every = config.dynamic_every?
+      self.listened_queues_only = config.listened_queues_only?
+      self.rufus_scheduler_options = config.rufus_scheduler_options
     end
 
     # the Rufus::Scheduler jobs that are scheduled
@@ -82,7 +90,7 @@ module SidekiqScheduler
         Sidekiq.logger.info 'Schedule empty! Set Sidekiq.schedule' if Sidekiq.schedule.empty?
 
         @scheduled_jobs = {}
-        queues = sidekiq_queues
+        queues = scheduler_config.sidekiq_queues
 
         Sidekiq.schedule.each do |name, config|
           if !listened_queues_only || enabled_queue?(config['queue'].to_s, queues)
@@ -238,6 +246,8 @@ module SidekiqScheduler
 
     private
 
+    attr_reader :scheduler_config
+
     def new_job(name, interval_type, config, schedule, options)
       options = options.merge({ :job => true, :tags => [name] })
 
@@ -288,16 +298,6 @@ module SidekiqScheduler
         [*args, metadata]
       else
         [args, metadata]
-      end
-    end
-
-    def sidekiq_queues
-      if SIDEKIQ_GTE_7_0_0
-        Sidekiq.instance_variable_get(:@config).queues.map(&:to_s)
-      elsif SIDEKIQ_GTE_6_5_0
-        Sidekiq[:queues].map(&:to_s)
-      else
-        Sidekiq.options[:queues].map(&:to_s)
       end
     end
 
