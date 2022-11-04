@@ -13,7 +13,7 @@ module SidekiqScheduler
 
     # TODO: Can we remove those attr_accessor's? If we need to keep them, we should
     # update those values on the config object instead of just here in the scheduler.
-    # That's why we need to do what we do in the set_current_scheduler_options (not 
+    # That's why we need to do what we do in the set_current_scheduler_options (not
     # saying we will have to do it somehow still)
 
     # Set to enable or disable the scheduler.
