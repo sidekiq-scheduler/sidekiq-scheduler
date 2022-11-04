@@ -83,40 +83,41 @@ Configuration options are placed inside `sidekiq.yml` config file.
 Available options are:
 
 ``` yaml
-:dynamic: <if true the schedule can be modified in runtime [false by default]>
-:dynamic_every: <if dynamic is true, the schedule is reloaded every interval [5s by default]>
-:enabled: <enables scheduler if true [true by default]>
 :scheduler:
+  :dynamic: <if true the schedule can be modified in runtime [false by default]>
+  :dynamic_every: <if dynamic is true, the schedule is reloaded every interval [5s by default]>
+  :enabled: <enables scheduler if true [true by default]>
   :listened_queues_only: <push jobs whose queue is being listened by sidekiq [false by default]>
-:rufus_scheduler_options: <Set custom options for rufus scheduler, like max_work_threads [{} by default]>
+  :rufus_scheduler_options: <Set custom options for rufus scheduler, like max_work_threads [{} by default]>
 ```
 
 ## Schedule configuration
 
-The schedule is configured through the `:schedule` config entry in the sidekiq config file:
+The schedule is configured through the `:scheduler:` -> `:schedule` config entry in the sidekiq config file:
 
 ``` yaml
-:schedule:
-  CancelAbandonedOrders:
-    cron: '0 */5 * * * *'   # Runs when second = 0, every 5 minutes
+:scheduler:
+  :schedule:
+    CancelAbandonedOrders:
+      cron: '0 */5 * * * *'   # Runs when second = 0, every 5 minutes
 
-  queue_documents_for_indexing:
-    cron: '0 0 * * * *'   # Runs every hour
+    queue_documents_for_indexing:
+      cron: '0 0 * * * *'   # Runs every hour
 
-    # By default the job name will be taken as worker class name.
-    # If you want to have a different job name and class name, provide the 'class' option
-    class: QueueDocuments
+      # By default the job name will be taken as worker class name.
+      # If you want to have a different job name and class name, provide the 'class' option
+      class: QueueDocuments
 
-    queue: slow
-    args: ['*.pdf']
-    description: "This job queues pdf content for indexing in solr"
+      queue: slow
+      args: ['*.pdf']
+      description: "This job queues pdf content for indexing in solr"
 
-    # Enable the `metadata` argument which will pass a Hash containing the schedule metadata
-    # as the last argument of the `perform` method. `false` by default.
-    include_metadata: true
+      # Enable the `metadata` argument which will pass a Hash containing the schedule metadata
+      # as the last argument of the `perform` method. `false` by default.
+      include_metadata: true
 
-    # Enable / disable a job. All jobs are enabled by default.
-    enabled: true
+      # Enable / disable a job. All jobs are enabled by default.
+      enabled: true
 ```
 
 ### Schedule metadata
@@ -157,9 +158,10 @@ Cron, every, and interval types push jobs into sidekiq in a recurrent manner.
 `cron` follows the same pattern as cron utility, with seconds resolution.
 
 ``` yaml
-:schedule:
-  HelloWorld:
-    cron: '0 * * * * *' # Runs when second = 0
+:scheduler:
+  :schedule:
+    HelloWorld:
+      cron: '0 * * * * *' # Runs when second = 0
 ```
 
 `every` triggers following a given frequency:
@@ -250,7 +252,8 @@ When `:dynamic` flag is set to `true`, schedule changes are loaded every 5 secon
 
 ``` yaml
 # config/sidekiq.yml
-:dynamic: true
+:scheduler:
+  :dynamic: true
 ```
 
 If `:dynamic` flag is set to `false`, you'll have to reload the schedule manually in sidekiq
@@ -299,8 +302,9 @@ You can also override the thread pool size in Rufus Scheduler by setting the fol
 ---
 ...
 
-rufus_scheduler_options:
-  max_work_threads: 5
+:scheduler:
+  rufus_scheduler_options:
+    max_work_threads: 5
 
 ...
 ```
@@ -386,12 +390,13 @@ Say you have one process with the schedule:
 
 :queues:
   - default
-:schedule:
-  do_something_every_minute:
-    class: DoSomethingJob
-    args: matey
-    queue: :scheduler
-    cron: '0 * * * * * America/Los_Angeles'
+:scheduler:
+  :schedule:
+    do_something_every_minute:
+      class: DoSomethingJob
+      args: matey
+      queue: :scheduler
+      cron: '0 * * * * * America/Los_Angeles'
 ```
 
 And a separate separate configured process without one:
@@ -401,7 +406,8 @@ And a separate separate configured process without one:
   - scheduler
 
 ## NOTE Disable the Scheduler
-:enabled: false
+:scheduler:
+  :enabled: false
 ```
 
 ### Details
