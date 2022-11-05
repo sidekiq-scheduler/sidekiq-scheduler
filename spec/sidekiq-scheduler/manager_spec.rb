@@ -143,7 +143,7 @@ describe SidekiqScheduler::Manager do
           }
 
           it {
-            expect(subject.dynamic_every).to eql(scheduler_options[:dynamic_every])
+            expect(subject.dynamic_every).to eql(scheduler_options[:scheduler][:dynamic_every])
           }
 
           it {
@@ -194,7 +194,7 @@ describe SidekiqScheduler::Manager do
         SidekiqScheduler::Config.new(
           sidekiq_config: sidekiq_config_for_options(
             {
-              scheduler: { 
+              scheduler: {
                 listened_queues_only: true,
                 enabled: true,
                 dynamic: true,
@@ -203,7 +203,7 @@ describe SidekiqScheduler::Manager do
               },
             }
           )
-        )        
+        )
       )
     end
 
@@ -220,8 +220,8 @@ describe SidekiqScheduler::Manager do
       described_class.new(
         SidekiqScheduler::Config.new(
           sidekiq_config: sidekiq_config_for_options(
-            {              
-              scheduler: { 
+            {
+              scheduler: {
                 enabled: true,
                 dynamic: true,
                 dynamic_every: '5s',
@@ -230,7 +230,7 @@ describe SidekiqScheduler::Manager do
               },
             }
           )
-        )            
+        )
       )
     end
 
