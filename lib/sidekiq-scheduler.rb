@@ -17,7 +17,7 @@ Sidekiq.configure_server do |config|
     # schedules_changed's type was changed from SET to ZSET, so we remove old versions at startup
     SidekiqScheduler::RedisManager.clean_schedules_changed
 
-    scheduler_config = SidekiqScheduler::Config.new(config)
+    scheduler_config = SidekiqScheduler::Config.new(sidekiq_config: config)
 
     schedule_manager = SidekiqScheduler::Manager.new(scheduler_config)
     if SIDEKIQ_GTE_6_5_0

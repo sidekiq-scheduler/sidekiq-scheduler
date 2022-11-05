@@ -47,7 +47,7 @@ module SidekiqScheduler
       end
     end
 
-    def initialize(config = SidekiqScheduler::Config.new)
+    def initialize(config = SidekiqScheduler::Config.new(without_defaults: true))
       @scheduler_config = config
 
       self.enabled = config.enabled?

@@ -3,7 +3,7 @@ describe SidekiqScheduler::Manager do
   describe '.new' do
     subject { described_class.new(scheduler_config) }
 
-    let(:scheduler_config) { SidekiqScheduler::Config.new(@sconfig.reset!(scheduler_options)) }
+    let(:scheduler_config) { SidekiqScheduler::Config.new(sidekiq_config: @sconfig.reset!(scheduler_options)) }
     let(:scheduler_options) do
       {
         scheduler: {
@@ -124,7 +124,7 @@ describe SidekiqScheduler::Manager do
 
         before do
           sidekiq_previous_options = Sidekiq::Config.new(previous_options)
-          previous_config = SidekiqScheduler::Config.new(sidekiq_previous_options)
+          previous_config = SidekiqScheduler::Config.new(sidekiq_config: sidekiq_previous_options)
           SidekiqScheduler::Scheduler.instance = SidekiqScheduler::Scheduler.new(previous_config)
         end
 
@@ -167,7 +167,7 @@ describe SidekiqScheduler::Manager do
       describe 'scheduler attributes' do
         subject do
           sidekiq_options = Sidekiq::Config.new(scheduler_options)
-          described_class.new(sidekiq_options)
+          described_class.new(SidekiqScheduler::Config.new(sidekiq_config: sidekiq_options))
           SidekiqScheduler::Scheduler.instance
         end
 
@@ -191,11 +191,19 @@ describe SidekiqScheduler::Manager do
 
     let(:manager) do
       described_class.new(
-        enabled: true,
-        dynamic: true,
-        dynamic_every: '5s',
-        scheduler: { listened_queues_only: true },
-        schedule: { 'current' => ScheduleFaker.cron_schedule('queue' => 'default') }
+        SidekiqScheduler::Config.new(
+          sidekiq_config: Sidekiq::Config.new(
+            {
+              scheduler: { 
+                listened_queues_only: true,
+                enabled: true,
+                dynamic: true,
+                dynamic_every: '5s',
+                schedule: { 'current' => ScheduleFaker.cron_schedule('queue' => 'default') }
+              },
+            }
+          )
+        )        
       )
     end
 
@@ -210,11 +218,19 @@ describe SidekiqScheduler::Manager do
 
     let(:manager) do
       described_class.new(
-        enabled: true,
-        dynamic: true,
-        dynamic_every: '5s',
-        scheduler: { listened_queues_only: true },
-        schedule: { 'current' => ScheduleFaker.cron_schedule('queue' => 'default') }
+        SidekiqScheduler::Config.new(
+          sidekiq_config: Sidekiq::Config.new(
+            {              
+              scheduler: { 
+                enabled: true,
+                dynamic: true,
+                dynamic_every: '5s',
+                listened_queues_only: true,
+                schedule: { 'current' => ScheduleFaker.cron_schedule('queue' => 'default') }
+              },
+            }
+          )
+        )            
       )
     end
 
