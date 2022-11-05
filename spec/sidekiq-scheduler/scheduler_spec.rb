@@ -101,7 +101,7 @@ describe SidekiqScheduler::Scheduler do
     let(:value) do
       described_class.new(
         SidekiqScheduler::Config.new(
-          sidekiq_config: Sidekiq::Config.new(
+          sidekiq_config: sidekiq_config_for_options(
             {
               scheduler: {
                 enabled: true,
