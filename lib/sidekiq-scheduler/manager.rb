@@ -10,13 +10,6 @@ module SidekiqScheduler
   # from Redis onto the work queues
   #
   class Manager
-    DEFAULT_SCHEDULER_OPTIONS = {
-      enabled: true,
-      dynamic: false,
-      dynamic_every: '5s',
-      schedule: {}
-    }
-
     def initialize(config)
       set_current_scheduler_options(config)
 
