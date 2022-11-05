@@ -1,8 +1,7 @@
 describe SidekiqScheduler::Scheduler do
   let(:scheduler_options) do
     {
-      scheduler:
-      {
+      scheduler: {
         enabled: true,
         dynamic: false,
         dynamic_every: '5s',
@@ -59,15 +58,15 @@ describe SidekiqScheduler::Scheduler do
     context 'when passing no options' do
       subject { described_class.new }
 
-      it { expect(subject.enabled).to eq(SidekiqScheduler::Config::DEFAULT_OPTIONS[:enabled]) }
+      it { expect(subject.enabled).to be_nil }
 
-      it { expect(subject.dynamic).to eq(SidekiqScheduler::Config::DEFAULT_OPTIONS[:dynamic]) }
+      it { expect(subject.dynamic).to be_nil }
 
-      it { expect(subject.dynamic_every).to eq(SidekiqScheduler::Config::DEFAULT_OPTIONS[:dynamic_every]) }
+      it { expect(subject.dynamic_every).to be_nil }
 
-      it { expect(subject.listened_queues_only).to eq(SidekiqScheduler::Config::DEFAULT_OPTIONS[:listened_queues_only]) }
+      it { expect(subject.listened_queues_only).to be_nil }
 
-      it { expect(subject.rufus_scheduler_options).to eq(SidekiqScheduler::Config::DEFAULT_OPTIONS[:rufus_scheduler_options]) }
+      it { expect(subject.rufus_scheduler_options).to be_nil }
     end
   end
 
@@ -85,11 +84,11 @@ describe SidekiqScheduler::Scheduler do
       describe 'scheduler instance' do
         it { is_expected.to be_a(SidekiqScheduler::Scheduler) }
 
-        it { expect(subject.enabled).to eq(SidekiqScheduler::Config::DEFAULT_OPTIONS[:enabled]) }
+        it { expect(subject.enabled).to be_nil }
 
-        it { expect(subject.dynamic).to eq(SidekiqScheduler::Config::DEFAULT_OPTIONS[:dynamic]) }
+        it { expect(subject.dynamic).to be_nil }
 
-        it { expect(subject.dynamic_every).to eq(SidekiqScheduler::Config::DEFAULT_OPTIONS[:dynamic_every]) }
+        it { expect(subject.dynamic_every).to be_nil }
 
         it { expect(subject.listened_queues_only).to be_nil }
       end
@@ -101,13 +100,15 @@ describe SidekiqScheduler::Scheduler do
 
     let(:value) do
       described_class.new(
-          SidekiqScheduler::Config.new(
-          {
-            scheduler: {
-              enabled: true,
-              dynamic: false
+        SidekiqScheduler::Config.new(
+          sidekiq_config: Sidekiq::Config.new(
+            {
+              scheduler: {
+                enabled: true,
+                dynamic: false
+              }
             }
-          }
+          )
         )
       )
     end

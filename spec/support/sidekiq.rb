@@ -13,9 +13,9 @@ end
 class SConfigWrapper
   def reset!(options={})
     if SIDEKIQ_GTE_7_0_0
-      sconfig = reset_sidekiq_config!(options)
-      sconfig.queues = []
-      sconfig
+      @sconfig = reset_sidekiq_config!(options)
+      @sconfig.queues = []
+      @sconfig
     else
       # Sidekiq 6 the default queues was an empty array https://github.com/mperham/sidekiq/blob/6-x/lib/sidekiq.rb#L21
       Sidekiq.options[:queues] = Sidekiq::DEFAULTS[:queues]
