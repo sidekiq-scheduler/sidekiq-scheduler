@@ -10,6 +10,15 @@ def reset_sidekiq_config!(options={})
   cfg
 end
 
+def sidekiq_config_for_options(options = {})
+  if SIDEKIQ_GTE_7_0_0
+    Sidekiq::Config.new(options)
+  else
+    Sidekiq.options = Sidekiq.options.merge(options)
+    Sidekiq
+  end
+end
+
 class SConfigWrapper
   def reset!(options={})
     if SIDEKIQ_GTE_7_0_0
@@ -19,6 +28,7 @@ class SConfigWrapper
     else
       # Sidekiq 6 the default queues was an empty array https://github.com/mperham/sidekiq/blob/6-x/lib/sidekiq.rb#L21
       Sidekiq.options[:queues] = Sidekiq::DEFAULTS[:queues]
+      Sidekiq.options = Sidekiq.options.merge(options)
       Sidekiq
     end
   end

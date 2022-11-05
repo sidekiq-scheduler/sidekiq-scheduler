@@ -123,8 +123,8 @@ describe SidekiqScheduler::Manager do
         end
 
         before do
-          sidekiq_previous_options = Sidekiq::Config.new(previous_options)
-          previous_config = SidekiqScheduler::Config.new(sidekiq_config: sidekiq_previous_options)
+          sidekiq_previous_config = sidekiq_config_for_options(previous_options)
+          previous_config = SidekiqScheduler::Config.new(sidekiq_config: sidekiq_previous_config)
           SidekiqScheduler::Scheduler.instance = SidekiqScheduler::Scheduler.new(previous_config)
         end
 
@@ -166,8 +166,8 @@ describe SidekiqScheduler::Manager do
 
       describe 'scheduler attributes' do
         subject do
-          sidekiq_options = Sidekiq::Config.new(scheduler_options)
-          described_class.new(SidekiqScheduler::Config.new(sidekiq_config: sidekiq_options))
+          sidekiq_config = sidekiq_config_for_options(scheduler_options)
+          described_class.new(SidekiqScheduler::Config.new(sidekiq_config: sidekiq_config))
           SidekiqScheduler::Scheduler.instance
         end
 
@@ -192,7 +192,7 @@ describe SidekiqScheduler::Manager do
     let(:manager) do
       described_class.new(
         SidekiqScheduler::Config.new(
-          sidekiq_config: Sidekiq::Config.new(
+          sidekiq_config: sidekiq_config_for_options(
             {
               scheduler: { 
                 listened_queues_only: true,
@@ -219,7 +219,7 @@ describe SidekiqScheduler::Manager do
     let(:manager) do
       described_class.new(
         SidekiqScheduler::Config.new(
-          sidekiq_config: Sidekiq::Config.new(
+          sidekiq_config: sidekiq_config_for_options(
             {              
               scheduler: { 
                 enabled: true,
