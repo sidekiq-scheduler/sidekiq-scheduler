@@ -11,7 +11,7 @@ describe SidekiqScheduler::Scheduler do
       }
     }
   end
-  let(:scheduler_config) { SidekiqScheduler::Config.new(@sconfig.reset!(scheduler_options)) }
+  let(:scheduler_config) { SidekiqScheduler::Config.new(sidekiq_config: @sconfig.reset!(scheduler_options)) }
   let(:instance) { described_class.new(scheduler_config) }
 
   before do

@@ -2,9 +2,9 @@ module SidekiqScheduler
   class Config
     # We have to set the default as nil because the scheduler could be instantiated without
     # passing the sidekiq config, and in those scenarios we don't want to fail
-    def initialize(sidekiq_config = nil)
+    def initialize(sidekiq_config: nil, without_defaults: false)
       @sidekiq_config = sidekiq_config
-      @scheduler_config = DEFAULT_OPTIONS.merge(fetch_scheduler_config(sidekiq_config))
+      @scheduler_config = fetch_scheduler_config(sidekiq_config, without_defaults)
     end
 
     def enabled?
@@ -82,7 +82,12 @@ module SidekiqScheduler
       rufus_scheduler_options: {}
     }.freeze
 
-    def fetch_scheduler_config(sidekiq_config)
+    def fetch_scheduler_config(sidekiq_config, without_defaults)
+      conf = fetch_scheduler_config_from_sidekiq(sidekiq_config)
+      without_defaults ? conf : DEFAULT_OPTIONS.merge(conf)
+    end
+
+    def fetch_scheduler_config_from_sidekiq(sidekiq_config)
       return {} if sidekiq_config.nil?
 
       if SIDEKIQ_GTE_6_5_0
