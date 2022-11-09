@@ -56,17 +56,7 @@ module SidekiqScheduler
     end
 
     def sidekiq_queues
-      if SIDEKIQ_GTE_7_0_0
-        if sidekiq_config.present?
-          sidekiq_config.queues.map(&:to_s)
-        else
-          Sidekiq.instance_variable_get(:@config).queues.map(&:to_s)
-        end
-      elsif SIDEKIQ_GTE_6_5_0
-        Sidekiq[:queues].map(&:to_s)
-      else
-        Sidekiq.options[:queues].map(&:to_s)
-      end
+      SidekiqScheduler::SidekiqAdapter.sidekiq_queues(sidekiq_config)
     end
 
     private
@@ -83,18 +73,8 @@ module SidekiqScheduler
     }.freeze
 
     def fetch_scheduler_config(sidekiq_config, without_defaults)
-      conf = fetch_scheduler_config_from_sidekiq(sidekiq_config)
+      conf = SidekiqScheduler::SidekiqAdapter.fetch_scheduler_config_from_sidekiq(sidekiq_config)
       without_defaults ? conf : DEFAULT_OPTIONS.merge(conf)
     end
-
-    def fetch_scheduler_config_from_sidekiq(sidekiq_config)
-      return {} if sidekiq_config.nil?
-
-      if SIDEKIQ_GTE_6_5_0
-        sidekiq_config.fetch(:scheduler, {})
-      else
-        sidekiq_config.options.fetch(:scheduler, {})
-      end
-    end
-  end  
+  end
 end

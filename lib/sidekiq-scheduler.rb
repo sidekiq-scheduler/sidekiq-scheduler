@@ -1,15 +1,16 @@
 require 'sidekiq'
 require 'tilt/erb'
 
+SIDEKIQ_GTE_6_5_0 = Gem::Version.new(Sidekiq::VERSION) >= Gem::Version.new('6.5.0')
+SIDEKIQ_GTE_7_0_0 = Gem::Version.new(Sidekiq::VERSION) >= Gem::Version.new('7.0.0')
+
 require_relative 'sidekiq/scheduler'
 require_relative 'sidekiq-scheduler/version'
 require_relative 'sidekiq-scheduler/manager'
 require_relative 'sidekiq-scheduler/redis_manager'
 require_relative 'sidekiq-scheduler/config'
 require_relative 'sidekiq-scheduler/extensions/schedule'
-
-SIDEKIQ_GTE_6_5_0 = Gem::Version.new(Sidekiq::VERSION) >= Gem::Version.new('6.5.0')
-SIDEKIQ_GTE_7_0_0 = Gem::Version.new(Sidekiq::VERSION) >= Gem::Version.new('7.0.0')
+require_relative 'sidekiq-scheduler/sidekiq-adapter'
 
 Sidekiq.configure_server do |config|
 
@@ -20,21 +21,11 @@ Sidekiq.configure_server do |config|
     scheduler_config = SidekiqScheduler::Config.new(sidekiq_config: config)
 
     schedule_manager = SidekiqScheduler::Manager.new(scheduler_config)
-    if SIDEKIQ_GTE_6_5_0
-      config[:schedule_manager] = schedule_manager
-      config[:schedule_manager].start
-    else
-      config.options[:schedule_manager] = schedule_manager
-      config.options[:schedule_manager].start
-    end
+    SidekiqScheduler::SidekiqAdapter.start_schedule_manager(sidekiq_config: config, schedule_manager: schedule_manager)
   end
 
   config.on(:quiet) do
-    if SIDEKIQ_GTE_6_5_0
-      config[:schedule_manager].stop
-    else
-      config.options[:schedule_manager].stop
-    end
+    SidekiqScheduler::SidekiqAdapter.stop_schedule_manager
   end
 
 end
