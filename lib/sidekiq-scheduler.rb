@@ -10,7 +10,7 @@ require_relative 'sidekiq-scheduler/manager'
 require_relative 'sidekiq-scheduler/redis_manager'
 require_relative 'sidekiq-scheduler/config'
 require_relative 'sidekiq-scheduler/extensions/schedule'
-require_relative 'sidekiq-scheduler/sidekiq-adapter'
+require_relative 'sidekiq-scheduler/sidekiq_adapter'
 
 Sidekiq.configure_server do |config|
 
