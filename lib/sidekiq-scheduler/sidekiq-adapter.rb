@@ -12,19 +12,19 @@ module SidekiqScheduler
 
     def self.start_schedule_manager(sidekiq_config:, schedule_manager:)
       if SIDEKIQ_GTE_6_5_0
-        config[:schedule_manager] = schedule_manager
-        config[:schedule_manager].start
+        sidekiq_config[:schedule_manager] = schedule_manager
+        sidekiq_config[:schedule_manager].start
       else
-        config.options[:schedule_manager] = schedule_manager
-        config.options[:schedule_manager].start
+        sidekiq_config.options[:schedule_manager] = schedule_manager
+        sidekiq_config.options[:schedule_manager].start
       end
     end
 
-    def self.stop_schedule_manager
+    def self.stop_schedule_manager(sidekiq_config:)
       if SIDEKIQ_GTE_6_5_0
-        config[:schedule_manager].stop
+        sidekiq_config[:schedule_manager].stop
       else
-        config.options[:schedule_manager].stop
+        sidekiq_config.options[:schedule_manager].stop
       end
     end
 
