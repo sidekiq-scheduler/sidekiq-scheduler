@@ -25,7 +25,7 @@ Sidekiq.configure_server do |config|
   end
 
   config.on(:quiet) do
-    SidekiqScheduler::SidekiqAdapter.stop_schedule_manager
+    SidekiqScheduler::SidekiqAdapter.stop_schedule_manager(sidekiq_config: config)
   end
 
 end
