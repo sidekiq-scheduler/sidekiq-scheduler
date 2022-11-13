@@ -1,9 +1,6 @@
 require 'sidekiq'
 require 'tilt/erb'
 
-SIDEKIQ_GTE_6_5_0 = Gem::Version.new(Sidekiq::VERSION) >= Gem::Version.new('6.5.0')
-SIDEKIQ_GTE_7_0_0 = Gem::Version.new(Sidekiq::VERSION) >= Gem::Version.new('7.0.0')
-
 require_relative 'sidekiq/scheduler'
 require_relative 'sidekiq-scheduler/version'
 require_relative 'sidekiq-scheduler/manager'

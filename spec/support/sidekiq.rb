@@ -11,7 +11,7 @@ def reset_sidekiq_config!(options={})
 end
 
 def sidekiq_config_for_options(options = {})
-  if SIDEKIQ_GTE_7_0_0
+  if SidekiqScheduler::SidekiqAdapter::SIDEKIQ_GTE_7_0_0
     Sidekiq::Config.new(options)
   else
     Sidekiq.options = Sidekiq.options.merge(options)
@@ -21,7 +21,7 @@ end
 
 class SConfigWrapper
   def reset!(options={})
-    if SIDEKIQ_GTE_7_0_0
+    if SidekiqScheduler::SidekiqAdapter::SIDEKIQ_GTE_7_0_0
       @sconfig = reset_sidekiq_config!(options)
       @sconfig.queues = []
       @sconfig
@@ -34,7 +34,7 @@ class SConfigWrapper
   end
 
   def queues=(val)
-    if SIDEKIQ_GTE_7_0_0
+    if SidekiqScheduler::SidekiqAdapter::SIDEKIQ_GTE_7_0_0
       @sconfig.queues = val
     else
       Sidekiq.options[:queues] = val
