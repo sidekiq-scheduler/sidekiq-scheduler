@@ -63,7 +63,7 @@ module SidekiqScheduler
 
     def self.hexists(hash_key, field_key)
       result = Sidekiq.redis { |r| r.hexists(hash_key.to_s, field_key.to_s) }
-      SIDEKIQ_GTE_7_0_0 ? (result > 0) : result
+      SidekiqScheduler::SidekiqAdapter::SIDEKIQ_GTE_7_0_0 ? (result > 0) : result
     end
   end
 end
