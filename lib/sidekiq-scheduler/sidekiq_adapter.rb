@@ -18,15 +18,17 @@ module SidekiqScheduler
     end
 
     def self.check_using_old_sidekiq_scheduler_config!(sidekiq_config)
-      if SIDEKIQ_GTE_6_5_0
-        %i[enabled dynamic dynamic_every schedule listened_queues_only rufus_scheduler_options].each do |option|
+      %i[enabled dynamic dynamic_every schedule listened_queues_only rufus_scheduler_options].each do |option|
+        if SIDEKIQ_GTE_7_0_0
           if sidekiq_config.key?(option)
             raise OptionNotSupportedAnymore, ":#{option} option should be under the :scheduler: key"
           end
-        end
-      else
-        %i[enabled dynamic dynamic_every schedule listened_queues_only rufus_scheduler_options].each do |option|
-          if sidekiq_config.options.key?(option).present?
+        elsif SIDEKIQ_GTE_6_5_0
+          unless sidekiq_config[option].nil?
+            raise OptionNotSupportedAnymore, ":#{option} option should be under the :scheduler: key"
+          end
+        else
+          if sidekiq_config.options.key?(option)
             raise OptionNotSupportedAnymore, ":#{option} option should be under the :scheduler: key"
           end
         end
