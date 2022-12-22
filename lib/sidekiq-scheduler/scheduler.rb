@@ -15,6 +15,10 @@ module SidekiqScheduler
     # update those values on the config object instead of just here in the scheduler.
     # That's why we need to do what we do in the set_current_scheduler_options (not
     # saying we will have to do it somehow still)
+    #
+    # NOTE: ^ Keeping this TODO here for now, in a future version of this project
+    # we will remove those attr acessors and use only our config object. For now, 
+    # let's keep as it is.
 
     # Set to enable or disable the scheduler.
     attr_accessor :enabled
