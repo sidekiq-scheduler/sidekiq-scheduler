@@ -1,9 +1,5 @@
 require 'sidekiq-scheduler'
 
-# Adds String#starts_with? which is used internally by sidekiq 7 as it assumes ActiveSupport is loaded.
-# TODO: Remove once https://github.com/mperham/sidekiq/pull/5621 is released.
-require 'active_support/core_ext/string'
-
 require_relative 'job_presenter'
 
 module SidekiqScheduler
