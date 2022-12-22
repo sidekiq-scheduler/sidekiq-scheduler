@@ -10,7 +10,7 @@ describe SidekiqScheduler::Manager do
           enabled: enabled,
           dynamic: false,
           dynamic_every: '5s',
-          scheduler: { listened_queues_only: true },
+          listened_queues_only: true,
           schedule: { 'current' => ScheduleFaker.cron_schedule('queue' => 'default') }
         }
       }
@@ -154,11 +154,13 @@ describe SidekiqScheduler::Manager do
     end
 
     context 'when no options are passed' do
-      let(:scheduler_options) { {} }
+      let(:scheduler_options) { { scheduler: {} } }
 
-      it {
+      it do
+        subject
+
         expect(SidekiqScheduler::Scheduler.instance).to be_a(SidekiqScheduler::Scheduler)
-      }
+      end
 
       it {
         expect { subject }.to change { Sidekiq.schedule }.to({})
