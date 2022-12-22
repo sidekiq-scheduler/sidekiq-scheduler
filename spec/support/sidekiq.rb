@@ -26,9 +26,8 @@ class SConfigWrapper
       @sconfig.queues = []
       @sconfig
     else
-      # Sidekiq 6 the default queues was an empty array https://github.com/mperham/sidekiq/blob/6-x/lib/sidekiq.rb#L21
-      Sidekiq.options[:queues] = Sidekiq::DEFAULTS[:queues]
-      Sidekiq.options = Sidekiq.options.merge(options)
+      # Sidekiq 6 -> reset the sidekiq config for each test
+      Sidekiq.options = Sidekiq::DEFAULTS.dup.merge(options)
       Sidekiq
     end
   end
