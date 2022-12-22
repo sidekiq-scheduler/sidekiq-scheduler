@@ -14,7 +14,7 @@ def sidekiq_config_for_options(options = {})
   if SidekiqScheduler::SidekiqAdapter::SIDEKIQ_GTE_7_0_0
     Sidekiq::Config.new(options)
   else
-    Sidekiq.options = Sidekiq.options.merge(options)
+    Sidekiq.options = Sidekiq::DEFAULTS.dup.merge(options)
     Sidekiq
   end
 end
