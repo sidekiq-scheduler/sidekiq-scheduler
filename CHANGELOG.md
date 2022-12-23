@@ -1,4 +1,4 @@
-# Unreleased
+# 5.0.0.beta1
 
 - [**BREAKING CHANGE**] Moves all sidekiq-scheduler config options under the `scheduler` key in the `sidekiq.yml` file [#412](https://github.com/sidekiq-scheduler/sidekiq-scheduler/pull/412)
   - If you're migrating from v4 to v5, any `sidekiq-scheduler` config you may have in your `sidekiq.yml` should be moved under the `scheduler` key.
