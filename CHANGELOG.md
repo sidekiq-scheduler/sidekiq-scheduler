@@ -1,5 +1,9 @@
 # Unreleased
 
+- [**BREAKING CHANGE**] Moves all sidekiq-scheduler config options under the `scheduler` key in the `sidekiq.yml` file [#412](https://github.com/sidekiq-scheduler/sidekiq-scheduler/pull/412)
+  - If you're migrating from v4 to v5, any `sidekiq-scheduler` config you may have in your `sidekiq.yml` should be moved under the `scheduler` key.
+  - See [#412](https://github.com/sidekiq-scheduler/sidekiq-scheduler/pull/412) to see which are the config options that you need to move under the `scheduler` key.
+  
 - [**BREAKING CHANGE**] Drop support for EOL Ruby & Sidekiq versions (Ruby: `2.5.x` & `2.6.x`; Sidekiq: `4.x` & `5.x`) [#411](https://github.com/sidekiq-scheduler/sidekiq-scheduler/pull/411)
 
 - [**FIX**] Add support for Sidekiq 7 [#410](https://github.com/sidekiq-scheduler/sidekiq-scheduler/pull/410)
