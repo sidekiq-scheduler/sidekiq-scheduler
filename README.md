@@ -48,10 +48,11 @@ end
 ``` yaml
 # config/sidekiq.yml
 
-:schedule:
-  hello_world:
-    cron: '0 * * * * *'   # Runs once per minute
-    class: HelloWorld
+:scheduler:
+  :schedule:
+    hello_world:
+      cron: '0 * * * * *'   # Runs once per minute
+      class: HelloWorld
 ```
 
 Run sidekiq:
