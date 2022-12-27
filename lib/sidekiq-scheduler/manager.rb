@@ -1,5 +1,3 @@
-require 'redis'
-
 require 'sidekiq-scheduler/schedule'
 require 'sidekiq-scheduler/scheduler'
 
