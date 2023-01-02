@@ -1,3 +1,7 @@
+# 5.0.0.beta2
+
+  - [**FIX**] Drop explicit redis dependency [#416](https://github.com/sidekiq-scheduler/sidekiq-scheduler/pull/416)
+
 # 5.0.0.beta1
 
 - [**BREAKING CHANGE**] Moves all sidekiq-scheduler config options under the `scheduler` key in the `sidekiq.yml` file [#412](https://github.com/sidekiq-scheduler/sidekiq-scheduler/pull/412)
