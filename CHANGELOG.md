@@ -1,3 +1,12 @@
+# 5.0.0
+
+  - [**FIX**] Ensure generated scheduled time has a precision of 3 miliseconds. [#418](https://github.com/sidekiq-scheduler/sidekiq-scheduler/pull/418)
+
+*Note 1:* Check [# 5.0.0.beta1](#500beta1) & [# 5.0.0.beta2](#500beta2) releases for breaking changes.
+
+*Note 2:* Sidekiq Embedding is yet not supported, see [#419](https://github.com/sidekiq-scheduler/sidekiq-scheduler/issues/419) for more details.
+
+
 # 5.0.0.beta2
 
   - [**FIX**] Drop explicit redis dependency [#416](https://github.com/sidekiq-scheduler/sidekiq-scheduler/pull/416)
