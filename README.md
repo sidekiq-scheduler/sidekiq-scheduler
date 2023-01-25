@@ -18,7 +18,7 @@
 `sidekiq-scheduler` is an extension to [Sidekiq](http://github.com/mperham/sidekiq) that
 pushes jobs in a scheduled way, mimicking cron utility.
 
-__Note:__ Current branch contains work of the upcoming v5 release, if you are looking for version 2.2.\*, 3.\*, or 4.\*, go to [2.2-stable branch](https://github.com/sidekiq-scheduler/sidekiq-scheduler/tree/2.2-stable) / [v3-stable](https://github.com/sidekiq-scheduler/sidekiq-scheduler/tree/v3-stable) / [v4-stable](https://github.com/sidekiq-scheduler/sidekiq-scheduler/tree/v4-stable).
+__Note:__ Current branch contains work of the v5 release, if you are looking for version 2.2.\*, 3.\*, or 4.\*, go to [2.2-stable branch](https://github.com/sidekiq-scheduler/sidekiq-scheduler/tree/2.2-stable) / [v3-stable](https://github.com/sidekiq-scheduler/sidekiq-scheduler/tree/v3-stable) / [v4-stable](https://github.com/sidekiq-scheduler/sidekiq-scheduler/tree/v4-stable).
 
 ## Installation
 
