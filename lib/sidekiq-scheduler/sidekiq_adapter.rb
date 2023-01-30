@@ -55,10 +55,10 @@ module SidekiqScheduler
 
     def self.sidekiq_queues(sidekiq_config)
       if SIDEKIQ_GTE_7_0_0
-        if sidekiq_config.present?
-          sidekiq_config.queues.map(&:to_s)
-        else
+        if sidekiq_config.nil? || (sidekiq_config.respond_to?(:empty?) && sidekiq_config.empty?)
           Sidekiq.instance_variable_get(:@config).queues.map(&:to_s)
+        else
+          sidekiq_config.queues.map(&:to_s)
         end
       elsif SIDEKIQ_GTE_6_5_0
         Sidekiq[:queues].map(&:to_s)
