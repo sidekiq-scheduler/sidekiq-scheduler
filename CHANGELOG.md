@@ -1,3 +1,9 @@
+# 5.0.1
+
+  - [**ENHANCEMENT**] Adds Ruby 3.2 to the CI matrix. [#420](https://github.com/sidekiq-scheduler/sidekiq-scheduler/pull/420)
+  - [**DOCS**] README: refer to v5 as released. [#421](https://github.com/sidekiq-scheduler/sidekiq-scheduler/pull/421)
+  - [**FIX**] Fix dependency on Rails `.present?` method. [#425](https://github.com/sidekiq-scheduler/sidekiq-scheduler/pull/425)
+ 
 # 5.0.0
 
   - [**FIX**] Ensure generated scheduled time has a precision of 3 miliseconds. [#418](https://github.com/sidekiq-scheduler/sidekiq-scheduler/pull/418)
