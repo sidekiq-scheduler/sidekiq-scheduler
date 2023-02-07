@@ -281,7 +281,7 @@ module SidekiqScheduler
     # Saves a schedule state
     #
     # @param name [String] with the schedule's name
-    # @param name [Hash] with the schedule's state
+    # @param state [Hash] with the schedule's state
     def set_schedule_state(name, state)
       SidekiqScheduler::RedisManager.set_job_state(name, state)
     end
