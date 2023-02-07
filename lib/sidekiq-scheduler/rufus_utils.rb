@@ -3,9 +3,9 @@ require 'sidekiq-scheduler/utils'
 module SidekiqScheduler
   class RufusUtils
 
-    # Normalizes schedule options to rufust scheduler options
+    # Normalizes schedule options to rufus scheduler options
     #
-    # @param options [String, [Array]
+    # @param options [String, Array]
     #
     # @return [Array]
     #

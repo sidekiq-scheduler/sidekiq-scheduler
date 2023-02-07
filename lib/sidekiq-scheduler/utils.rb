@@ -57,7 +57,7 @@ module SidekiqScheduler
     # Initializes active_job using the passed parameters.
     #
     # @param [Class] klass The class to initialize
-    # @param [Array/Hash] the parameters passed to the klass initializer
+    # @param [Array, Hash] args The parameters passed to the klass initializer
     #
     # @return [Object] instance of the class klass
     def self.initialize_active_job(klass, args)
