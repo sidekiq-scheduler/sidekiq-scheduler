@@ -16,7 +16,7 @@ Gem::Specification.new do |s|
 
   s.required_ruby_version = '>= 2.7'
 
-  s.add_dependency 'sidekiq', '>= 4', '< 8'
+  s.add_dependency 'sidekiq', '>= 6', '< 8'
   s.add_dependency 'rufus-scheduler', '~> 3.2'
   s.add_dependency 'tilt', '>= 1.4.0'
 
