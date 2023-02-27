@@ -1,3 +1,8 @@
+# 5.0.2
+
+  - [**FIX**] Fix YARD docblocks. [#427](https://github.com/sidekiq-scheduler/sidekiq-scheduler/pull/427)
+  - [**FIX**] Fix dependency requirement on Sidekiq reverted unintentionally. [#429](https://github.com/sidekiq-scheduler/sidekiq-scheduler/issues/429)
+
 # 5.0.1
 
   - [**ENHANCEMENT**] Adds Ruby 3.2 to the CI matrix. [#420](https://github.com/sidekiq-scheduler/sidekiq-scheduler/pull/420)
