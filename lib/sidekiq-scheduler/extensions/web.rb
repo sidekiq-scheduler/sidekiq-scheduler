@@ -10,5 +10,5 @@ if Sidekiq::VERSION >= '6.0.0'
   Sidekiq::Web.use Rack::Static, urls: ['/stylesheets-scheduler'],
                                  root: ASSETS_PATH,
                                  cascade: true,
-                                 header_rules: [[:all, { 'Cache-Control' => 'public, max-age=86400' }]]
+                                 header_rules: [[:all, { 'cache-control' => 'public, max-age=86400' }]]
 end
