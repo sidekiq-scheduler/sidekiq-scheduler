@@ -1,0 +1,16 @@
+﻿gd:
+  recurring_jobs: Obraichean ath-chùrsach
+  name: Ainm
+  description: Tuairisgeul
+  interval: Eadaramh
+  class: Clas
+  queue: Ciudha
+  arguments: Argamaidean
+  enqueue_now: Cuir sa chiudha an-dràsta
+  last_time: An t-àm mu dheireadh
+  next_time: An t-ath-àm
+  no_next_time: chan eil ath-ghnìomhachadh aig an obair seo
+  disable: Cuir à comas
+  enable: Cuir an comas
+  disable_all: Cuir na h-uile à comas
+  enable_all: Cuir na h-uile an comas
