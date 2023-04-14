@@ -58,7 +58,7 @@ module SidekiqScheduler
       self.dynamic = config.dynamic?
       self.dynamic_every = config.dynamic_every?
       self.listened_queues_only = config.listened_queues_only?
-      self.rufus_scheduler_options = config.rufus_scheduler_options
+      self.rufus_scheduler_options = config.rufus_scheduler_options || {}
     end
 
     # the Rufus::Scheduler jobs that are scheduled
