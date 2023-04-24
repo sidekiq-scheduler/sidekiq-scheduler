@@ -7,7 +7,10 @@ fr:
   queue: Queue
   arguments: Arguments
   enqueue_now: Ajouter à la queue
-  next_time: Quand
+  last_time: Dernière fois
+  next_time: Prochaine fois
   no_next_time: Pas d'exécution prévue pour cette tâche
   disable: Désactiver
   enable: Activer
+  disable_all: Tout désactiver
+  enable_all: Tout activer
