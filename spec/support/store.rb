@@ -50,7 +50,7 @@ module SidekiqScheduler
     end
 
     def self.zrangebyscore(zset_key, from, to)
-      Sidekiq.redis { |r| r.zrangebyscore(zset_key, from, to) }
+      SidekiqScheduler::SidekiqAdapter.redis_zrangebyscore(zset_key, from, to)
     end
 
     def self.zrange(zset_key, from, to)

@@ -76,5 +76,15 @@ module SidekiqScheduler
         end
       end
     end
+
+    def self.redis_zrangebyscore(key, from, to)
+      Sidekiq.redis do |r|
+        if SIDEKIQ_GTE_7_0_0
+          r.zrange(key, from, to, "BYSCORE")
+        else
+          r.zrangebyscore(key, from, to)
+        end
+      end
+    end
   end
 end
