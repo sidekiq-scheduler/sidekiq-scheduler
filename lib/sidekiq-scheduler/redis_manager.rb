@@ -106,7 +106,7 @@ module SidekiqScheduler
     #
     # @return [Array] array with all the changed job names
     def self.get_schedule_changes(from, to)
-      Sidekiq.redis { |r| r.zrangebyscore(schedules_changed_key, from, "(#{to}") }
+      SidekiqScheduler::SidekiqAdapter.redis_zrangebyscore(schedules_changed_key, from, "(#{to}")
     end
 
     # Register a schedule change for a given job
