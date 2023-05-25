@@ -60,10 +60,10 @@ module SidekiqScheduler
     # @param [Array, Hash] args The parameters passed to the klass initializer
     #
     # @return [Object] instance of the class klass
-    def self.initialize_active_job(klass, args, use_kwarg = false)
+    def self.initialize_active_job(klass, args, keyword_argument = false)
       if args.is_a?(Array)
         klass.new(*args)
-      elsif args.is_a?(Hash) && use_kwarg
+      elsif args.is_a?(Hash) && keyword_argument
         klass.new(**symbolize_keys(args))
       else
         klass.new(args)

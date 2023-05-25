@@ -273,7 +273,7 @@ describe SidekiqScheduler::Utils do
         expect(AddressUpdaterKeyword).to receive(:new).with(foo: 'bar', hello: 'world').and_call_original
         expect(AddressUpdaterKeyword).to receive(:new).with(no_args).and_call_original
 
-        expect(subject).to have_attributes(arguments: [args], queue_name: 'default')
+        expect(subject).to have_attributes(arguments: [args.symbolize_keys], queue_name: 'default')
       end
     end
 
