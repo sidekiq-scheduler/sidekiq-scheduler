@@ -60,11 +60,11 @@ module SidekiqScheduler
     # @param [Array, Hash] args The parameters passed to the klass initializer
     #
     # @return [Object] instance of the class klass
-    def self.initialize_active_job(klass, args)
+    def self.initialize_active_job(klass, args, use_kwarg = false)
       if args.is_a?(Array)
         klass.new(*args)
-      elsif args.is_a?(Hash)
-        klass.new(**args)
+      elsif args.is_a?(Hash) && use_kwarg
+        klass.new(**symbolize_keys(args))
       else
         klass.new(args)
       end
@@ -96,7 +96,7 @@ module SidekiqScheduler
         queue: config['queue']
       }.keep_if { |_, v| !v.nil? }
 
-      initialize_active_job(config['class'], config['args']).enqueue(options)
+      initialize_active_job(config['class'], config['args'], config['keyword_argument']).enqueue(options)
     end
 
     # Removes the hash values associated to the rufus metadata keys.

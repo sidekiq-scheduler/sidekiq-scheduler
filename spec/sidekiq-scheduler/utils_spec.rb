@@ -264,6 +264,19 @@ describe SidekiqScheduler::Utils do
       end
     end
 
+    context 'with keyword args' do
+      let(:config) { { 'class' => job, 'args' => args, 'queue' => queue, 'keyword_argument' => true } }
+      let(:args) { { 'foo' => 'bar', 'hello' => 'world' } }
+      let(:job) { AddressUpdaterKeyword }
+
+      it 'should be correctly enqueued with keyword arguments' do
+        expect(AddressUpdaterKeyword).to receive(:new).with(foo: 'bar', hello: 'world').and_call_original
+        expect(AddressUpdaterKeyword).to receive(:new).with(no_args).and_call_original
+
+        expect(subject).to have_attributes(arguments: [args], queue_name: 'default')
+      end
+    end
+
     context 'with queue name set by config' do
       let(:queue) { 'critical' }
 
