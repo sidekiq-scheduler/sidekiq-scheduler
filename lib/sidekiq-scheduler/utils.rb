@@ -63,6 +63,8 @@ module SidekiqScheduler
     def self.initialize_active_job(klass, args)
       if args.is_a?(Array)
         klass.new(*args)
+      elsif args.is_a?(Hash)
+        klass.new(**args)
       else
         klass.new(args)
       end
