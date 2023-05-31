@@ -66,7 +66,7 @@ describe SidekiqScheduler::Scheduler do
 
       it { expect(subject.listened_queues_only).to be_nil }
 
-      it { expect(subject.rufus_scheduler_options).to be_nil }
+      it { expect(subject.rufus_scheduler_options).to eql({}) }
     end
   end
 
