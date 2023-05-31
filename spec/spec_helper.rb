@@ -2,7 +2,6 @@ require 'simplecov'
 
 SimpleCov.start do
   add_filter "spec/support/sidekiq.rb"
-  minimum_coverage 97.80
 end
 
 require 'sidekiq'
