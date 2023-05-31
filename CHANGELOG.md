@@ -1,3 +1,11 @@
+# 5.0.3
+
+  - [**FIX**] Fix "uppercase character in header name: Cache-Control" [#432](https://github.com/sidekiq-scheduler/sidekiq-scheduler/pull/432)
+  - [**ENHANCEMENT**] Add gd translation [#433](https://github.com/sidekiq-scheduler/sidekiq-scheduler/pull/433)
+  - [**ENHANCEMENT**] Add French translation [#435](https://github.com/sidekiq-scheduler/sidekiq-scheduler/pull/435)
+  - [**FIX**] Remove usage of deprecated Redis command `zrangebyscore` [#437](https://github.com/sidekiq-scheduler/sidekiq-scheduler/pull/437)
+  - [**ENHANCEMENT**] Add the ability to force a job args hash to be deconstructed to keyword arguments [#440](https://github.com/sidekiq-scheduler/sidekiq-scheduler/pull/440)
+
 # 5.0.2
 
   - [**FIX**] Fix YARD docblocks. [#427](https://github.com/sidekiq-scheduler/sidekiq-scheduler/pull/427)
