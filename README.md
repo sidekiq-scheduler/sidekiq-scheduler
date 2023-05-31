@@ -119,6 +119,25 @@ The schedule is configured through the `:scheduler:` -> `:schedule` config entry
 
       # Enable / disable a job. All jobs are enabled by default.
       enabled: true
+
+      # Deconstructs a hash defined as the `args` to keyword arguments. 
+      #
+      # `flase` by default.
+      # 
+      # Example
+      # 
+      # my_job:
+      #   cron: '0 0 * * * *'
+      #   class: MyJob
+      #   args: { foo: 'bar', hello: 'world' } 
+      #   keyword_argument: true
+      #
+      # class MyJob < ActiveJob::Base
+      #   def perform(foo:, hello:)
+      #     # ...
+      #   end
+      # end
+      keyword_argument: true 
 ```
 
 ### Schedule metadata
