@@ -122,7 +122,7 @@ The schedule is configured through the `:scheduler:` -> `:schedule` config entry
 
       # Deconstructs a hash defined as the `args` to keyword arguments. 
       #
-      # `flase` by default.
+      # `false` by default.
       # 
       # Example
       # 
