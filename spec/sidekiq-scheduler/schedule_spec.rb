@@ -7,7 +7,11 @@ describe SidekiqScheduler::Schedule do
     let(:job_id) { 'super_job' }
     let(:schedule) { ScheduleFaker.default_options }
 
-    before { SidekiqScheduler::Scheduler.dynamic = true }
+    before do
+      @original_dynamic, SidekiqScheduler::Scheduler.dynamic = SidekiqScheduler::Scheduler.dynamic, true
+    end
+
+    after { SidekiqScheduler::Scheduler.dynamic = @original_dynamic }
 
     it 'sets the schedule on redis' do
       subject
