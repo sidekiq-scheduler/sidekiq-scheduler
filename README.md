@@ -208,7 +208,7 @@ At, and in types push jobs only once. `at` schedules in a point in time:
     at: '3001/01/01'
 ```
 
-You can specify any string that `DateTime.parse` and `Chronic` understand. To enable Chronic
+You can specify any string that `DateTime.parse` and `Chronic` understand. To enable [Chronic](https://github.com/mojombo/chronic)
 strings, you must add it as a dependency.
 
 `in` triggers after a time duration has elapsed:
