@@ -256,7 +256,12 @@ module SidekiqScheduler
       options = options.merge({ :job => true, :tags => [name] })
 
       rufus_scheduler.send(interval_type, schedule, options) do |job, time|
-        idempotent_job_enqueue(name, time, SidekiqScheduler::Utils.sanitize_job_config(config)) if job_enabled?(name)
+        if job_enabled?(name)
+          # rufus-scheduler returns the current time. For CronJob, use the job scheduled time.
+          time = job.previous_time if job.is_a?(Rufus::Scheduler::CronJob)
+
+          idempotent_job_enqueue(name, time, SidekiqScheduler::Utils.sanitize_job_config(config))
+        end
       end
     end
 
