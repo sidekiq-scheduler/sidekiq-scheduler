@@ -1050,4 +1050,30 @@ describe SidekiqScheduler::Scheduler do
       end
     end
   end
+
+  context 'when the server load is very high' do
+    # rufus-scheduler returns the current time, which may different from
+    # the job scheduled time by a few seconds depending on server load conditions.
+    # This causes multiple execution of cron jobs in multiple hosts.
+    #
+    # This scenario is that the job was supposed to be executed at exactly 10:00:00, but it turned out to be 10:00:01.
+
+    before do
+      Timecop.travel(Time.new(2023, 10, 10, 9, 59, 0))
+      Sidekiq.schedule = {
+        'cron_job' => {
+          'cron' => '0 10 * * *',
+          'class' => 'CronWorker',
+        }
+      }
+      instance.load_schedule!
+      Timecop.travel(Time.new(2023, 10, 10, 10, 0, 1))
+    end
+
+    it 'enqueues the time is 10:00:00' do
+      allow(instance).to receive(:idempotent_job_enqueue).and_call_original
+      sleep 0.5 # wait rufus-scheduler to execute the job
+      expect(instance).to have_received(:idempotent_job_enqueue).with('cron_job', EtOrbi.parse('2023-10-10 10:00:00'), { 'class' => 'CronWorker' })
+    end
+  end
 end
