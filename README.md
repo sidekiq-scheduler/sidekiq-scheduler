@@ -45,6 +45,8 @@ class HelloWorld
 end
 ```
 
+__Note:__ In Sidekiq v6.3 `Sidekiq::Job` was introduced as an alias for `Sidekiq::Worker`. `Sidekiq::Worker` has been officially deprecated in Sidekiq v7 although it still exists for backwards compatibility. It is therefore recommended to use `include Sidekiq::Job` in the above example unless an older version of Sidekiq is required.
+
 ``` yaml
 # config/sidekiq.yml
 
