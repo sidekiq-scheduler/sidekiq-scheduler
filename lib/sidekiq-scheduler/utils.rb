@@ -141,5 +141,44 @@ module SidekiqScheduler
     def self.update_job_last_time(name, last_time)
       SidekiqScheduler::RedisManager.set_job_last_time(name, last_time) if last_time
     end
+
+    # Try to figure out when the cron job was supposed to run.
+    #
+    # Rufus calls the scheduler block with the current time and not the time the block was scheduled to run.
+    # This means under certain conditions you could have a job get scheduled multiple times because `time.to_i` is used
+    # to key the job in redis. If one server is under load and Rufus tries to run the jobs 1 seconds after the other
+    # server then the job will be queued twice.
+    # This method essentially makes a best guess at when this job was supposed to run and return that.
+    #
+    # @param [Fugit::Cron] cron
+    # @param [Time] time
+    #
+    # @return [Time]
+    def self.calc_cron_run_time(cron, time)
+      time = time.round # remove sub seconds to prevent rounding errors.
+      next_t = cron.next_time(time).utc
+      previous_t = cron.previous_time(time).utc
+      # The `time` var is some point between `previous_t` and `next_t`.
+      # Figure out how far off we are from each side in seconds.
+      next_diff = next_t - time
+      previous_diff = time - previous_t
+
+      if next_diff == previous_diff
+        # `next_diff` and `previous_diff` can be equal in two scenarios.
+        # 1. The `time` is exactly when the job was scheduled to run.
+        # 2. The `time` is exactly between `next_t` and `previous_t`, down to the exact second.
+        #
+        # The odds of 2 happening are basically zero but it is possible.
+        # So in scenario 2 it's possible to return the wrong time. For example if the job runs every minute and `time`
+        # is 15:25.30 then the returned time will be 15:25.30 instead of 15:25.0 (if rounding down).
+        time
+      elsif next_diff > previous_diff
+        # We are closer to the previous run time so return that.
+        previous_t
+      else
+        # We are closer to the next run time so return that.
+        next_t
+      end
+    end
   end
 end

@@ -256,7 +256,15 @@ module SidekiqScheduler
       options = options.merge({ :job => true, :tags => [name] })
 
       rufus_scheduler.send(interval_type, schedule, options) do |job, time|
-        idempotent_job_enqueue(name, time, SidekiqScheduler::Utils.sanitize_job_config(config)) if job_enabled?(name)
+        if job_enabled?(name)
+          conf = SidekiqScheduler::Utils.sanitize_job_config(config)
+
+          if job.is_a?(Rufus::Scheduler::CronJob)
+            idempotent_job_enqueue(name, SidekiqScheduler::Utils.calc_cron_run_time(job.cron_line, time.utc), conf)
+          else
+            idempotent_job_enqueue(name, time, conf)
+          end
+        end
       end
     end
 
