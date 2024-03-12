@@ -361,7 +361,7 @@ MyRegularJob:
 Then we can conditionally load it via an initializer:
 
 ```ruby
-# config/initializer/sidekiq.rb
+# config/initializers/sidekiq.rb
 if ENV.fetch("IS_SCHEDULER", false)
   Sidekiq.configure_server do |config|
     config.on(:startup) do
