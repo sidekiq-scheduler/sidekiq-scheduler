@@ -698,18 +698,38 @@ describe SidekiqScheduler::Scheduler do
     end
 
     context 'at schedule' do
-      let(:config) { ScheduleFaker.at_schedule(at: Time.now + 60) }
+      let(:config) { ScheduleFaker.at_schedule(at: at) }
 
-      it 'adds the job to rufus scheduler' do
-        expect(instance.rufus_scheduler.jobs.size).to eq(1)
+      context 'in the future' do
+        let(:at) { Time.now + 60 }
+
+        it 'adds the job to rufus scheduler' do
+          expect(instance.rufus_scheduler.jobs.size).to eq(1)
+        end
+
+        it 'puts the job inside the scheduled hash' do
+          expect(instance.scheduled_jobs.keys).to eq([job_name])
+        end
+
+        it 'stores the next time execution correctly' do
+          expect(next_time_execution).to be
+        end
       end
 
-      it 'puts the job inside the scheduled hash' do
-        expect(instance.scheduled_jobs.keys).to eq([job_name])
-      end
+      context 'in the past' do
+        let(:at) { Time.now - 60 }
 
-      it 'stores the next time execution correctly' do
-        expect(next_time_execution).to be
+        it 'does not add the job to rufus scheduler' do
+          expect(instance.rufus_scheduler.jobs).to be_empty
+        end
+
+        it 'does not put the job inside the scheduled hash' do
+          expect(instance.scheduled_jobs.keys).not_to include(job_name)
+        end
+
+        it 'stores the next time execution correctly' do
+          expect(next_time_execution).not_to be
+        end
       end
     end
 
