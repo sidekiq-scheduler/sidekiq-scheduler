@@ -128,6 +128,8 @@ module SidekiqScheduler
             schedule, options = SidekiqScheduler::RufusUtils.normalize_schedule_options(config_interval_type)
 
             rufus_job = new_job(name, interval_type, config, schedule, options)
+            return unless rufus_job
+
             @scheduled_jobs[name] = rufus_job
             SidekiqScheduler::Utils.update_job_next_time(name, rufus_job.next_time)
 
