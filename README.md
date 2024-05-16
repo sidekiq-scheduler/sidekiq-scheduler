@@ -57,6 +57,9 @@ __Note:__ In Sidekiq v6.3 `Sidekiq::Job` was introduced as an alias for `Sidekiq
       class: HelloWorld
 ```
 
+> [!NOTE]
+> sidekiq-scheduler uses [fugit](https://github.com/floraison/fugit) under the hood, which supports up to six arguments as the cron string, [see](https://github.com/floraison/fugit?tab=readme-ov-file#the-second-extension). 
+
 Run sidekiq:
 
 ``` sh
