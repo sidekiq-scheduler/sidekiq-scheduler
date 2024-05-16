@@ -399,8 +399,8 @@ describe SidekiqScheduler::Utils do
         # every minute would mean 30 seconds is between next and previous run
         let(:time) { Time.utc(2024, 1, 1, 9, 0, 30) }
 
-        it 'returns the time' do
-          expect(described_class.calc_cron_run_time(cron, time)).to eq(time)
+        it 'returns the previous time' do
+          expect(described_class.calc_cron_run_time(cron, time)).to eq(cron.previous_time(time).utc)
         end
       end
 
@@ -444,8 +444,8 @@ describe SidekiqScheduler::Utils do
         # every hour would mean 30 minutes is between next and previous run
         let(:time) { Time.utc(2024, 1, 1, 9, 30) }
 
-        it 'returns the time' do
-          expect(described_class.calc_cron_run_time(cron, time)).to eq(time)
+        it 'returns the previous time' do
+          expect(described_class.calc_cron_run_time(cron, time)).to eq(cron.previous_time(time).utc)
         end
       end
 
