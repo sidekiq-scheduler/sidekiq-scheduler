@@ -164,14 +164,9 @@ module SidekiqScheduler
       previous_diff = time - previous_t
 
       if next_diff == previous_diff
-        # `next_diff` and `previous_diff` can be equal in two scenarios.
-        # 1. The `time` is exactly when the job was scheduled to run.
-        # 2. The `time` is exactly between `next_t` and `previous_t`, down to the exact second.
-        #
-        # The odds of 2 happening are basically zero but it is possible.
-        # So in scenario 2 it's possible to return the wrong time. For example if the job runs every minute and `time`
-        # is 15:25.30 then the returned time will be 15:25.30 instead of 15:25.0 (if rounding down).
-        time
+        # In the event `time` is exactly between `previous_t` and `next_t` the diff will not be equal to
+        # `cron.rough_frequency`. In that case we round down.
+        cron.rough_frequency == next_diff ? time : previous_t
       elsif next_diff > previous_diff
         # We are closer to the previous run time so return that.
         previous_t
