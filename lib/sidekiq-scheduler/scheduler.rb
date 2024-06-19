@@ -250,6 +250,12 @@ module SidekiqScheduler
       end
     end
 
+    def to_hash
+      {
+        scheduler_config: @scheduler_config.to_hash
+      }
+    end
+
     private
 
     attr_reader :scheduler_config

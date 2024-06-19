@@ -1070,4 +1070,16 @@ describe SidekiqScheduler::Scheduler do
       end
     end
   end
+
+  describe '#to_hash' do
+    subject { instance.to_hash }
+
+    it 'returns a hash including a result of the scheduler_config.to_hash' do
+      expect(subject).to eq(
+        {
+          scheduler_config: scheduler_config.to_hash
+        }
+      )
+    end
+  end
 end
