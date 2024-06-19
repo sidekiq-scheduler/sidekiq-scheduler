@@ -59,6 +59,17 @@ module SidekiqScheduler
       SidekiqScheduler::SidekiqAdapter.sidekiq_queues(sidekiq_config)
     end
 
+    def to_hash
+      {
+        enabled: enabled?,
+        dynamic: dynamic?,
+        dynamic_every: dynamic_every?,
+        shedule: schedule,
+        listened_queues_only: listened_queues_only?,
+        rufus_scheduler_options: rufus_scheduler_options
+      }
+    end
+
     private
 
     attr_reader :scheduler_config
