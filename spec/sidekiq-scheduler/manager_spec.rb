@@ -241,4 +241,36 @@ describe SidekiqScheduler::Manager do
       subject
     end
   end
+
+  describe '#to_hash' do
+    subject { manager.to_hash }
+
+    let(:manager) do
+      described_class.new(
+        SidekiqScheduler::Config.new(
+          sidekiq_config: sidekiq_config_for_options(
+            {
+              scheduler: {
+                enabled: true,
+                dynamic: true,
+                dynamic_every: '5s',
+                listened_queues_only: true,
+                schedule: { 'current' => ScheduleFaker.cron_schedule('queue' => 'default') }
+              },
+            }
+          )
+        )
+      )
+    end
+
+    let(:scheduler_instance) { manager.instance_variable_get(:@scheduler_instance) }
+
+    it 'returns a hash including a result of the scheduler_instance.to_hash' do
+      expect(subject).to eq(
+        {
+          scheduler: scheduler_instance.to_hash
+        }
+      )
+    end
+  end
 end
