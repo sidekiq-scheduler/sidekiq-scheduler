@@ -24,6 +24,15 @@ module SidekiqScheduler
       @scheduler_instance.load_schedule!
     end
 
+    # This method is needed to avoid exposing unnecessary information.
+    # Because ActiveSupport's `as_json` traverses instance values to convert the object to a hash
+    # unless it responds to `to_hash`.
+    def to_hash
+      {
+        scheduler: @scheduler_instance.to_hash
+      }
+    end
+
     private
 
     def set_current_scheduler_options(config)
