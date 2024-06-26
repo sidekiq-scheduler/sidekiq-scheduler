@@ -13,7 +13,7 @@ module SidekiqScheduler
 
       @scheduler_instance = SidekiqScheduler::Scheduler.new(config)
       SidekiqScheduler::Scheduler.instance = @scheduler_instance
-      Sidekiq.schedule = config.schedule if @scheduler_instance.enabled
+      Sidekiq.schedule = config.schedule if @scheduler_instance.enabled && !@scheduler_instance.dynamic
     end
 
     def stop
