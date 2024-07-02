@@ -4,6 +4,7 @@ module SidekiqScheduler
   class SidekiqAdapter
     SIDEKIQ_GTE_6_5_0 = Gem::Version.new(Sidekiq::VERSION) >= Gem::Version.new('6.5.0')
     SIDEKIQ_GTE_7_0_0 = Gem::Version.new(Sidekiq::VERSION) >= Gem::Version.new('7.0.0')
+    SIDEKIQ_GTE_7_3_0 = Gem::Version.new(Sidekiq::VERSION) >= Gem::Version.new('7.3.0')
 
     def self.fetch_scheduler_config_from_sidekiq(sidekiq_config)
       return {} if sidekiq_config.nil?
