@@ -1,4 +1,5 @@
 it:
+  "Recurring Jobs": Job ricorrenti
   recurring_jobs: Job ricorrenti
   name: Nome
   description: Descrizione
