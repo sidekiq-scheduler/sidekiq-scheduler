@@ -1,3 +1,19 @@
+# 5.0.4
+  - [**FIX**] Ensure rufus-scheduler has a default rufus_scheduler_options value [#434](https://github.com/sidekiq-scheduler/sidekiq-scheduler/issues/426)
+  - [**ENHANCEMENT**] Remove code related to sidekiq < 6 [#443](https://github.com/sidekiq-scheduler/sidekiq-scheduler/pull/443)
+  - [**ENHANCEMENT**] Change cache-control to `private` [#446](https://github.com/sidekiq-scheduler/sidekiq-scheduler/pull/446)
+  - [**ENHANCEMENT**] Increase compatibility range with tilt dependency [#458](https://github.com/sidekiq-scheduler/sidekiq-scheduler/pull/458)
+  - [**ENHANCEMENT**] Ensure we support Ruby 3.3 [#461](https://github.com/sidekiq-scheduler/sidekiq-scheduler/pull/461)
+  - [**ENHANCEMENT**] Use Redis MULTI command (https://github.com/sidekiq-scheduler/sidekiq-scheduler/pull/464)
+  - [**ENHANCEMENT**] Don't attempt to set jon next_time when job is nil [#466](https://github.com/sidekiq-scheduler/sidekiq-scheduler/pull/466)
+  - [**ENHANCEMENT**] Improvements to prevent jobs been enqueued multiple times due to a delay in job execution [#463](https://github.com/sidekiq-scheduler/sidekiq-scheduler/pull/463)
+  - [**FIX**] Prevent stack level too deep error by implementing `to_hash` method [#470](https://github.com/sidekiq-scheduler/sidekiq-scheduler/pull/470)
+  - [**ENHANCEMENT**] Support new Sidekiq model for registering UI plugins [#472](https://github.com/sidekiq-scheduler/sidekiq-scheduler/pull/472)
+  - [**ENHANCEMENT**] Stop testing against Ruby 2.7 and 3.0 [#472](https://github.com/sidekiq-scheduler/sidekiq-scheduler/pull/472#discussion_r1663197863)
+  - [**ENHANCEMENT**] Display `at` and `in` in the dashboard [#291](https://github.com/sidekiq-scheduler/sidekiq-scheduler/pull/291)  
+  - [**ENHANCEMENT**] Docs enhancements [#442](https://github.com/sidekiq-scheduler/sidekiq-scheduler/pull/442), [#449](https://github.com/sidekiq-scheduler/sidekiq-scheduler/pull/449), [#457](https://github.com/sidekiq-scheduler/sidekiq-scheduler/pull/457), [#465](https://github.com/sidekiq-scheduler/sidekiq-scheduler/pull/465), [58e1835](https://github.com/sidekiq-scheduler/sidekiq-scheduler/commit/58e18351054fc3c264b2b5a684173316f674c386)
+
+
 # 5.0.3
 
   - [**FIX**] Fix "uppercase character in header name: Cache-Control" [#432](https://github.com/sidekiq-scheduler/sidekiq-scheduler/pull/432)
