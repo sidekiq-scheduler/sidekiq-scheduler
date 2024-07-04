@@ -20,7 +20,7 @@ else
   Sidekiq::Web.tabs['recurring_jobs'] = 'recurring-jobs'
   Sidekiq::Web.locales << File.expand_path("#{File.dirname(__FILE__)}/../../../web/locales")
 
-  Sidekiq::Web.use Rack::Static, urls: ['/stylesheets-scheduler'],
+  Sidekiq::Web.use Rack::Static, urls: ['/recurring_jobs/stylesheets-scheduler'],
                                  root: ASSETS_PATH,
                                  cascade: true,
                                  header_rules: [[:all, { 'cache-control' => 'private, max-age=86400' }]]
