@@ -1,3 +1,6 @@
+# 5.0.5
+  - [**FIX**] Use correct folder structure for assets [#476](https://github.com/sidekiq-scheduler/sidekiq-scheduler/pull/476)
+
 # 5.0.4
   - [**FIX**] Ensure rufus-scheduler has a default rufus_scheduler_options value [#434](https://github.com/sidekiq-scheduler/sidekiq-scheduler/issues/426)
   - [**ENHANCEMENT**] Remove code related to sidekiq < 6 [#443](https://github.com/sidekiq-scheduler/sidekiq-scheduler/pull/443)
