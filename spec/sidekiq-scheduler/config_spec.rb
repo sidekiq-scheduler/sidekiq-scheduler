@@ -12,7 +12,7 @@ RSpec.describe SidekiqScheduler::Config do
           enabled: true,
           dynamic: false,
           dynamic_every: '5s',
-          shedule: {},
+          schedule: {},
           listened_queues_only: nil,
           rufus_scheduler_options: {}
         }
