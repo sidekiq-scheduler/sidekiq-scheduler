@@ -38,7 +38,7 @@
  
 # 5.0.0
 
-  - [**FIX**] Ensure generated scheduled time has a precision of 3 miliseconds. [#418](https://github.com/sidekiq-scheduler/sidekiq-scheduler/pull/418)
+  - [**FIX**] Ensure generated scheduled time has a precision of 3 milliseconds. [#418](https://github.com/sidekiq-scheduler/sidekiq-scheduler/pull/418)
 
 *Note 1:* Check [# 5.0.0.beta1](#500beta1) & [# 5.0.0.beta2](#500beta2) releases for breaking changes.
 
@@ -91,6 +91,6 @@
 - [**ENHANCEMENT**] Highlight disabled jobs [#369](https://github.com/sidekiq-scheduler/sidekiq-scheduler/pull/369)
 - [**BREAKING CHANGE**] Require redis 4.2.0 [#370](https://github.com/sidekiq-scheduler/sidekiq-scheduler/pull/370)
 - [**FIX**] Fixes redis deprecation warning regarding `exists` [#370](https://github.com/sidekiq-scheduler/sidekiq-scheduler/pull/370)
-- [**BREAKING CHANGE**] Remove dependecy on thwait and e2mmap [#371](https://github.com/sidekiq-scheduler/sidekiq-scheduler/pull/371)
+- [**BREAKING CHANGE**] Remove dependency on thwait and e2mmap [#371](https://github.com/sidekiq-scheduler/sidekiq-scheduler/pull/371)
 - Support Ruby 3.1 [#373](https://github.com/sidekiq-scheduler/sidekiq-scheduler/pull/373)
 - [**BREAKING CHANGE**] Set rufus_scheduler_options via sidekiq.yml file as configuration option [#375](https://github.com/sidekiq-scheduler/sidekiq-scheduler/pull/375)
