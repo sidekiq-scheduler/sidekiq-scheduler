@@ -65,7 +65,7 @@ module SidekiqScheduler
     end
     alias_method :schedule!, :reload_schedule!
 
-    # Retrive the schedule configuration for the given name
+    # Retrieve the schedule configuration for the given name
     # if the name is nil it returns a hash with all the
     # names end their schedules.
     def get_schedule(name = nil)

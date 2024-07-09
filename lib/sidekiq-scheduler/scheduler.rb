@@ -17,7 +17,7 @@ module SidekiqScheduler
     # saying we will have to do it somehow still)
     #
     # NOTE: ^ Keeping this TODO here for now, in a future version of this project
-    # we will remove those attr acessors and use only our config object. For now,
+    # we will remove those attr accessors and use only our config object. For now,
     # let's keep as it is.
 
     # Set to enable or disable the scheduler.
@@ -308,7 +308,7 @@ module SidekiqScheduler
     #
     # @example with hash argument
     #   arguments_with_metadata({value: 1}, scheduled_at: Time.now.round(3))
-    #   #=> [{value: 1}, {scheduled_at: <miliseconds since epoch>}]
+    #   #=> [{value: 1}, {scheduled_at: <milliseconds since epoch>}]
     #
     # @param args [Array|Hash]
     # @param metadata [Hash]

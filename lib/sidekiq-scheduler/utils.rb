@@ -73,7 +73,7 @@ module SidekiqScheduler
     # Returns true if the enqueuing needs to be done for an ActiveJob
     #  class false otherwise.
     #
-    # @param [Class] klass the class to check is decendant from ActiveJob
+    # @param [Class] klass the class to check is descendant from ActiveJob
     #
     # @return [Boolean]
     def self.active_job_enqueue?(klass)

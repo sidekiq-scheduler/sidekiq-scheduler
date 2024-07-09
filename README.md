@@ -337,7 +337,7 @@ You can also override the thread pool size in Rufus Scheduler by setting the fol
 ## Notes about running on Multiple Hosts
 
 Under normal conditions, `cron` and `at` jobs are pushed once regardless of the number of `sidekiq-scheduler` running instances,
-assumming that time deltas between hosts is less than 24 hours.
+assuming that time deltas between hosts is less than 24 hours.
 
 Non-normal conditions that could push a specific job multiple times are:
  - high cpu load + a high number of jobs scheduled at the same time, like 100 jobs
@@ -494,7 +494,7 @@ end
 
 ## The Spring preloader and Testing your initializer via Rails console
 
-If you're pulling in your schedule from a YML file via an initializer as shown, be aware that the Spring application preloader included with Rails will interefere with testing via the Rails console.
+If you're pulling in your schedule from a YML file via an initializer as shown, be aware that the Spring application preloader included with Rails will interfere with testing via the Rails console.
 
 **Spring will not reload initializers** unless the initializer is changed.  Therefore, if you're making a change to your YML schedule file and reloading Rails console to see the change, Spring will make it seem like your modified schedule is not being reloaded.
 
