@@ -64,7 +64,7 @@ module SidekiqScheduler
         enabled: enabled?,
         dynamic: dynamic?,
         dynamic_every: dynamic_every?,
-        shedule: schedule,
+        schedule: schedule,
         listened_queues_only: listened_queues_only?,
         rufus_scheduler_options: rufus_scheduler_options
       }
