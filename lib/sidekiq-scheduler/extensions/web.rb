@@ -2,7 +2,7 @@ require 'sidekiq/web' unless defined?(Sidekiq::Web)
 
 if SidekiqScheduler::SidekiqAdapter::SIDEKIQ_GTE_7_3_0
 
-  # Locale and asset cache is configured in `.regiester`
+  # Locale and asset cache is configured in `.register`
   Sidekiq::Web.register(SidekiqScheduler::Web,
     name: "recurring_jobs",
     tab: ["Recurring Jobs"],
