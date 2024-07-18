@@ -121,7 +121,7 @@ module SidekiqScheduler
       Sidekiq.redis { |r| r.del(schedules_changed_key) unless r.type(schedules_changed_key) == 'zset' }
     end
 
-    # Removes a queued job instance
+    # Registers a queued job instance
     #
     # @param [String] job_name The name of the job
     # @param [Time] time The time at which the job was cleared by the scheduler
