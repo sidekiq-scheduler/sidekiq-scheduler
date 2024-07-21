@@ -299,6 +299,16 @@ describe SidekiqScheduler::Scheduler do
 
       instance.clear_schedule!(stop_option)
     end
+
+    it 'clears scheduled jobs' do
+      Sidekiq.schedule = { 'some_job '=> ScheduleFaker.every_schedule }
+      instance.load_schedule_job('some_job', ScheduleFaker.every_schedule )
+
+      expect do
+        instance.clear_schedule!
+      end.to change { instance.scheduled_jobs }
+      expect(instance.scheduled_jobs).to be_empty
+    end
   end
 
   describe '#load_schedule!' do
