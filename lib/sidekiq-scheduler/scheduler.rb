@@ -196,7 +196,7 @@ module SidekiqScheduler
         @rufus_scheduler = nil
       end
 
-      @@scheduled_jobs = {}
+      @scheduled_jobs = {}
 
       rufus_scheduler
     end
