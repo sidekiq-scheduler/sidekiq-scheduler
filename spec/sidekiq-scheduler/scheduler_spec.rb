@@ -582,8 +582,14 @@ describe SidekiqScheduler::Scheduler do
     let(:next_time_execution) do
       SidekiqScheduler::Store.hexists(SidekiqScheduler::RedisManager.next_times_key, job_name)
     end
+    let(:travel_to) { nil }
 
-    before { subject }
+    before do
+      Timecop.travel(travel_to) if travel_to
+      subject
+    end
+
+    after { Timecop.return if travel_to }
 
     context 'without a timing option' do
       it 'does not put the job inside the scheduled hash' do
@@ -654,6 +660,27 @@ describe SidekiqScheduler::Scheduler do
 
           it 'does not store the next time execution correctly' do
             expect(next_time_execution).not_to be
+          end
+        end
+
+        context 'when the cron is not periodically' do
+          before { Sidekiq.schedule = { job_name => config } }
+          after { SidekiqScheduler::Store.del(pushed_job_key) }
+
+          let(:config) { ScheduleFaker.cron_schedule('cron' => '0 8-18 * * *') }
+          let(:pushed_job_key) { SidekiqScheduler::RedisManager.pushed_job_key(job_name) }
+          let(:travel_to) { Timecop.travel(Time.local(2024, 7, 1, 7, 0, 0)) }
+
+          it 'register consecutive jobs correctly' do
+            expect {
+              Timecop.travel(60 * 60)
+              sleep 0.5
+            }.to change { SidekiqScheduler::Store.zrange(pushed_job_key, 0, -1).size }.by(1)
+
+            expect {
+              Timecop.travel(60 * 60)
+              sleep 0.5
+            }.to change { SidekiqScheduler::Store.zrange(pushed_job_key, 0, -1).size }.by(1)
           end
         end
       end
