@@ -539,7 +539,7 @@ MIT License
 
 ## Copyright
 
-- Copyright 2021 - 2023 Marcelo Lauxen.
+- Copyright 2021 - 2024 Marcelo Lauxen.
 - Copyright 2013 - 2022 Moove-IT.
 - Copyright 2012 Morton Jonuschat.
 - Some parts copyright 2010 Ben VandenBos.
