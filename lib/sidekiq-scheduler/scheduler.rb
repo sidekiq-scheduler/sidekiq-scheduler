@@ -267,10 +267,8 @@ module SidekiqScheduler
         if job_enabled?(name)
           conf = SidekiqScheduler::Utils.sanitize_job_config(config)
 
-          # `SidekiqScheduler::Utils.calc_cron_run_time` only works with a job running periodically.
-          # Also, `SidekiqScheduler::Utils.calc_cron_run_time` is only required jobs are execute frequently. So only call it if really needed.
-          if job.is_a?(Rufus::Scheduler::CronJob) && job.cron_line.rough_frequency <= 60
-            idempotent_job_enqueue(name, SidekiqScheduler::Utils.calc_cron_run_time(job.cron_line, time.utc), conf)
+          if job.is_a?(Rufus::Scheduler::CronJob)
+            idempotent_job_enqueue(name, SidekiqScheduler::Utils.calc_cron_run_time(job.cron_line, time.to_t), conf)
           else
             idempotent_job_enqueue(name, time, conf)
           end

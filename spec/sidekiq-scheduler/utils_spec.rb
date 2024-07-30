@@ -388,7 +388,7 @@ describe SidekiqScheduler::Utils do
       let(:cron) { Fugit::Cron.do_parse('* * * * *') }
 
       context 'when run at exact time' do
-        let(:time) { Time.utc(2024, 1, 1, 9, 0, 0) }
+        let(:time) { Time.new(2024, 1, 1, 9, 0, 0) }
 
         it 'returns the current time' do
           expect(described_class.calc_cron_run_time(cron, time)).to eq(time)
@@ -397,7 +397,7 @@ describe SidekiqScheduler::Utils do
 
       context 'when exactly between previous and next run' do
         # every minute would mean 30 seconds is between next and previous run
-        let(:time) { Time.utc(2024, 1, 1, 9, 0, 30) }
+        let(:time) { Time.new(2024, 1, 1, 9, 0, 30) }
 
         it 'returns the previous time' do
           expect(described_class.calc_cron_run_time(cron, time)).to eq(cron.previous_time(time).utc)
@@ -405,7 +405,7 @@ describe SidekiqScheduler::Utils do
       end
 
       context 'when running before previous run' do
-        let(:time) { Time.utc(2024, 1, 1, 8, 59, 58) }
+        let(:time) { Time.new(2024, 1, 1, 8, 59, 58) }
 
         it 'returns next run' do
           expect(described_class.calc_cron_run_time(cron, time)).to eq(cron.next_time(time).utc)
@@ -413,7 +413,7 @@ describe SidekiqScheduler::Utils do
       end
 
       context 'when closer to next run' do
-        let(:time) { Time.utc(2024, 1, 1, 9, 0, 31) }
+        let(:time) { Time.new(2024, 1, 1, 9, 0, 31) }
 
         it 'returns next run' do
           expect(described_class.calc_cron_run_time(cron, time)).to eq(cron.next_time(time).utc)
@@ -421,7 +421,7 @@ describe SidekiqScheduler::Utils do
       end
 
       context 'when closer to previous run' do
-        let(:time) { Time.utc(2024, 1, 1, 9, 0, 29) }
+        let(:time) { Time.new(2024, 1, 1, 9, 0, 29) }
 
         it 'returns previous run' do
           expect(described_class.calc_cron_run_time(cron, time)).to eq(cron.previous_time(time).utc)
@@ -433,7 +433,7 @@ describe SidekiqScheduler::Utils do
       let(:cron) { Fugit::Cron.do_parse('0 */1 * * *') }
 
       context 'when run at exact time' do
-        let(:time) { Time.utc(2024, 1, 1, 9, 0, 0) }
+        let(:time) { Time.new(2024, 1, 1, 9, 0, 0) }
 
         it 'returns the current time' do
           expect(described_class.calc_cron_run_time(cron, time)).to eq(time)
@@ -442,7 +442,7 @@ describe SidekiqScheduler::Utils do
 
       context 'when exactly between previous and next run' do
         # every hour would mean 30 minutes is between next and previous run
-        let(:time) { Time.utc(2024, 1, 1, 9, 30) }
+        let(:time) { Time.new(2024, 1, 1, 9, 30) }
 
         it 'returns the previous time' do
           expect(described_class.calc_cron_run_time(cron, time)).to eq(cron.previous_time(time).utc)
@@ -450,7 +450,7 @@ describe SidekiqScheduler::Utils do
       end
 
       context 'when running before previous run' do
-        let(:time) { Time.utc(2024, 1, 1, 8, 59, 59) }
+        let(:time) { Time.new(2024, 1, 1, 8, 59, 59) }
 
         it 'returns next run' do
           expect(described_class.calc_cron_run_time(cron, time)).to eq(cron.next_time(time).utc)
@@ -458,7 +458,7 @@ describe SidekiqScheduler::Utils do
       end
 
       context 'when closer to next run' do
-        let(:time) { Time.utc(2024, 1, 1, 9, 30, 1) } # 1 second after
+        let(:time) { Time.new(2024, 1, 1, 9, 30, 1) } # 1 second after
 
         it 'returns next run' do
           expect(described_class.calc_cron_run_time(cron, time)).to eq(cron.next_time(time).utc)
@@ -466,10 +466,103 @@ describe SidekiqScheduler::Utils do
       end
 
       context 'when closer to previous run' do
-        let(:time) { Time.utc(2024, 1, 1, 9, 29, 59) } # 1 second off
+        let(:time) { Time.new(2024, 1, 1, 9, 29, 59) } # 1 second off
 
         it 'returns previous run' do
           expect(described_class.calc_cron_run_time(cron, time)).to eq(cron.previous_time(time).utc)
+        end
+      end
+    end
+
+    context 'when running aperiodically' do
+      context 'when a time zone is set' do
+        let(:cron) { Fugit::Cron.do_parse('0 8-18 * * * Asia/Tokyo') }
+
+        context 'when run at exact time' do
+          # Tokyo is +9 hours from UTC
+          let(:time) { Time.new(2024, 1, 1, 8, 0, 0, in: '+09:00') }
+
+          it 'returns the current time' do
+            expect(described_class.calc_cron_run_time(cron, time)).to eq(time.to_time)
+          end
+        end
+
+        context 'when exactly between previous and next run' do
+          # 1AM is 7 hours from 8AM and 6PM
+          let(:time) { Time.new(2024, 1, 1, 1, 0, in: '+09:00') }
+
+          it 'returns the previous time' do
+            expect(described_class.calc_cron_run_time(cron, time)).to eq(cron.previous_time(time).to_t)
+          end
+        end
+
+        context 'when running before previous run' do
+          let(:time) { Time.new(2024, 1, 1, 7, 59, 59, in: '+09:00') }
+
+          it 'returns next run' do
+            expect(described_class.calc_cron_run_time(cron, time)).to eq(cron.next_time(time).to_t)
+          end
+        end
+
+        context 'when closer to next run' do
+          let(:time) { Time.new(2024, 1, 1, 8, 30, 1, in: '+09:00') } # 1 second after
+
+          it 'returns next run' do
+            expect(described_class.calc_cron_run_time(cron, time)).to eq(cron.next_time(time).to_t)
+          end
+        end
+
+        context 'when closer to previous run' do
+          let(:time) { Time.new(2024, 1, 1, 17, 29, 59, in: '+09:00') } # 1 second off
+
+          it 'returns previous run' do
+            expect(described_class.calc_cron_run_time(cron, time)).to eq(cron.previous_time(time).to_t)
+          end
+        end
+      end
+
+      context 'when a time zone is not set' do
+        let(:cron) { Fugit::Cron.do_parse('0 8-18 * * *') }
+
+        context 'when run at exact time' do
+          let(:time) { Time.new(2024, 1, 1, 8, 0, 0) }
+
+          it 'returns the current time' do
+            expect(described_class.calc_cron_run_time(cron, time)).to eq(time.to_time)
+          end
+        end
+
+        context 'when exactly between previous and next run' do
+          # 1AM is 7 hours from 8AM and 6PM
+          let(:time) { Time.new(2024, 1, 1, 1, 0) }
+
+          it 'returns the previous time' do
+            expect(described_class.calc_cron_run_time(cron, time)).to eq(cron.previous_time(time).to_t)
+          end
+        end
+
+        context 'when running before previous run' do
+          let(:time) { Time.new(2024, 1, 1, 7, 59, 59) }
+
+          it 'returns next run' do
+            expect(described_class.calc_cron_run_time(cron, time)).to eq(cron.next_time(time).to_t)
+          end
+        end
+
+        context 'when closer to next run' do
+          let(:time) { Time.new(2024, 1, 1, 8, 30, 1) } # 1 second after
+
+          it 'returns next run' do
+            expect(described_class.calc_cron_run_time(cron, time)).to eq(cron.next_time(time).to_t)
+          end
+        end
+
+        context 'when closer to previous run' do
+          let(:time) { Time.new(2024, 1, 1, 17, 29, 59) } # 1 second off
+
+          it 'returns previous run' do
+            expect(described_class.calc_cron_run_time(cron, time)).to eq(cron.previous_time(time).to_t)
+          end
         end
       end
     end

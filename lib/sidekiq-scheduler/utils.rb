@@ -155,9 +155,11 @@ module SidekiqScheduler
     #
     # @return [Time]
     def self.calc_cron_run_time(cron, time)
-      time = time.round # remove sub seconds to prevent rounding errors.
-      next_t = cron.next_time(time).utc
-      previous_t = cron.previous_time(time).utc
+      time = time.floor # remove sub seconds to prevent rounding errors.
+      return time if cron.match?(time) # If the time is a perfect match then return it.
+
+      next_t = cron.next_time(time).to_t
+      previous_t = cron.previous_time(time).to_t
       # The `time` var is some point between `previous_t` and `next_t`.
       # Figure out how far off we are from each side in seconds.
       next_diff = next_t - time
