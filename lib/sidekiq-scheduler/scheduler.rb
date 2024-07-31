@@ -270,7 +270,7 @@ module SidekiqScheduler
           if job.is_a?(Rufus::Scheduler::CronJob)
             idempotent_job_enqueue(name, SidekiqScheduler::Utils.calc_cron_run_time(job.cron_line, time.to_t), conf)
           else
-            idempotent_job_enqueue(name, time, conf)
+            idempotent_job_enqueue(name, time.to_t, conf)
           end
         end
       end
@@ -303,7 +303,7 @@ module SidekiqScheduler
     end
 
     # Adds a Hash with schedule metadata as the last argument to call the worker.
-    # It currently returns the schedule time as a Float number representing the milisencods
+    # It currently returns the schedule time as a Float number representing the milliseconds
     # since epoch.
     #
     # @example with hash argument
