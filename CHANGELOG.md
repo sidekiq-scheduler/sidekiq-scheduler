@@ -1,3 +1,8 @@
+# 5.0.6
+  - [**FIX**] Fix typo in `config#to_hash` method [#479](https://github.com/sidekiq-scheduler/sidekiq-scheduler/pull/479)
+  - [**FIX**] Correctly clear scheduled jobs with Scheduler#clear_schedule! [#485](https://github.com/sidekiq-scheduler/sidekiq-scheduler/pull/485)
+  - [**FIX**] Fix scheduling of aperiodic cron jobs [#487](https://github.com/sidekiq-scheduler/sidekiq-scheduler/pull/487) (see [#484](https://github.com/sidekiq-scheduler/sidekiq-scheduler/pull/484) for more details as well)
+
 # 5.0.5
   - [**FIX**] Use correct folder structure for assets [#476](https://github.com/sidekiq-scheduler/sidekiq-scheduler/pull/476)
 
