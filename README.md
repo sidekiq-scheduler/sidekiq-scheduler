@@ -37,7 +37,7 @@ gem install sidekiq-scheduler
 require 'sidekiq-scheduler'
 
 class HelloWorld
-  include Sidekiq::Worker
+  include Sidekiq::Job
 
   def perform
     puts 'Hello world'
