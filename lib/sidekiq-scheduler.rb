@@ -1,5 +1,4 @@
 require 'sidekiq'
-require 'tilt/erb'
 
 require_relative 'sidekiq/scheduler'
 require_relative 'sidekiq-scheduler/version'
