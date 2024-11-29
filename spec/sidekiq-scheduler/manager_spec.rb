@@ -55,6 +55,18 @@ describe SidekiqScheduler::Manager do
           expect(subject.listened_queues_only).to eql(scheduler_options[:scheduler][:listened_queues_only])
         }
       end
+
+      context 'when dynamic option is true' do
+        subject do
+          scheduler_options[:scheduler][:dynamic] = true
+          described_class.new(scheduler_config)
+          SidekiqScheduler::Scheduler.instance
+        end
+
+        it {
+          expect { subject }.not_to change { Sidekiq.schedule }
+        }
+      end
     end
 
     context 'when enabled option is false' do
