@@ -24,6 +24,9 @@
     color: white;
     border: 1px solid #555;
   }
+  .list-group-item-disabled {
+    background-color: #444;
+  }
 }
 
 .toggle-all-buttons {
