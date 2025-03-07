@@ -18,7 +18,7 @@ Gem::Specification.new do |s|
 
   s.metadata = { 'rubygems_mfa_required' => 'true' }
 
-  s.add_dependency 'sidekiq', '>= 6', '< 8'
+  s.add_dependency 'sidekiq', '>= 7.3', '< 8'
   s.add_dependency 'rufus-scheduler', '~> 3.2'
 
   s.add_development_dependency 'rake', '~> 12.0'
@@ -30,4 +30,5 @@ Gem::Specification.new do |s|
   s.add_development_dependency 'activejob'
   s.add_development_dependency 'rack-test'
   s.add_development_dependency 'rack', '< 3'
+  s.add_development_dependency 'rack-session'
 end
