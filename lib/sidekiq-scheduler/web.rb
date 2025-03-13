@@ -16,7 +16,7 @@ module SidekiqScheduler
       end
 
       app.post '/recurring-jobs/:name/enqueue' do
-        schedule = Sidekiq.get_schedule(params[:name])
+        schedule = Sidekiq.get_schedule(route_params(:name))
         SidekiqScheduler::Scheduler.instance.enqueue_job(schedule)
         redirect "#{root_path}recurring-jobs"
       end
@@ -24,12 +24,12 @@ module SidekiqScheduler
       app.post '/recurring-jobs/:name/toggle' do
         Sidekiq.reload_schedule!
 
-        SidekiqScheduler::Scheduler.instance.toggle_job_enabled(params[:name])
+        SidekiqScheduler::Scheduler.instance.toggle_job_enabled(route_params(:name))
         redirect "#{root_path}recurring-jobs"
       end
 
       app.post '/recurring-jobs/toggle-all' do
-        SidekiqScheduler::Scheduler.instance.toggle_all_jobs(params[:action] == 'enable')
+        SidekiqScheduler::Scheduler.instance.toggle_all_jobs(url_params(:action) == 'enable')
         redirect "#{root_path}recurring-jobs"
       end
     end
