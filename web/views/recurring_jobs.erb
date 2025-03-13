@@ -1,8 +1,4 @@
-<% if SidekiqScheduler::SidekiqAdapter::SIDEKIQ_GTE_7_3_0 %>
 <%= style_tag "recurring_jobs/stylesheets-scheduler/recurring_jobs.css" %>
-<% else %>
-<link href="<%= root_path %>recurring_jobs/stylesheets-scheduler/recurring_jobs.css" media="screen" rel="stylesheet" type="text/css" />
-<% end %>
 
 <div class="row">
   <div class="col-sm-6">

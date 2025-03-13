@@ -1,5 +1,6 @@
 require 'sidekiq-scheduler/web'
 require 'rack/test'
+require 'rack/session'
 
 describe Sidekiq::Web do
   include Rack::Test::Methods
