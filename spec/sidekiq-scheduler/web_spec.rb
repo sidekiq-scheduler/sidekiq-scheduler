@@ -1,11 +1,8 @@
 require 'sidekiq-scheduler/web'
 require 'rack/test'
-require 'rack/session'
 
 describe Sidekiq::Web do
   include Rack::Test::Methods
-
-  Sidekiq::Web.use Rack::Session::Cookie, secret: File.read('spec/support/.session.key'), same_site: true, max_age: 86400
 
   let(:app) { Sidekiq::Web }
 
@@ -32,8 +29,19 @@ describe Sidekiq::Web do
   end
 
   before do
+    env 'rack.session', { csrf: File.read('spec/support/.session.key') }
+    env 'HTTP_X_CSRF_TOKEN', File.read('spec/support/.session.key')
+
     Sidekiq.redis(&:flushall)
     Sidekiq.schedule = jobs
+
+    if Gem::Version.new(Sidekiq::VERSION) >= Gem::Version.new('8.0.0')
+      Sidekiq::Web.configure do |c|
+        # Remove CSRF protection
+        # See: https://github.com/sidekiq/sidekiq/blob/0a1bce30e562357e0bb60ce84d78fe5d8446bed9/test/webext_test.rb#L37
+        c.middlewares.clear
+      end
+    end
   end
 
   describe 'GET /recurring-jobs' do

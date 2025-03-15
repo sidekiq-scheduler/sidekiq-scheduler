@@ -10,16 +10,27 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        redis-version: ["~> 4.2", "~> 5"]
-        ruby-version: ['2.7', '3.0', '3.1', '3.2', '3.3', '3.4']
-        sidekiq-version: ['~> 7.3']
+        sidekiq-version: ['~> 7.3', '~> 8.0']
+        ruby-version: ['3.2', '3.3', '3.4']
+        rack-version: ['>= 3.1.0']
+        include:
+          # Sidekiq 8 requires Ruby >= 3.2 and rack >= 3.1
+          # Below are the additional compatible combinations for Sidekiq 7.3
+          - sidekiq-version: '~> 7.3'
+            ruby-version: '2.7'
+            rack-version: '~> 2.2'
+          - sidekiq-version: '~> 7.3'
+            ruby-version: '3.0'
+            rack-version: '~> 2.2'
+          - sidekiq-version: '~> 7.3'
+            ruby-version: '3.1'
+            rack-version: '~> 2.2'
     services:
       redis:
         image: redis
         ports:
           - 6379:6379
     env:
-      REDIS_VERSION: "${{ matrix.redis-version }}"
       SIDEKIQ_VERSION: "${{ matrix.sidekiq-version }}"
     steps:
       - uses: actions/checkout@v4

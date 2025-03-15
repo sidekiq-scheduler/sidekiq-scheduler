@@ -8,7 +8,27 @@ module SidekiqScheduler
   module Web
     VIEW_PATH = File.expand_path('../../../web/views', __FILE__)
 
+    module Helpers
+      def fetch_route_param(key)
+        if SidekiqAdapter::SIDEKIQ_GTE_8_0_0
+          route_params(key)
+        else
+          route_params[key]
+        end
+      end
+
+      def fetch_url_param(key)
+        if SidekiqAdapter::SIDEKIQ_GTE_8_0_0
+          url_params(key)
+        else
+          params[key]
+        end
+      end
+    end
+
     def self.registered(app)
+      app.helpers(Helpers)
+
       app.get '/recurring-jobs' do
         @presented_jobs = JobPresenter.build_collection(Sidekiq.schedule!)
 
@@ -16,7 +36,7 @@ module SidekiqScheduler
       end
 
       app.post '/recurring-jobs/:name/enqueue' do
-        schedule = Sidekiq.get_schedule(route_params(:name))
+        schedule = Sidekiq.get_schedule(fetch_route_param(:name))
         SidekiqScheduler::Scheduler.instance.enqueue_job(schedule)
         redirect "#{root_path}recurring-jobs"
       end
@@ -24,12 +44,12 @@ module SidekiqScheduler
       app.post '/recurring-jobs/:name/toggle' do
         Sidekiq.reload_schedule!
 
-        SidekiqScheduler::Scheduler.instance.toggle_job_enabled(route_params(:name))
+        SidekiqScheduler::Scheduler.instance.toggle_job_enabled(fetch_route_param(:name))
         redirect "#{root_path}recurring-jobs"
       end
 
       app.post '/recurring-jobs/toggle-all' do
-        SidekiqScheduler::Scheduler.instance.toggle_all_jobs(url_params(:action) == 'enable')
+        SidekiqScheduler::Scheduler.instance.toggle_all_jobs(fetch_url_param(:action) == 'enable')
         redirect "#{root_path}recurring-jobs"
       end
     end
