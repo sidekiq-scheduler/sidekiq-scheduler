@@ -1,3 +1,6 @@
+# 5.0.7
+  - [**ENHANCEMENT**] Adds compatibility with Sidekiq 8 [#497](https://github.com/sidekiq-scheduler/sidekiq-scheduler/pull/497)
+
 # 5.0.6
   - [**FIX**] Fix typo in `config#to_hash` method [#479](https://github.com/sidekiq-scheduler/sidekiq-scheduler/pull/479)
   - [**FIX**] Correctly clear scheduled jobs with Scheduler#clear_schedule! [#485](https://github.com/sidekiq-scheduler/sidekiq-scheduler/pull/485)
@@ -18,7 +21,7 @@
   - [**FIX**] Prevent stack level too deep error by implementing `to_hash` method [#470](https://github.com/sidekiq-scheduler/sidekiq-scheduler/pull/470)
   - [**ENHANCEMENT**] Support new Sidekiq model for registering UI plugins [#472](https://github.com/sidekiq-scheduler/sidekiq-scheduler/pull/472)
   - [**ENHANCEMENT**] Stop testing against Ruby 2.7 and 3.0 [#472](https://github.com/sidekiq-scheduler/sidekiq-scheduler/pull/472#discussion_r1663197863)
-  - [**ENHANCEMENT**] Display `at` and `in` in the dashboard [#291](https://github.com/sidekiq-scheduler/sidekiq-scheduler/pull/291)  
+  - [**ENHANCEMENT**] Display `at` and `in` in the dashboard [#291](https://github.com/sidekiq-scheduler/sidekiq-scheduler/pull/291)
   - [**ENHANCEMENT**] Docs enhancements [#442](https://github.com/sidekiq-scheduler/sidekiq-scheduler/pull/442), [#449](https://github.com/sidekiq-scheduler/sidekiq-scheduler/pull/449), [#457](https://github.com/sidekiq-scheduler/sidekiq-scheduler/pull/457), [#465](https://github.com/sidekiq-scheduler/sidekiq-scheduler/pull/465), [58e1835](https://github.com/sidekiq-scheduler/sidekiq-scheduler/commit/58e18351054fc3c264b2b5a684173316f674c386)
 
 
@@ -40,7 +43,7 @@
   - [**ENHANCEMENT**] Adds Ruby 3.2 to the CI matrix. [#420](https://github.com/sidekiq-scheduler/sidekiq-scheduler/pull/420)
   - [**DOCS**] README: refer to v5 as released. [#421](https://github.com/sidekiq-scheduler/sidekiq-scheduler/pull/421)
   - [**FIX**] Fix dependency on Rails `.present?` method. [#425](https://github.com/sidekiq-scheduler/sidekiq-scheduler/pull/425)
- 
+
 # 5.0.0
 
   - [**FIX**] Ensure generated scheduled time has a precision of 3 milliseconds. [#418](https://github.com/sidekiq-scheduler/sidekiq-scheduler/pull/418)
@@ -59,7 +62,7 @@
 - [**BREAKING CHANGE**] Moves all sidekiq-scheduler config options under the `scheduler` key in the `sidekiq.yml` file [#412](https://github.com/sidekiq-scheduler/sidekiq-scheduler/pull/412)
   - If you're migrating from v4 to v5, any `sidekiq-scheduler` config you may have in your `sidekiq.yml` should be moved under the `scheduler` key.
   - See [#412](https://github.com/sidekiq-scheduler/sidekiq-scheduler/pull/412) to see which are the config options that you need to move under the `scheduler` key.
-  
+
 - [**BREAKING CHANGE**] Drop support for EOL Ruby & Sidekiq versions (Ruby: `2.5.x` & `2.6.x`; Sidekiq: `4.x` & `5.x`) [#411](https://github.com/sidekiq-scheduler/sidekiq-scheduler/pull/411)
 
 - [**FIX**] Add support for Sidekiq 7 [#410](https://github.com/sidekiq-scheduler/sidekiq-scheduler/pull/410)
