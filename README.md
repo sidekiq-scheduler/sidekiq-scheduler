@@ -18,7 +18,7 @@
 `sidekiq-scheduler` is an extension to [Sidekiq](http://github.com/mperham/sidekiq) that
 pushes jobs in a scheduled way, mimicking cron utility.
 
-__Note:__ Current branch contains work of the v5 release, if you are looking for version 2.2.\*, 3.\*, or 4.\*, go to [2.2-stable branch](https://github.com/sidekiq-scheduler/sidekiq-scheduler/tree/2.2-stable) / [v3-stable](https://github.com/sidekiq-scheduler/sidekiq-scheduler/tree/v3-stable) / [v4-stable](https://github.com/sidekiq-scheduler/sidekiq-scheduler/tree/v4-stable).
+__Note:__ Current branch contains work of the v6 release, if you are looking for version 2.2.\*, 3.\*, 4.\*, or 5.\*, go to [2.2-stable branch](https://github.com/sidekiq-scheduler/sidekiq-scheduler/tree/2.2-stable) / [v3-stable](https://github.com/sidekiq-scheduler/sidekiq-scheduler/tree/v3-stable) / [v4-stable](https://github.com/sidekiq-scheduler/sidekiq-scheduler/tree/v4-stable) / [v5-stable](https://github.com/sidekiq-scheduler/sidekiq-scheduler/tree/v5-stable).
 
 ## Installation
 
@@ -58,7 +58,7 @@ __Note:__ In Sidekiq v6.3 `Sidekiq::Job` was introduced as an alias for `Sidekiq
 ```
 
 > [!NOTE]
-> sidekiq-scheduler uses [fugit](https://github.com/floraison/fugit) under the hood, which supports up to six arguments as the cron string, [see](https://github.com/floraison/fugit?tab=readme-ov-file#the-second-extension). 
+> sidekiq-scheduler uses [fugit](https://github.com/floraison/fugit) under the hood, which supports up to six arguments as the cron string, [see](https://github.com/floraison/fugit?tab=readme-ov-file#the-second-extension).
 
 Run sidekiq:
 
@@ -125,16 +125,16 @@ The schedule is configured through the `:scheduler:` -> `:schedule` config entry
       # Enable / disable a job. All jobs are enabled by default.
       enabled: true
 
-      # Deconstructs a hash defined as the `args` to keyword arguments. 
+      # Deconstructs a hash defined as the `args` to keyword arguments.
       #
       # `false` by default.
-      # 
+      #
       # Example
-      # 
+      #
       # my_job:
       #   cron: '0 0 * * * *'
       #   class: MyJob
-      #   args: { foo: 'bar', hello: 'world' } 
+      #   args: { foo: 'bar', hello: 'world' }
       #   keyword_argument: true
       #
       # class MyJob < ActiveJob::Base
@@ -142,7 +142,7 @@ The schedule is configured through the `:scheduler:` -> `:schedule` config entry
       #     # ...
       #   end
       # end
-      keyword_argument: true 
+      keyword_argument: true
 ```
 
 ### Schedule metadata
@@ -347,7 +347,7 @@ Non-normal conditions that could push a specific job multiple times are:
 
 ### Suggested setup for Multiple Hosts using Heroku and Rails
 
-Configuration options `every`, `interval` and `in` will push once per host. This may be undesirable. One way to achieve single jobs per the schedule would be to manually designate a host as the scheduler. The goal is to have a single scheduler process running across all your hosts. 
+Configuration options `every`, `interval` and `in` will push once per host. This may be undesirable. One way to achieve single jobs per the schedule would be to manually designate a host as the scheduler. The goal is to have a single scheduler process running across all your hosts.
 
 This can be achieved by using an environment variable and controlling the number of dynos. In Rails, you can read this variable during initialization and then conditionally load your config file.
 
@@ -384,7 +384,7 @@ worker: bundle exec sidekiq -q default
 scheduler: IS_SCHEDULER=true bundle exec sidekiq -q default
 ```
 
-When running via Heroku, you set your `scheduler` process to have 1 dyno. This will ensure you have at most 1 worker loading the schedule. 
+When running via Heroku, you set your `scheduler` process to have 1 dyno. This will ensure you have at most 1 worker loading the schedule.
 
 ## Notes on when Sidekiq worker is down
 
@@ -397,7 +397,7 @@ Possible solutions include:
 - Zero downtime deploy for sidekiq workers: keep at least one worker up during whole deploy and only restart/shut it down after when new one has started
 - Running scheduler inside your unicorn/rails processes (if you already have zero downtime deploy set up for these)
 
-Each option has it's own pros and cons. 
+Each option has it's own pros and cons.
 
 ## Notes when running multiple Sidekiq processors on the same Redis
 
