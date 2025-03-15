@@ -1,3 +1,3 @@
 module SidekiqScheduler
-  VERSION = "5.0.7"
+  VERSION = "6.0.0"
 end

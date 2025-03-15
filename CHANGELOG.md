@@ -1,5 +1,6 @@
-# 5.0.7
+# 6.0.0
   - [**ENHANCEMENT**] Adds compatibility with Sidekiq 8 [#497](https://github.com/sidekiq-scheduler/sidekiq-scheduler/pull/497)
+  - [**BREAKING CHANGE**] Drop support for Sidekiq 7.2 and earlier
 
 # 5.0.6
   - [**FIX**] Fix typo in `config#to_hash` method [#479](https://github.com/sidekiq-scheduler/sidekiq-scheduler/pull/479)
