@@ -28,7 +28,6 @@ Gem::Specification.new do |s|
   s.add_development_dependency 'simplecov'
   s.add_development_dependency 'byebug'
   s.add_development_dependency 'activejob'
-  s.add_development_dependency 'rack-test'
-  s.add_development_dependency 'rack', '< 3'
-  s.add_development_dependency 'rack-session'
+  s.add_development_dependency 'rack-test', '>= 1.1'
+  s.add_development_dependency 'rack', '>= 2.2.4'
 end

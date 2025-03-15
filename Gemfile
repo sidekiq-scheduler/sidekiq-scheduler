@@ -1,5 +1,5 @@
 source 'https://rubygems.org'
 
-gem "redis", ENV.fetch("REDIS_VERSION", ">= 5")
-gem "sidekiq", ENV.fetch("SIDEKIQ_VERSION", ">= 7.3")
+gem "sidekiq", ENV.fetch("SIDEKIQ_VERSION", "~> 8")
+gem "rack", ENV.fetch("RACK_VERSION", ">= 3.1.0")
 gemspec
