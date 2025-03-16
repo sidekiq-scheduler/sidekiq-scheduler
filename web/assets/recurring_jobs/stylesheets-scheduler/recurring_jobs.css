@@ -1,45 +1,81 @@
-.recurring-jobs { border-top-left-radius: 4px; border-top-right-radius: 4px; }
-.recurring-jobs .title { margin-bottom: 5px; }
-.recurring-jobs .title .name { font-weight: bold;}
-.recurring-jobs .info,
-.recurring-jobs .description { margin-bottom: 5px; }
-.recurring-jobs .actions { margin-bottom: 5px; }
-.recurring-jobs .status,
-.recurring-jobs .description { font-size: 12px; }
-.recurring-jobs .enqueue { margin-bottom: 0.5rem }
-
-.list-group-item {
-  background-color: #f3f3f3;
-  color: #585454;
-  border: 1px solid rgba(0, 0, 0, 0.1);
+.sidekiq-scheduler .job-name {
+  color: var(--color-primary);
+  display: block;
+  font-size: var(--font-size);
+  font-weight: 700;
 }
 
-.list-group-item-disabled {
-  background-color: #f3d3d3;
-}
-
-@media (prefers-color-scheme: dark) {
-  .list-group-item {
-    background-color: #222;
-    color: white;
-    border: 1px solid #555;
-  }
-  .list-group-item-disabled {
-    color: #585454;
-  }
-}
-
-.toggle-all-buttons {
-  margin-top: 20px;
-  margin-bottom: 10px;
-  line-height: 45px;
+.sidekiq-scheduler .queue {
   text-align: right;
 }
 
-@media (max-width: 768px) {
-  .toggle-all-buttons {
-    margin-top: 0;
+.sidekiq-scheduler .btn-xs {
+  padding: 1px 5px;
+  font-size: var(--font-size-small);
+  line-height: 1.5;
+}
+
+.sidekiq-scheduler .description,
+.sidekiq-scheduler .last-time,
+.sidekiq-scheduler .next-time {
+  font-size: var(--font-size-small);
+}
+
+.sidekiq-scheduler .description {
+  padding-top: 10px;
+}
+
+.sidekiq-scheduler .inline {
+  display: inline;
+}
+
+.sidekiq-scheduler .job-list .job {
+  background-color: var(--color-elevated);
+  border: 1px solid var(--color-border);
+  box-shadow: 0 2px 4px 0 var(--color-shadow);
+  padding: 10px;
+}
+
+.sidekiq-scheduler .column-2 {
+  float: left;
+  width: 50%;
+}
+
+.sidekiq-scheduler .column-3 {
+  float: left;
+  width: 33.33%;
+}
+
+.sidekiq-scheduler .row:after {
+  content: "";
+  display: table;
+  clear: both;
+}
+
+.sidekiq-scheduler .job.disabled-job {
+  background-color: #f3d3d3;
+  color: #585454;
+}
+
+@media (prefers-color-scheme: dark) {
+  .sidekiq-scheduler .job.disabled-job {
+    background-color: #4f0b0b;
+  }
+}
+
+.sidekiq-scheduler .disabled-job .next-time {
+  text-decoration: line-through;
+}
+
+@media screen and (max-width: 1000px) {
+  .sidekiq-scheduler .column-2,
+  .sidekiq-scheduler .column-3,
+  .sidekiq-scheduler .description {
+    width: 100%;
+    padding: 5px 10px;
+  }
+
+  .sidekiq-scheduler .queue {
     text-align: left;
-    line-height: inherit;
   }
 }

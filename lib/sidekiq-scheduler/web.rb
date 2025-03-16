@@ -6,10 +6,10 @@ module SidekiqScheduler
   # Hook into *Sidekiq::Web* app which adds a new '/recurring-jobs' page
 
   module Web
-    VIEW_PATH = File.expand_path('../../../web/views', __FILE__)
+    VIEW_PATH = File.expand_path(SidekiqAdapter::SIDEKIQ_GTE_8_0_0 ? '../../../web/views' : '../../../web/views/sidekiq73', __FILE__)
 
     module Helpers
-      def fetch_route_param(key)
+      def sidekiq_scheduler_fetch_route_param(key)
         if SidekiqAdapter::SIDEKIQ_GTE_8_0_0
           route_params(key)
         else
@@ -17,7 +17,7 @@ module SidekiqScheduler
         end
       end
 
-      def fetch_url_param(key)
+      def sidekiq_scheduler_fetch_url_param(key)
         if SidekiqAdapter::SIDEKIQ_GTE_8_0_0
           url_params(key)
         else
@@ -36,7 +36,7 @@ module SidekiqScheduler
       end
 
       app.post '/recurring-jobs/:name/enqueue' do
-        schedule = Sidekiq.get_schedule(fetch_route_param(:name))
+        schedule = Sidekiq.get_schedule(sidekiq_scheduler_fetch_route_param(:name))
         SidekiqScheduler::Scheduler.instance.enqueue_job(schedule)
         redirect "#{root_path}recurring-jobs"
       end
@@ -44,12 +44,12 @@ module SidekiqScheduler
       app.post '/recurring-jobs/:name/toggle' do
         Sidekiq.reload_schedule!
 
-        SidekiqScheduler::Scheduler.instance.toggle_job_enabled(fetch_route_param(:name))
+        SidekiqScheduler::Scheduler.instance.toggle_job_enabled(sidekiq_scheduler_fetch_route_param(:name))
         redirect "#{root_path}recurring-jobs"
       end
 
       app.post '/recurring-jobs/toggle-all' do
-        SidekiqScheduler::Scheduler.instance.toggle_all_jobs(fetch_url_param(:action) == 'enable')
+        SidekiqScheduler::Scheduler.instance.toggle_all_jobs(sidekiq_scheduler_fetch_url_param(:action) == 'enable')
         redirect "#{root_path}recurring-jobs"
       end
     end
