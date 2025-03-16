@@ -8,3 +8,5 @@ Gemfile.lock
 notes.md
 
 .idea/
+
+.DS_STORE

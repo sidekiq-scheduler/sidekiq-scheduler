@@ -1,0 +1,61 @@
+<%= style_tag "recurring_jobs/stylesheets-scheduler/recurring_jobs_73.css" %>
+
+<div class="row">
+  <div class="col-sm-6">
+    <h3><%= t('recurring_jobs') %></h3>
+  </div>
+  <div class="col-sm-6 toggle-all-buttons">
+    <form action="<%= root_path %>recurring-jobs/toggle-all" method="post">
+      <%= csrf_tag %>
+      <button type="submit" class="btn btn-warn btn-xs" name="action" value="enable"><%= t('enable_all') %></button>
+      <button type="submit" class="btn btn-warn btn-xs" name="action" value="disable"><%= t('disable_all') %></button>
+    </form>
+  </div>
+</div>
+
+<div class="recurring-jobs">
+  <ul class="list-group">
+    <% @presented_jobs.each do |job| %>
+      <li class="list-group-item <%= !job.enabled? && "list-group-item-disabled" %>">
+        <div class="title">
+          <div class="row">
+            <div class="col-xs-6">
+              <span class="name"><%= job.name %></span>
+            </div>
+            <div class="col-xs-6 text-right">
+              <a href="<%= root_path %>queues/<%= job.queue %>"><%= job.queue %></a>
+            </div>
+          </div>
+        </div>
+        <div class="description"><%= job['description'] %></div>
+        <div class="info">
+          <div class="row">
+            <div class="col-md-4 class"><%= job['class'] %></div>
+            <div class="col-md-4 interval text-left"><%= t('interval') %>: <%= job.interval %></div>
+            <div class="col-md-4 args"><%= t('arguments') %>: <%= job['args'] %></div>
+          </div>
+        </div>
+        <div class="status row">
+          <div class="col-md-4 actions">
+            <form action="<%= root_path %>recurring-jobs/<%= ERB::Util.url_encode(job.name) %>/enqueue" method="post" class="enqueue">
+              <%= csrf_tag %>
+              <input type="submit" class="btn btn-warn btn-xs" value="<%= t('enqueue_now') %>" />
+            </form>
+            <form action="<%= root_path %>recurring-jobs/<%= ERB::Util.url_encode(job.name) %>/toggle" method="post">
+              <%= csrf_tag %>
+              <input type="submit" class="btn <%= job.enabled? ? "btn-primary" : "btn-warn"%> btn-xs" value="<%= job.enabled? ? t('disable') : t('enable') %>" />
+            </form>
+          </div>
+          <div class="col-md-4">
+            <span class="last_time"><%= t('last_time') %>: <%= job.last_time %></span>
+          </div>
+          <div class="col-md-4">
+            <span class="next_time text-right" style="<%= 'text-decoration:line-through' unless job.enabled? %>">
+              <%= t('next_time') %>: <%= job.next_time || t('no_next_time') %>
+            </span>
+          </div>
+        </div>
+      </li>
+    <% end %>
+  </ul>
+</div>

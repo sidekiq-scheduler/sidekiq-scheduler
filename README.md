@@ -480,6 +480,8 @@ run Sidekiq::Web
 
 ![Sidekiq Web Integration](https://github.com/sidekiq-scheduler/sidekiq-scheduler/raw/master/images/recurring-jobs-ui-tab.png)
 
+![Sidekiq Web Integration Dark Mode](https://github.com/sidekiq-scheduler/sidekiq-scheduler/raw/master/images/recurring-jobs-ui-tab-dark.png)
+
 ## ActiveJob integration
 
 When using sidekiq-scheduler with ActiveJob your jobs can just extend `ApplicationJob` as usual, without the `require` and `include` boilerplate. Under the hood Rails will load up the scheduler and include the worker module for you.
