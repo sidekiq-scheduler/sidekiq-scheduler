@@ -1,6 +1,4 @@
 module SidekiqScheduler
-  class OptionNotSupportedAnymore < StandardError; end
-
   class SidekiqAdapter
     SIDEKIQ_GTE_7_3_0 = Gem::Version.new(Sidekiq::VERSION) >= Gem::Version.new('7.3.0')
     SIDEKIQ_GTE_8_0_0 = Gem::Version.new(Sidekiq::VERSION) >= Gem::Version.new('8.0.0')
@@ -8,17 +6,7 @@ module SidekiqScheduler
     def self.fetch_scheduler_config_from_sidekiq(sidekiq_config)
       return {} if sidekiq_config.nil?
 
-      check_using_old_sidekiq_scheduler_config!(sidekiq_config)
-
       sidekiq_config.fetch(:scheduler, {})
-    end
-
-    def self.check_using_old_sidekiq_scheduler_config!(sidekiq_config)
-      %i[enabled dynamic dynamic_every schedule listened_queues_only rufus_scheduler_options].each do |option|
-        if sidekiq_config.key?(option)
-          raise OptionNotSupportedAnymore, ":#{option} option should be under the :scheduler: key"
-        end
-      end
     end
 
     def self.start_schedule_manager(sidekiq_config:, schedule_manager:)
