@@ -1,6 +1,7 @@
 # 6.0.0.beta2
- - [**FIX**/**BREAKING CHANGE**] Don't clear "schedule" key on boot in `dynamic` schedule mode [#467](https://github.com/sidekiq-scheduler/sidekiq-scheduler/pull/467)
-   - If you use sidekiq-scheduler with the `dynamic` mode, be aware that the schedule key won't be cleared on boot anymore (so maybe patches handling that in your codebase might have to be removed)
+  - [**FIX**/**BREAKING CHANGE**] Don't clear "schedule" key on boot in `dynamic` schedule mode [#467](https://github.com/sidekiq-scheduler/sidekiq-scheduler/pull/467)
+    - If you use sidekiq-scheduler with the `dynamic` mode, be aware that the schedule key won't be cleared on boot anymore (so maybe patches handling that in your codebase might have to be removed)
+  - [**FIX**] SidekiqScheduler::Manager enormous inspect output [17f9c7f](https://github.com/sidekiq-scheduler/sidekiq-scheduler/commit/17f9c7ffc7f7db79a1cb047bed985f2bdf12ac92).
 
 # 6.0.0.beta1
   - [**ENHANCEMENT**] Adds compatibility with Sidekiq 8 [#497](https://github.com/sidekiq-scheduler/sidekiq-scheduler/pull/497)
