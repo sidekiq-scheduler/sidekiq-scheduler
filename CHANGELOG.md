@@ -1,4 +1,4 @@
-# 6.0.0
+# 6.0.0.beta1
   - [**ENHANCEMENT**] Adds compatibility with Sidekiq 8 [#497](https://github.com/sidekiq-scheduler/sidekiq-scheduler/pull/497)
   - [**BREAKING CHANGE**] Drop support for Sidekiq 7.2 and earlier [#497](https://github.com/sidekiq-scheduler/sidekiq-scheduler/pull/498)
 
