@@ -256,6 +256,10 @@ module SidekiqScheduler
       }
     end
 
+    def inspect
+      "#<SidekiqScheduler::Scheduler enabled=#{enabled} dynamic=#{dynamic} dynamic_every=#{dynamic_every} listened_queues_only=#{listened_queues_only} rufus_scheduler_options=#{rufus_scheduler_options}>"
+    end
+
     private
 
     attr_reader :scheduler_config
