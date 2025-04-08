@@ -1,7 +1,9 @@
 # 6.0.0.beta2
   - [**FIX**/**BREAKING CHANGE**] Don't clear "schedule" key on boot in `dynamic` schedule mode [#467](https://github.com/sidekiq-scheduler/sidekiq-scheduler/pull/467)
     - If you use sidekiq-scheduler with the `dynamic` mode, be aware that the schedule key won't be cleared on boot anymore (so maybe patches handling that in your codebase might have to be removed)
-  - [**FIX**] SidekiqScheduler::Manager enormous inspect output [17f9c7f](https://github.com/sidekiq-scheduler/sidekiq-scheduler/commit/17f9c7ffc7f7db79a1cb047bed985f2bdf12ac92).
+  - [**FIX**] SidekiqScheduler::Manager enormous inspect output [17f9c7f](https://github.com/sidekiq-scheduler/sidekiq-scheduler/commit/17f9c7ffc7f7db79a1cb047bed985f2bdf12ac92) / [#462](https://github.com/sidekiq-scheduler/sidekiq-scheduler/issues/462).
+  - [**FIX/ENHANCEMENT**] Remove checks that would raise an error if any of the following options was not under the `scheduler` key (`enabled`, `dynamic`, `dynamic_every`, `schedule`, `listened_queues_only`, `rufus_scheduler_options`). [1e64958](https://github.com/sidekiq-scheduler/sidekiq-scheduler/commit/1e6495838aaee91cbf53fbd57c3749f0ed35dc28) / [#469](https://github.com/sidekiq-scheduler/sidekiq-scheduler/issues/469)
+    - This was needed for those migrating from v4 to v5, but isn't anymore.
 
 # 6.0.0.beta1
   - [**ENHANCEMENT**] Adds compatibility with Sidekiq 8 [#497](https://github.com/sidekiq-scheduler/sidekiq-scheduler/pull/497)
