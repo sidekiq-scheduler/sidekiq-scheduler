@@ -1,3 +1,6 @@
+# 6.0.0
+  - Check the changelog for beta1 and beta2 of this version.
+
 # 6.0.0.beta2
   - [**FIX**/**BREAKING CHANGE**] Don't clear "schedule" key on boot in `dynamic` schedule mode [#467](https://github.com/sidekiq-scheduler/sidekiq-scheduler/pull/467)
     - If you use sidekiq-scheduler with the `dynamic` mode, be aware that the schedule key won't be cleared on boot anymore (so maybe patches handling that in your codebase might have to be removed)
