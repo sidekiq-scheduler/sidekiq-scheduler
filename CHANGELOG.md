@@ -1,3 +1,6 @@
+# 6.0.1
+  - [**FIX**] Fix issue with Sidekiq v7.3.0-v7.3.6 [#503](https://github.com/sidekiq-scheduler/sidekiq-scheduler/pull/503)
+
 # 6.0.0
   - Check the changelog for beta1 and beta2 of this version.
 
