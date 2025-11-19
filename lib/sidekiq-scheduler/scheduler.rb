@@ -348,11 +348,7 @@ module SidekiqScheduler
     def prepare_arguments(config)
       config['class'] = SidekiqScheduler::Utils.try_to_constantize(config['class'])
 
-      if config['args'].is_a?(Hash)
-        config['args'].symbolize_keys! if config['args'].respond_to?(:symbolize_keys!)
-      else
-        config['args'] = Array(config['args'])
-      end
+      config['args'] = Array(config['args']) unless config['args'].is_a?(Hash)
 
       config
     end
