@@ -38,8 +38,13 @@ describe Sidekiq::Web do
     if Gem::Version.new(Sidekiq::VERSION) >= Gem::Version.new('8.0.0')
       Sidekiq::Web.configure do |c|
         # Remove CSRF protection
-        # See: https://github.com/sidekiq/sidekiq/blob/0a1bce30e562357e0bb60ce84d78fe5d8446bed9/test/webext_test.rb#L37
-        c.middlewares.clear
+        if Gem::Version.new(Sidekiq::VERSION) >= Gem::Version.new('8.0.5')
+          # See: https://github.com/sidekiq/sidekiq/commit/01bc5c963d9927ff27c62b118196972486a8f9a4
+          c[:csrf] = false
+        else
+          # See: https://github.com/sidekiq/sidekiq/blob/0a1bce30e562357e0bb60ce84d78fe5d8446bed9/test/webext_test.rb#L37
+          c.middlewares.clear
+        end
       end
     end
   end
