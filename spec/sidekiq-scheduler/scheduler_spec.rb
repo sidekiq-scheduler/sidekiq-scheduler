@@ -193,6 +193,20 @@ describe SidekiqScheduler::Scheduler do
       end
     end
 
+    context 'when arguments contain a hash' do
+      let(:args) { { 'dir' => '/tmp', file: 'test.txt' } }
+
+      it 'passes the args hash as is' do
+        expect(Sidekiq::Client).to receive(:push).with({
+                                                         'class' => SomeWorker,
+                                                         'queue' => 'high',
+                                                         'args' => { 'dir' => '/tmp', file: 'test.txt' }
+                                                       })
+
+        subject
+      end
+    end
+
     context 'when job is configured to receive metadata' do
       before { scheduled_job_config['include_metadata'] = true }
 
@@ -252,7 +266,7 @@ describe SidekiqScheduler::Scheduler do
             expect(Sidekiq::Client).to receive(:push).with({
                                                              'class' => SomeWorker,
                                                              'queue' => 'high',
-                                                             'args' => [{ dir: '/tmp' },
+                                                             'args' => [{ 'dir' => '/tmp' },
                                                                         { 'scheduled_at' => schedule_time.to_f.round(3) }]
                                                            })
 
