@@ -85,6 +85,13 @@ module SidekiqScheduler
       hdel(next_times_key, name)
     end
 
+    # Removes the state for a given job
+    #
+    # @param [String] name The name of the job
+    def self.remove_job_state(name)
+      hdel(schedules_state_key, name)
+    end
+
     # Returns the schedules of all the jobs
     #
     # @return [Hash] hash with all the job schedules
