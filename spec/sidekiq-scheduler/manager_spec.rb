@@ -1,4 +1,5 @@
 describe SidekiqScheduler::Manager do
+  before { Sidekiq.redis(&:flushall) }
 
   describe '.new' do
     subject { described_class.new(scheduler_config) }
@@ -63,9 +64,37 @@ describe SidekiqScheduler::Manager do
           SidekiqScheduler::Scheduler.instance
         end
 
-        it {
+        it 'does not change in-memory Sidekiq.schedule' do
           expect { subject }.not_to change { Sidekiq.schedule }
-        }
+        end
+
+        it 'pushes static schedules to Redis' do
+          subject
+
+          schedule_in_redis = SidekiqScheduler::RedisManager.get_job_schedule('current')
+          expect(schedule_in_redis).not_to be_nil
+          expect(JSON.parse(schedule_in_redis)).to include('cron' => '* * * * *')
+        end
+
+        context 'when there are existing dynamic schedules in Redis' do
+          before do
+            # Simulate a dynamic schedule that was added at runtime
+            SidekiqScheduler::RedisManager.set_job_schedule('dynamic_job', { 'cron' => '0 0 * * *', 'class' => 'DynamicJob' })
+          end
+
+          it 'preserves existing dynamic schedules' do
+            subject
+
+            # The dynamic schedule should still exist
+            dynamic_schedule = SidekiqScheduler::RedisManager.get_job_schedule('dynamic_job')
+            expect(dynamic_schedule).not_to be_nil
+            expect(JSON.parse(dynamic_schedule)).to include('class' => 'DynamicJob')
+
+            # And the static schedule should also be loaded
+            static_schedule = SidekiqScheduler::RedisManager.get_job_schedule('current')
+            expect(static_schedule).not_to be_nil
+          end
+        end
       end
     end
 

@@ -13,7 +13,18 @@ module SidekiqScheduler
 
       @scheduler_instance = SidekiqScheduler::Scheduler.new(config)
       SidekiqScheduler::Scheduler.instance = @scheduler_instance
-      Sidekiq.schedule = config.schedule if @scheduler_instance.enabled && !@scheduler_instance.dynamic
+
+      if @scheduler_instance.enabled && config.schedule&.any?
+        if @scheduler_instance.dynamic
+          # In dynamic mode: merge static schedules without removing dynamic ones
+          config.schedule.each do |name, job_spec|
+            Sidekiq.set_schedule(name, job_spec)
+          end
+        else
+          # In static mode: full replacement
+          Sidekiq.schedule = config.schedule
+        end
+      end
     end
 
     def stop
