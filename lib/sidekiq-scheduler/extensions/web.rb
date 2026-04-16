@@ -3,7 +3,7 @@ require 'sidekiq/web' unless defined?(Sidekiq::Web)
 # Locale and asset cache is configured in `cfg.register`
 args = {
   name: "recurring_jobs",
-  tab: ["Recurring Jobs"],
+  tab: ["recurring_jobs"],
   index: ["recurring-jobs"],
   root_dir: File.expand_path("../../../web", File.dirname(__FILE__)),
   asset_paths: ["stylesheets-scheduler"]

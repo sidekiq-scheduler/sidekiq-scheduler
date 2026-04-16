@@ -49,6 +49,24 @@ describe Sidekiq::Web do
     end
   end
 
+  describe 'GET /' do
+    subject { get '/' }
+
+    it { is_expected.to be_successful }
+
+    describe 'response body' do
+      subject do
+        get '/'
+        last_response.body
+      end
+
+      it 'shows the recurring jobs tab' do
+        is_expected.to match(/Recurring Jobs/)
+        is_expected.to match(%r{recurring-jobs})
+      end
+    end
+  end
+
   describe 'GET /recurring-jobs' do
     subject { get '/recurring-jobs' }
 
@@ -73,7 +91,7 @@ describe Sidekiq::Web do
           is_expected.to match(/BarClass/)
           is_expected.to match(/1h/)
           is_expected.to match(/special/)
-          is_expected.to match(/\[\"foo\", \"bar\"\]/)
+          is_expected.to match(/\["foo", "bar"\]/)
 
           is_expected.to match(/Enqueue now/)
         end
