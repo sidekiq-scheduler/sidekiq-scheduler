@@ -31,6 +31,9 @@ describe Sidekiq::Web do
   before do
     env 'rack.session', { csrf: File.read('spec/support/.session.key') }
     env 'HTTP_X_CSRF_TOKEN', File.read('spec/support/.session.key')
+    # Sidekiq 8.1+ treats non-GET requests as unsafe unless this header is set (browser sends it
+    # automatically). Rack::Test does not, so POSTs would return 403 without it.
+    env 'HTTP_SEC_FETCH_SITE', 'same-origin'
 
     Sidekiq.redis(&:flushall)
     Sidekiq.schedule = jobs
