@@ -1,3 +1,7 @@
+# 6.0.2
+  - [**FIX**] Use parser-safe web locale keys for the recurring jobs tab so the Sidekiq Web UI works with Sidekiq 8.1.3+ [#514](https://github.com/sidekiq-scheduler/sidekiq-scheduler/issues/514)
+  - [**FIX**] Stop symbolizing scheduled job `args` hash keys so string keys from YAML/JSON are preserved when enqueuing [ca3d405](https://github.com/sidekiq-scheduler/sidekiq-scheduler/commit/ca3d405e62433e3d889ebba1e3dedd3b0de0c8ef)
+
 # 6.0.1
   - [**FIX**] Fix issue with Sidekiq v7.3.0-v7.3.6 [#503](https://github.com/sidekiq-scheduler/sidekiq-scheduler/pull/503)
 
