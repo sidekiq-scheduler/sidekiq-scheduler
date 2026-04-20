@@ -16,7 +16,12 @@ Gem::Specification.new do |s|
 
   s.required_ruby_version = '>= 2.7'
 
-  s.metadata = { 'rubygems_mfa_required' => 'true' }
+  s.metadata = {
+    'rubygems_mfa_required' => 'true',
+    'source_code_uri' => 'https://github.com/sidekiq-scheduler/sidekiq-scheduler',
+    'bug_tracker_uri' => 'https://github.com/sidekiq-scheduler/sidekiq-scheduler/issues',
+    'changelog_uri' => 'https://github.com/sidekiq-scheduler/sidekiq-scheduler/blob/master/CHANGELOG.md'
+  }
 
   s.add_dependency 'sidekiq', '>= 7.3', '< 9'
   s.add_dependency 'rufus-scheduler', '~> 3.2'
