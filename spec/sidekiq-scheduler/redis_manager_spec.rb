@@ -159,6 +159,33 @@ describe SidekiqScheduler::RedisManager do
     end
   end
 
+  describe '.remove_job_state' do
+    subject { described_class.remove_job_state(job_name) }
+
+    let(:job_name) { 'some_job' }
+    let(:state) { JSON.generate('enabled' => false) }
+
+    before { SidekiqScheduler::Store.hset(SidekiqScheduler::RedisManager.schedules_state_key, job_name, state) }
+
+    it 'should remove the job state' do
+      subject
+
+      stored_state = SidekiqScheduler::Store.hget(SidekiqScheduler::RedisManager.schedules_state_key, job_name)
+      expect(stored_state).to be_nil
+    end
+
+    context "when the job state doesn't exist" do
+      let(:job_name) { 'job_without_state' }
+
+      it 'should maintain inexisting' do
+        subject
+
+        stored_state = SidekiqScheduler::Store.hget(SidekiqScheduler::RedisManager.schedules_state_key, job_name)
+        expect(stored_state).to be_nil
+      end
+    end
+  end
+
   describe '.get_all_schedules' do
     subject { described_class.get_all_schedules }
 
