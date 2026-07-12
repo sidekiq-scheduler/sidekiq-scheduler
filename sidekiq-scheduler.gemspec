@@ -27,6 +27,7 @@ Gem::Specification.new do |s|
   s.add_dependency 'rufus-scheduler', '~> 3.2'
 
   s.add_development_dependency 'rake', '~> 12.0'
+  s.add_development_dependency 'ostruct'
   s.add_development_dependency 'timecop'
   s.add_development_dependency 'mocha'
   s.add_development_dependency 'rspec'
