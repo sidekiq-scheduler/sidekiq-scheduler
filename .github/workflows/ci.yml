@@ -11,7 +11,7 @@ jobs:
       fail-fast: false
       matrix:
         sidekiq-version: ['~> 7.3', '~> 8.0']
-        ruby-version: ['3.2', '3.3', '3.4']
+        ruby-version: ['3.2', '3.3', '3.4', '4.0']
         rack-version: ['>= 3.1.0']
         include:
           # Sidekiq 8 requires Ruby >= 3.2 and rack >= 3.1
