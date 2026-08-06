@@ -16,7 +16,8 @@
 <div class="recurring-jobs">
   <ul class="list-group">
     <% @presented_jobs.each do |job| %>
-      <li class="list-group-item <%= !job.enabled? && "list-group-item-disabled" %>">
+      <% job_enabled = job.enabled? %>
+      <li class="list-group-item <%= !job_enabled && "list-group-item-disabled" %>">
         <div class="title">
           <div class="row">
             <div class="col-xs-6">
@@ -43,14 +44,14 @@
             </form>
             <form action="<%= root_path %>recurring-jobs/<%= ERB::Util.url_encode(job.name) %>/toggle" method="post">
               <%= csrf_tag %>
-              <input type="submit" class="btn <%= job.enabled? ? "btn-primary" : "btn-warn"%> btn-xs" value="<%= job.enabled? ? t('disable') : t('enable') %>" />
+              <input type="submit" class="btn <%= job_enabled ? "btn-primary" : "btn-warn"%> btn-xs" value="<%= job_enabled ? t('disable') : t('enable') %>" />
             </form>
           </div>
           <div class="col-md-4">
             <span class="last_time"><%= t('last_time') %>: <%= job.last_time %></span>
           </div>
           <div class="col-md-4">
-            <span class="next_time text-right" style="<%= 'text-decoration:line-through' unless job.enabled? %>">
+            <span class="next_time text-right" style="<%= 'text-decoration:line-through' unless job_enabled %>">
               <%= t('next_time') %>: <%= job.next_time || t('no_next_time') %>
             </span>
           </div>

@@ -121,5 +121,38 @@ describe SidekiqScheduler::JobPresenter do
         expect(subject.map(&:name)).to eq([:a_job, :b_job, :c_job, :d_job])
       end
     end
+
+    context 'when jobs have stored metadata' do
+      let(:schedule_hash) do
+        {
+          'enabled_job' => { 'enabled' => true },
+          'disabled_job' => { 'enabled' => true }
+        }
+      end
+      let(:last_time) { Time.now - 60 }
+      let(:next_time) { Time.now + 60 }
+
+      before do
+        SidekiqScheduler::RedisManager.set_job_state('disabled_job', 'enabled' => false)
+        SidekiqScheduler::RedisManager.set_job_last_time('disabled_job', last_time)
+        SidekiqScheduler::RedisManager.set_job_next_time('disabled_job', next_time)
+      end
+
+      it 'preloads metadata for every presenter' do
+        expect(SidekiqScheduler::RedisManager).to receive(:get_jobs_metadata)
+          .once.with(%w(disabled_job enabled_job)).and_call_original
+
+        presenters = subject.to_h { |presenter| [presenter.name, presenter] }
+
+        expect(SidekiqScheduler::RedisManager).not_to receive(:get_job_state)
+        expect(SidekiqScheduler::RedisManager).not_to receive(:get_job_last_time)
+        expect(SidekiqScheduler::RedisManager).not_to receive(:get_job_next_time)
+
+        expect(presenters.fetch('disabled_job').enabled?).to be(false)
+        expect(presenters.fetch('disabled_job').last_time).to eq(job_presenter.relative_time(last_time))
+        expect(presenters.fetch('disabled_job').next_time).to eq(job_presenter.relative_time(next_time))
+        expect(presenters.fetch('enabled_job').enabled?).to be(true)
+      end
+    end
   end
 end

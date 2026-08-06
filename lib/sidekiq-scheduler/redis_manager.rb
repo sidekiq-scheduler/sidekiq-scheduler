@@ -39,6 +39,27 @@ module SidekiqScheduler
       hget(last_times_key, name)
     end
 
+    # Returns the state and execution times for the given jobs.
+    #
+    # @param [Array<String>] names job names
+    # @return [Hash] metadata keyed by job name
+    def self.get_jobs_metadata(names)
+      names = Array(names)
+      return {} if names.empty?
+
+      states, last_times, next_times = Sidekiq.redis do |redis|
+        redis.pipelined do |pipeline|
+          pipeline.hmget(schedules_state_key, *names)
+          pipeline.hmget(last_times_key, *names)
+          pipeline.hmget(next_times_key, *names)
+        end
+      end
+
+      names.each_with_index.to_h do |name, index|
+        [name, { state: states[index], last_time: last_times[index], next_time: next_times[index] }]
+      end
+    end
+
     # Sets the schedule for a given job
     #
     # @param [String] name The name of the job

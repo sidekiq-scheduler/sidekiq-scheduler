@@ -49,6 +49,40 @@ describe SidekiqScheduler::RedisManager do
     it { is_expected.to eq(last_time) }
   end
 
+  describe '.get_jobs_metadata' do
+    subject { described_class.get_jobs_metadata(job_names) }
+
+    let(:job_names) { %w(some_job missing_job) }
+    let(:state) { JSON.generate('enabled' => false) }
+    let(:last_time) { 'last_time' }
+    let(:next_time) { 'next_time' }
+
+    before do
+      SidekiqScheduler::Store.hset(SidekiqScheduler::RedisManager.schedules_state_key, 'some_job', state)
+      SidekiqScheduler::Store.hset(SidekiqScheduler::RedisManager.last_times_key, 'some_job', last_time)
+      SidekiqScheduler::Store.hset(SidekiqScheduler::RedisManager.next_times_key, 'some_job', next_time)
+    end
+
+    it 'returns all metadata with one Redis checkout' do
+      expect(Sidekiq).to receive(:redis).once.and_call_original
+
+      is_expected.to eq(
+        'some_job' => { state: state, last_time: last_time, next_time: next_time },
+        'missing_job' => { state: nil, last_time: nil, next_time: nil }
+      )
+    end
+
+    context 'without job names' do
+      let(:job_names) { [] }
+
+      it 'does not access Redis' do
+        expect(Sidekiq).not_to receive(:redis)
+
+        is_expected.to eq({})
+      end
+    end
+  end
+
   describe '.set_job_schedule' do
     subject { described_class.set_job_schedule(job_name, config) }
 
