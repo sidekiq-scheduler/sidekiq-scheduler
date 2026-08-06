@@ -14,7 +14,8 @@
 
   <section class="job-list">
     <% @presented_jobs.each do |job| %>
-      <section class="job <%= job.enabled? ? "" : "disabled-job" %>">
+      <% job_enabled = job.enabled? %>
+      <section class="job <%= job_enabled ? "" : "disabled-job" %>">
         <div class="row">
           <div class="column-2">
             <div class="job-name"><%= job.name %></div>
@@ -43,7 +44,7 @@
             </form>
             <form class="inline" action="<%= root_path %>recurring-jobs/<%= ERB::Util.url_encode(job.name) %>/toggle" method="POST">
               <%= csrf_tag %>
-              <input type="submit" class="btn btn-xs <%= job.enabled? ? "btn-inverse" : "btn-warn"%>" value="<%= job.enabled? ? t('disable') : t('enable') %>" />
+              <input type="submit" class="btn btn-xs <%= job_enabled ? "btn-inverse" : "btn-warn"%>" value="<%= job_enabled ? t('disable') : t('enable') %>" />
             </form>
           </div>
           <div class="column-3">
