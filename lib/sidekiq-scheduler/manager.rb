@@ -17,7 +17,7 @@ module SidekiqScheduler
     end
 
     def stop
-      @scheduler_instance.clear_schedule!
+      @scheduler_instance.clear_schedule!(restart: false)
     end
 
     def start
