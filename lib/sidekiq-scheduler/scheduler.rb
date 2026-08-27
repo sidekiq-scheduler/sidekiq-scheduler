@@ -212,8 +212,8 @@ module SidekiqScheduler
     end
 
     def update_schedule
-      last_changed_score, @current_changed_score = @current_changed_score, Time.now.to_f
-      schedule_changes = SidekiqScheduler::RedisManager.get_schedule_changes(last_changed_score, @current_changed_score)
+      current_changed_score = Time.now.to_f
+      schedule_changes = SidekiqScheduler::RedisManager.get_schedule_changes(@current_changed_score, current_changed_score)
 
       if schedule_changes.size > 0
         Sidekiq.logger.info 'Updating schedule'
@@ -229,6 +229,8 @@ module SidekiqScheduler
         end
         Sidekiq.logger.info 'Schedule updated'
       end
+
+      @current_changed_score = current_changed_score
     end
 
     def job_enabled?(name)
