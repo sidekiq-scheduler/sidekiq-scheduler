@@ -186,11 +186,12 @@ module SidekiqScheduler
       @rufus_scheduler ||= SidekiqScheduler::Utils.new_rufus_scheduler(rufus_scheduler_options)
     end
 
-    # Stops old rufus scheduler and creates a new one.  Returns the new
-    # rufus scheduler
+    # Stops old rufus scheduler and optionally creates a new one. Returns the new
+    # rufus scheduler when restarting.
     #
     # @param [Symbol] stop_option The option to be passed to Rufus::Scheduler#stop
-    def clear_schedule!(stop_option = :wait)
+    # @param [Boolean] restart Whether to create a new scheduler after stopping
+    def clear_schedule!(stop_option = :wait, restart: true)
       if @rufus_scheduler
         @rufus_scheduler.stop(stop_option)
         @rufus_scheduler = nil
@@ -198,7 +199,7 @@ module SidekiqScheduler
 
       @scheduled_jobs = {}
 
-      rufus_scheduler
+      rufus_scheduler if restart
     end
 
     def reload_schedule!
