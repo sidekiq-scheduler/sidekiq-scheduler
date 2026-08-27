@@ -85,7 +85,7 @@ module SidekiqScheduler
 
     def fetch_scheduler_config(sidekiq_config, without_defaults)
       conf = SidekiqScheduler::SidekiqAdapter.fetch_scheduler_config_from_sidekiq(sidekiq_config)
-      without_defaults ? conf : DEFAULT_OPTIONS.merge(conf)
+      without_defaults ? conf : DEFAULT_OPTIONS.merge({ schedule: {}, rufus_scheduler_options: {} }, conf)
     end
   end
 end
