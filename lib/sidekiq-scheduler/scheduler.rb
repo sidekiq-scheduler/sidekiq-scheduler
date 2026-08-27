@@ -97,11 +97,7 @@ module SidekiqScheduler
         queues = scheduler_config.sidekiq_queues
 
         Sidekiq.schedule.each do |name, config|
-          if !listened_queues_only || enabled_queue?(config['queue'].to_s, queues)
-            load_schedule_job(name, config)
-          else
-            Sidekiq.logger.info { "Ignoring #{name}, job's queue is not enabled." }
-          end
+          load_schedule_job_for_queues(name, config, queues)
         end
 
         Sidekiq.logger.info 'Schedules Loaded'
@@ -219,10 +215,11 @@ module SidekiqScheduler
         Sidekiq.logger.info 'Updating schedule'
 
         Sidekiq.reload_schedule!
+        queues = scheduler_config.sidekiq_queues
         schedule_changes.each do |schedule_name|
           if Sidekiq.schedule.keys.include?(schedule_name)
             unschedule_job(schedule_name)
-            load_schedule_job(schedule_name, Sidekiq.schedule[schedule_name])
+            load_schedule_job_for_queues(schedule_name, Sidekiq.schedule[schedule_name], queues)
           else
             unschedule_job(schedule_name)
           end
@@ -263,6 +260,14 @@ module SidekiqScheduler
     private
 
     attr_reader :scheduler_config
+
+    def load_schedule_job_for_queues(name, config, queues)
+      if !listened_queues_only || enabled_queue?(config['queue'].to_s, queues)
+        load_schedule_job(name, config)
+      else
+        Sidekiq.logger.info { "Ignoring #{name}, job's queue is not enabled." }
+      end
+    end
 
     def new_job(name, interval_type, config, schedule, options)
       options = options.merge({ :job => true, :tags => [name] })
