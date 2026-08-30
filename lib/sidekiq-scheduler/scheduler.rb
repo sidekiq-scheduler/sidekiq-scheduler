@@ -220,7 +220,7 @@ module SidekiqScheduler
 
         Sidekiq.reload_schedule!
         schedule_changes.each do |schedule_name|
-          if Sidekiq.schedule.keys.include?(schedule_name)
+          if Sidekiq.schedule.key?(schedule_name)
             unschedule_job(schedule_name)
             load_schedule_job(schedule_name, Sidekiq.schedule[schedule_name])
           else
