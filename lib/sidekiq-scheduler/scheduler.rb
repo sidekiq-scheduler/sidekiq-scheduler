@@ -218,7 +218,7 @@ module SidekiqScheduler
         Sidekiq.reload_schedule!
         queues = scheduler_config.sidekiq_queues
         schedule_changes.each do |schedule_name|
-          if Sidekiq.schedule.keys.include?(schedule_name)
+          if Sidekiq.schedule.key?(schedule_name)
             unschedule_job(schedule_name)
             load_schedule_job_for_queues(schedule_name, Sidekiq.schedule[schedule_name], queues)
           else
