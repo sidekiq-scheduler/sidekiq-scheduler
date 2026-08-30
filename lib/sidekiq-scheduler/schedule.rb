@@ -113,6 +113,7 @@ module SidekiqScheduler
     # remove a given schedule by name
     def remove_schedule(name)
       SidekiqScheduler::RedisManager.remove_job_schedule(name)
+      SidekiqScheduler::RedisManager.remove_job_state(name)
       SidekiqScheduler::RedisManager.add_schedule_change(name)
     end
 

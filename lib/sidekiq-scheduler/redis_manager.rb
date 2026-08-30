@@ -76,6 +76,13 @@ module SidekiqScheduler
       hset(schedules_state_key, name, JSON.generate(state))
     end
 
+    # Removes the state for a given job
+    #
+    # @param [String] name The name of the job
+    def self.remove_job_state(name)
+      hdel(schedules_state_key, name)
+    end
+
     # Sets the next execution time for a given job
     #
     # @param [String] name The name of the job
