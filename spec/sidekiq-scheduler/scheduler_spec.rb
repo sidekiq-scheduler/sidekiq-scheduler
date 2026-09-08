@@ -1121,6 +1121,32 @@ describe SidekiqScheduler::Scheduler do
       end
     end
 
+    context 'when fetching schedule changes fails' do
+      before { Sidekiq.set_schedule('new_job', ScheduleFaker.cron_schedule) }
+
+      it 'does not advance the change cursor' do
+        previous_score = instance.instance_variable_get(:@current_changed_score)
+
+        allow(SidekiqScheduler::RedisManager).to receive(:get_schedule_changes).and_raise(IOError)
+
+        expect { subject }.to raise_error(IOError)
+        expect(instance.instance_variable_get(:@current_changed_score)).to eq(previous_score)
+      end
+
+      it 'loads the missed job on the next successful poll' do
+        allow(SidekiqScheduler::RedisManager).to receive(:get_schedule_changes).and_raise(IOError)
+
+        expect { subject }.to raise_error(IOError)
+        expect(instance.scheduled_jobs.keys).to_not include('new_job')
+
+        allow(SidekiqScheduler::RedisManager).to receive(:get_schedule_changes).and_call_original
+
+        instance.update_schedule
+
+        expect(instance.scheduled_jobs.keys).to include('new_job')
+      end
+    end
+
     context 'when listened_queues_only flag is active' do
       let(:scheduler_options) do
         {
