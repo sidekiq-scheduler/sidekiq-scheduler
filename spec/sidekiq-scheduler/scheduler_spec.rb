@@ -1120,6 +1120,65 @@ describe SidekiqScheduler::Scheduler do
         expect { subject }.to change { instance.instance_variable_get(:@current_changed_score) }.to be_a(Float)
       end
     end
+
+    context 'when listened_queues_only flag is active' do
+      let(:scheduler_options) do
+        {
+          scheduler: {
+            enabled: true,
+            dynamic: true,
+            dynamic_every: '5s',
+            listened_queues_only: true
+          }
+        }
+      end
+
+      before { @sconfig.queues = ['default'] }
+
+      context 'when a new job targets an excluded queue' do
+        before { Sidekiq.set_schedule('excluded_job', ScheduleFaker.cron_schedule('queue' => 'other')) }
+
+        it 'does not load the job into the scheduler' do
+          subject
+          expect(instance.scheduled_jobs.keys).to_not include('excluded_job')
+        end
+      end
+
+      context 'when a new job targets an included queue' do
+        before { Sidekiq.set_schedule('included_job', ScheduleFaker.cron_schedule('queue' => 'default')) }
+
+        it 'loads the job into the scheduler' do
+          subject
+          expect(instance.scheduled_jobs.keys).to include('included_job')
+        end
+      end
+
+      context 'when an existing job moves to an excluded queue' do
+        before do
+          Sidekiq.set_schedule('old_job', ScheduleFaker.cron_schedule('queue' => 'other'))
+        end
+
+        it 'removes the job from the scheduler' do
+          expect(instance.scheduled_jobs.keys).to include('old_job')
+          subject
+          expect(instance.scheduled_jobs.keys).to_not include('old_job')
+        end
+      end
+
+      context 'when an excluded job moves to an included queue' do
+        before do
+          Sidekiq.set_schedule('excluded_job', ScheduleFaker.cron_schedule('queue' => 'other'))
+          instance.update_schedule
+          Sidekiq.set_schedule('excluded_job', ScheduleFaker.cron_schedule('queue' => 'default'))
+        end
+
+        it 'loads the job into the scheduler' do
+          expect(instance.scheduled_jobs.keys).to_not include('excluded_job')
+          subject
+          expect(instance.scheduled_jobs.keys).to include('excluded_job')
+        end
+      end
+    end
   end
 
   describe '#to_hash' do
