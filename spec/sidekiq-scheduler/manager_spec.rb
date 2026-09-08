@@ -203,9 +203,9 @@ describe SidekiqScheduler::Manager do
         expect(SidekiqScheduler::Scheduler.instance).to be_a(SidekiqScheduler::Scheduler)
       end
 
-      it {
-        expect { subject }.to change { Sidekiq.schedule }.to({})
-      }
+      it 'does not overwrite Sidekiq.schedule when no schedule is configured' do
+        expect { subject }.not_to change { Sidekiq.schedule }
+      end
 
       describe 'scheduler attributes' do
         subject do
