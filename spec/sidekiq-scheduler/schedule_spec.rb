@@ -145,5 +145,49 @@ describe SidekiqScheduler::Schedule do
       expect(SidekiqScheduler::Store.job_from_redis_without_decoding(job_id)).to be_nil
       expect(SidekiqScheduler::Store.changed_job?(job_id)).to be_truthy
     end
+
+    context 'when the job has a stored state' do
+      before do
+        state = { 'enabled' => false }
+        SidekiqScheduler::RedisManager.set_job_state(job_id, state)
+      end
+
+      it 'removes the job state from redis' do
+        stored_state = SidekiqScheduler::RedisManager.get_job_state(job_id)
+        expect(stored_state).not_to be_nil
+
+        Sidekiq.remove_schedule(job_id)
+
+        stored_state = SidekiqScheduler::RedisManager.get_job_state(job_id)
+        expect(stored_state).to be_nil
+      end
+    end
+
+    context 'when the schedule is re-added after removal' do
+      let(:initial_schedule) { ScheduleFaker.default_options.merge('enabled' => true) }
+      let(:new_schedule) { ScheduleFaker.default_options.merge('enabled' => false) }
+
+      before do
+        # Set initial schedule
+        Sidekiq.set_schedule(job_id, initial_schedule)
+        # Toggle state (simulating user toggling via UI)
+        SidekiqScheduler::RedisManager.set_job_state(job_id, { 'enabled' => false })
+      end
+
+      it 'uses the new schedule enabled state, not the old cached state' do
+        # Remove the schedule
+        Sidekiq.remove_schedule(job_id)
+
+        # Verify state is cleaned up
+        expect(SidekiqScheduler::RedisManager.get_job_state(job_id)).to be_nil
+
+        # Re-add with different enabled value
+        Sidekiq.set_schedule(job_id, new_schedule)
+
+        # The state should now come from the schedule definition since there's no cached state
+        stored_state = SidekiqScheduler::RedisManager.get_job_state(job_id)
+        expect(stored_state).to be_nil # No cached state, so schedule's 'enabled' value will be used
+      end
+    end
   end
 end
