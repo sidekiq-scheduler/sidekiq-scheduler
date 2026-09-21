@@ -53,6 +53,19 @@ module SidekiqScheduler
       @schedule = schedule_hash
     end
 
+    # Merges the given schedule into the one stored in redis.
+    #
+    # Unlike `schedule=`, the schedules that are missing from the given hash are
+    # left untouched, so a schedule defined in the configuration file can be loaded
+    # in `dynamic` mode without discarding the ones added at runtime.
+    def merge_schedule(schedule_hash)
+      prepare_schedule(schedule_hash).each do |name, job_spec|
+        set_schedule(name, job_spec)
+      end
+
+      reload_schedule!
+    end
+
     def schedule
       @schedule
     end

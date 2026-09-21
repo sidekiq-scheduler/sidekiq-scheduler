@@ -63,9 +63,19 @@ describe SidekiqScheduler::Manager do
           SidekiqScheduler::Scheduler.instance
         end
 
-        it {
-          expect { subject }.not_to change { Sidekiq.schedule }
-        }
+        it 'loads the configured schedule' do
+          subject
+
+          expect(Sidekiq.schedule.keys).to include('current')
+        end
+
+        it 'keeps the schedules that are only stored in redis' do
+          Sidekiq.set_schedule('dynamic_only', ScheduleFaker.cron_schedule)
+
+          subject
+
+          expect(Sidekiq.get_schedule.keys).to include('dynamic_only')
+        end
       end
     end
 

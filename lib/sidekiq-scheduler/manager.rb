@@ -13,7 +13,15 @@ module SidekiqScheduler
 
       @scheduler_instance = SidekiqScheduler::Scheduler.new(config)
       SidekiqScheduler::Scheduler.instance = @scheduler_instance
-      Sidekiq.schedule = config.schedule if @scheduler_instance.enabled && !@scheduler_instance.dynamic
+      return unless @scheduler_instance.enabled
+
+      # In `dynamic` mode runtime schedules only live in redis, so merge instead of
+      # replacing, which would remove them on every boot.
+      if @scheduler_instance.dynamic
+        Sidekiq.merge_schedule(config.schedule)
+      else
+        Sidekiq.schedule = config.schedule
+      end
     end
 
     def stop
