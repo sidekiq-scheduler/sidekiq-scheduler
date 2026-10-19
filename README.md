@@ -380,9 +380,21 @@ Then you would just need to flag the scheduler process when you start it. If you
 ```yaml
 # Procfile
 web: bin/rails server
-worker: bundle exec sidekiq -q default
+worker: bundle exec sidekiq -q default -C config/sidekiq_worker.yml
 scheduler: IS_SCHEDULER=true bundle exec sidekiq -q default
 ```
+
+The `worker` process needs its own configuration file disabling the scheduler:
+
+```yaml
+# config/sidekiq_worker.yml
+
+## NOTE Disable the Scheduler
+:scheduler:
+  :enabled: false
+```
+
+Without that key the `worker` process starts the scheduler too, and because it has no schedule of its own it will clear the one the `scheduler` process wrote to Redis. See [Notes when running multiple Sidekiq processors on the same Redis](#notes-when-running-multiple-sidekiq-processors-on-the-same-redis).
 
 When running via Heroku, you set your `scheduler` process to have 1 dyno. This will ensure you have at most 1 worker loading the schedule.
 
